@@ -57,5 +57,6 @@ docs/_build/
 target/
 
 ._.DS*
+.DS_Store
 crash*.txt
 .vscode
