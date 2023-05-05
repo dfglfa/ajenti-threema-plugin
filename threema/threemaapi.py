@@ -1,0 +1,48 @@
+import sys
+
+try:
+    from config import API_KEY
+except ImportError:
+    print("API_KEY not readable from config.py")
+    print("Please rename _config.py -> config.py and insert your API key there.")
+    sys.exit()
+
+from credentialsclient import CredentialsClient
+from userclient import UserClient
+
+
+DEFAULT_BASE_URL = "https://work.threema.ch/api/v1"
+AUTH_HEADER = {"X-Api-Key": API_KEY}
+
+
+class ThreemaAdminClient:
+
+    def __init__(self, baseUrl=DEFAULT_BASE_URL):
+        self.baseUrl = baseUrl
+        self.userClient = UserClient(baseUrl, AUTH_HEADER)
+        self.credentialsClient = CredentialsClient(
+            baseUrl, AUTH_HEADER)
+
+    def getAllUsers(self, **params):
+        return self.userClient.getAll(**params)
+
+    def getAllCredentials(self, **params):
+        return self.credentialsClient.getAll(**params)
+
+    def createCredentials(self, username, password):
+        return self.credentialsClient.create(username, password)
+
+    def checkCredentialsNamingScheme(self):
+        return self.credentialsClient.checkNamingScheme()
+
+    def correctCredentialsNamingScheme(self):
+        return self.credentialsClient.correctNamingScheme()
+
+    def checkClassPrefixForAllStudents(self):
+        return self.credentialsClient.checkClassPrefixForAllStudents()
+
+    def updateCredentials(self, threemaId, username="", password=""):
+        return self.credentialsClient.update(threemaId, username, password)
+
+    def getCredentialsDetails(self, threemaId):
+        return self.credentialsClient.getDetails(threemaId)

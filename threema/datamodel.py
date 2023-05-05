@@ -1,0 +1,54 @@
+class User:
+    def __init__(self, **userData):
+        """
+        :param userData: Threema response parsed from JSON.
+
+        Example:
+        {
+            "id": "B4UXXX11", // UserID: 9964FH88
+            "nickname": "Alice",
+            "firstName": "Al",
+            "lastName": "Ice",
+            "csi": "AI000001",
+            "category": "Marketing",
+            "version": "android - 3.1k",
+            "lastCheck": "2017-01-01T00:00:00+0100",
+            "createdAt": "2017-01-01T00:00:00+0100"
+        }
+        """
+        for key, val in userData.items():
+            setattr(self, key, val)
+
+    def __repr__(self):
+        return f"{self.nickname}: ({self.firstName} {self.lastName}, ID: {self.id})"
+
+
+class Credentials:
+    """
+    :param credentialsData: Threema response parsed from JSON.
+
+    Example:
+
+    {
+        "_links": [...]
+        "id": "LAow0Rksa",
+        "username": "alice",
+        "password": "3mawrk",
+        "licenseAmount": 0,
+        "hash": false,
+        "lock": tr
+    }
+    """
+
+    def __init__(self, **credentialsData):
+        for key, val in credentialsData.items():
+            setattr(self, key, val)
+
+    def asKey(self):
+        return self.id, self.username or "<unknown>"
+
+    def __repr__(self):
+        return f"Username: {self.username} ID: {self.id}"
+
+    def __str__(self):
+        return f"Username: {self.username:35} ID: {self.id}"
