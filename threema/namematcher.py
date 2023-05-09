@@ -38,7 +38,7 @@ class NameMatcher:
 
     def checkConsistency(self, credentials: list[Credentials]):
         match_result = {
-            "suggestions": {},
+            "suggestions": [],
             "ok": [],
             "unmatched": [],
             "unused": []
@@ -59,12 +59,16 @@ class NameMatcher:
                     match_result["ok"].append(
                         {"id": threemaId, "username": username})
                 else:
-                    match_result["suggestions"][threemaId] = {
-                        "id": threemaId, "username": username, "matches": matches}
+                    match_result["suggestions"].append({
+                        "id": threemaId, "username": username, "matches": matches
+                    })
                 mapped_keys = mapped_keys.union(map(itemgetter(0), matches))
 
         for nn in self.normalized_names:
             if nn not in mapped_keys:
                 match_result["unused"].append(nn)
+
+        match_result["unused"].sort()
+        match_result["suggestions"].sort(key=lambda s: s["username"])
 
         return match_result

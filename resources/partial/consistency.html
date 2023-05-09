@@ -25,7 +25,7 @@
     </div>
   </div>
 
-  <div ng-if="results.suggestions">
+  <div ng-if="results.suggestions && results.suggestions.length">
     <div class="bg-primary defaultBlock" style="padding: 5px; margin: 10px 0">
       For the following users I have name change suggestions:
     </div>
@@ -39,6 +39,7 @@
             <strong>{{match[0]}}</strong>
           </div>
           <button
+            ng-disabled="updatePending"
             type="button"
             class="btn btn-danger"
             ng:click="applySuggestion(sugg.id, match[0])"

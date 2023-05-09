@@ -6,19 +6,29 @@ angular
       pageTitle.set(gettext("Consistency"));
 
       $scope.check = () => {
-        $http.get("/api/threema_connector/credentials/check").then((resp) => {
-          $scope.results = resp.data;
-        });
+        return $http
+          .get("/api/threema_connector/credentials/check")
+          .then((resp) => {
+            $scope.results = resp.data;
+          });
       };
 
+      $scope.updatePending = false;
+
       $scope.applySuggestion = (threemaId, changedName) => {
+        $scope.updatePending = true;
         $http
           .post("/api/threema_connector/credentials/update", {
             threemaId,
             changedName,
           })
           .then((resp) => {
-            $scope.check();
+            $scope.check().then(() => {
+              $scope.updatePending = false;
+            });
+          })
+          .catch(() => {
+            $scope.updatePending = false;
           });
       };
     }
