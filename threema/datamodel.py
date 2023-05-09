@@ -1,3 +1,6 @@
+import json
+
+
 class User:
     def __init__(self, **userData):
         """
@@ -22,6 +25,14 @@ class User:
     def __repr__(self):
         return f"{self.nickname}: ({self.firstName} {self.lastName}, ID: {self.id})"
 
+    def toJsonDict(self):
+        return {
+            "id": self.id,
+            "nickname": self.nickname,
+            "firstname": self.firstname,
+            "lastname": self.lastname
+        }
+
 
 class Credentials:
     """
@@ -44,11 +55,14 @@ class Credentials:
         for key, val in credentialsData.items():
             setattr(self, key, val)
 
-    def asKey(self):
-        return self.id, self.username or "<unknown>"
-
     def __repr__(self):
         return f"Username: {self.username} ID: {self.id}"
 
     def __str__(self):
         return f"Username: {self.username:35} ID: {self.id}"
+
+    def toJsonDict(self):
+        return {
+            "id": self.id,
+            "username": self.username,
+        }

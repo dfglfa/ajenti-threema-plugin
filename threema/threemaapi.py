@@ -40,8 +40,8 @@ class ThreemaAdminClient:
     def correctCredentialsNamingScheme(self):
         return self.credentialsClient.correctNamingScheme()
 
-    def checkClassPrefixForAllStudents(self):
-        return self.credentialsClient.checkClassPrefixForAllStudents()
+    def checkConsistencyForAllStudents(self):
+        return self.credentialsClient.checkConsistencyForAllStudents()
 
     def updateCredentials(self, threemaId, username="", password=""):
         return self.credentialsClient.update(threemaId, username, password)

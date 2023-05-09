@@ -36,7 +36,7 @@ class NameMatcher:
         else:
             return []
 
-    def completeMatch(self, credentials: list[Credentials]):
+    def checkConsistency(self, credentials: list[Credentials]):
         match_result = {
             "suggestions": {},
             "ok": [],
@@ -44,21 +44,23 @@ class NameMatcher:
             "unused": []
         }
         mapped_keys = set()
-        creds_keys = [c.asKey() for c in credentials]
-        for ck in creds_keys:
-            _, username = ck
+        creds_keys = [(c.id, c.username or "unknown") for c in credentials]
+        for threemaId, username in creds_keys:
             matches = self.findMatches(username)
             if not matches:
-                match_result["unmatched"].append(ck)
+                match_result["unmatched"].append(
+                    {"id": threemaId, "username": username})
             else:
                 classOfFirstMatchWithPrefix = matches[0][1]
                 if username.startswith(classOfFirstMatchWithPrefix):
                     # This username already has a matching prefix ...
                     # might be better to check if first and last name are already contained,
                     # but for now this is ok
-                    match_result["ok"].append(ck)
+                    match_result["ok"].append(
+                        {"id": threemaId, "username": username})
                 else:
-                    match_result["suggestions"][ck] = matches
+                    match_result["suggestions"][threemaId] = {
+                        "id": threemaId, "username": username, "matches": matches}
                 mapped_keys = mapped_keys.union(map(itemgetter(0), matches))
 
         for nn in self.normalized_names:

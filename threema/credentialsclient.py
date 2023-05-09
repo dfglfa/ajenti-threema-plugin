@@ -125,8 +125,8 @@ class CredentialsClient:
 
         return res
 
-    def checkClassPrefixForAllStudents(self):
-        return self.nameMatcher.completeMatch(self.getAll())
+    def checkConsistencyForAllStudents(self):
+        return self.nameMatcher.checkConsistency(self.getAll())
 
     def _getUrlForId(self, threemaId):
         return f"{self.baseUrl}/credentials/{quote(threemaId, safe='')}"

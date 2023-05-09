@@ -60,3 +60,4 @@ target/
 .DS_Store
 crash*.txt
 .vscode
+threema/config.py
