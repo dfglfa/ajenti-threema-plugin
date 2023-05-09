@@ -1,6 +1,6 @@
 
 import random
-from threemaapi import ThreemaAdminClient
+from .threemaapi import ThreemaAdminClient
 
 
 client = ThreemaAdminClient()

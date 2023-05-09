@@ -1,11 +1,11 @@
 import json
 import requests
 
-from datamodel import Credentials
-from datamodel import User
-from namematcher import NameMatcher
+from .datamodel import Credentials
+from .datamodel import User
+from .namematcher import NameMatcher
 from urllib.parse import quote
-from config import STUDENTS_DATA_FILE
+from .config import STUDENTS_DATA_FILE
 import os
 
 GRADES_NAMES_COLLEGE_GERMAN = range(5, 10)

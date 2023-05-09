@@ -1,14 +1,16 @@
-import sys
 
 try:
-    from config import API_KEY
+    from .config import API_KEY
 except ImportError:
-    print("API_KEY not readable from config.py")
+    print("*" * 50)
+    print("WARNING: API_KEY not readable from config.py")
     print("Please rename _config.py -> config.py and insert your API key there.")
-    sys.exit()
+    print("Threema access will not work otherwise.")
+    print("*" * 50)
+    API_KEY = ""
 
-from credentialsclient import CredentialsClient
-from userclient import UserClient
+from .credentialsclient import CredentialsClient
+from .userclient import UserClient
 
 
 DEFAULT_BASE_URL = "https://work.threema.ch/api/v1"

@@ -1,7 +1,7 @@
 import json
 import requests
 
-from datamodel import User
+from .datamodel import User
 
 
 class UserClient:

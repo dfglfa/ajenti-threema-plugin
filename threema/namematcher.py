@@ -1,9 +1,9 @@
 import csv
 import difflib
 from operator import itemgetter
-from datamodel import Credentials
+from .datamodel import Credentials
 
-from utils import getNameWithClassPrefix, sanitizeName
+from .utils import getNameWithClassPrefix, sanitizeName
 
 
 class NameMatcher:

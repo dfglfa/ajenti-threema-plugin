@@ -1,4 +1,4 @@
-from utils import getClassDifference
+from .utils import getClassDifference
 
 
 def test_same_class():

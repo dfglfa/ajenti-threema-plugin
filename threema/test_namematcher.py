@@ -1,5 +1,5 @@
 import tempfile
-from namematcher import NameMatcher
+from .namematcher import NameMatcher
 
 HEADER = "Nom,Prenom,Classe"
 DATA = ["Mueller,Lisa,TES", "Meier,Rainer,5II",
