@@ -1,8 +1,52 @@
 <h1>Consistency check</h1>
 
-<p>Users that seem to have a correct threema name: {{correct}}</p>
-<p>Users that seem to have an incorrect threema name: {{incorrect}}</p>
-<p>Threema users that do not appear in the database: {{nodb}}</p>
-<p>Database users without a matching threema account: {{unused}}</p>
-
 <a class="btn btn-primary" ng:click="check()">Check now</a>
+
+<div ng-if="results">
+  <div class="bg-success defaultBlock" style="padding: 5px; margin: 10px 0">
+    Found <strong>{{results.ok.length}} users</strong> that seem to have a
+    correct threema name
+  </div>
+  <div ng-if="results.unmatched">
+    <div class="bg-warning defaultBlock" style="padding: 5px; margin: 10px 0">
+      The following threema users do not appear in the database:
+    </div>
+    <div>
+      <div ng-repeat="u in results.unmatched">{{u.username}}</div>
+    </div>
+  </div>
+
+  <div ng-if="results.unused">
+    <div class="bg-info defaultBlock" style="padding: 5px; margin: 10px 0">
+      Database users without a matching threema account:
+    </div>
+    <div>
+      <div ng-repeat="u in results.unused">{{u}}</div>
+    </div>
+  </div>
+
+  <div ng-if="results.suggestions">
+    <div class="bg-primary defaultBlock" style="padding: 5px; margin: 10px 0">
+      For the following users I have name change suggestions:
+    </div>
+    <div>
+      <div ng-repeat="sugg in results.suggestions" style="margin: 10px 0">
+        <h4>{{sugg.username}}</h4>
+        <div ng-repeat="match in sugg.matches track by $index">
+          <div style="display: inline-block; width: 350px; height: 30px">
+            <span ng-if="$index === 0">Suggested change:</span>
+            <span ng-if="$index > 0">Alternative {{$index}}:</span>
+            <strong>{{match[0]}}</strong>
+          </div>
+          <button
+            type="button"
+            class="btn btn-danger"
+            ng:click="applySuggestion(sugg.id, match[0])"
+          >
+            Apply
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

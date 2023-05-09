@@ -2,12 +2,10 @@
 
 <h1>{{my_title}}</h1>
 <div>
-  <h2 translate>Threema Connector</h2>
-  <a class="btn btn-primary" ng:click="click()"> Click ({{counter}}) </a>
   <hr />
   <h2 translate>Manage your threema users here</h2>
-  <p class="alert alert-info">{{python_get}}</p>
-  <p class="alert alert-info">{{python_post}}</p>
   <p>Check consistency of database and current threema user list:</p>
-  <a class="btn btn-secondary" href="./consistency"> Check consistency </a>
+  <a class="btn btn-default" ng-href="threema_connector/consistency">
+    Check consistency
+  </a>
 </div>

@@ -4,7 +4,7 @@ email: johannes.charra@gmail.com
 url: http://example.com
 version: "0.1"
 title: "threema_connector"
-icon: question
+icon: mobile
 # dependency on Core is required for UI plugins
 dependencies:
   - !PluginDependency { plugin_name: core }
@@ -24,4 +24,5 @@ resources:
   - "resources/js/controllers/consistency.controller.es"
   - "resources/partial/index.html"
   - "resources/partial/consistency.html"
+  - "resources/css/styles.css"
   - "ng:example.threema_connector"

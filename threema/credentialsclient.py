@@ -78,6 +78,12 @@ class CredentialsClient:
 
     def update(self, threemaId, username, password):
         url = self._getUrlForId(threemaId)
+
+        if not password:
+            # Need to fetch password, as it should stay unchanged
+            details = self.getDetails(threemaId)
+            password = details.password
+
         resp = requests.put(url, json={"id": threemaId, "username": username, "password": password},
                             headers=self.authHeader)
 

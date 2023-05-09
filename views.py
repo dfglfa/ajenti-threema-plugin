@@ -33,9 +33,14 @@ class Handler(HttpPlugin):
     def handle_api_check_credentials(self, http_context):
         return self.client.checkConsistencyForAllStudents()
 
-    @post(r'/api/threema_connector')
+    @post(r'/api/threema_connector/credentials/update')
     @endpoint(api=True)
-    def handle_api_post_example_threema_connector(self, http_context):
-        data = http_context.json_body()['my_var']
-        text = "This content in the module %s was generated through a POST call to Python !" % data
-        return text
+    def handle_api_post_credentials_update(self, http_context):
+        body = http_context.json_body()
+
+        threemaId, changedName = body.get("threemaId"), body.get("changedName")
+
+        self.client.updateCredentials(
+            threemaId=threemaId, username=changedName)
+
+        return "ok"

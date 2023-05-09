@@ -11,11 +11,9 @@ class ItemProvider(SidebarItemProvider):
     def provide(self):
         return [
             {
-                # category:tools, category:sofware, category:system, category:other
                 'attach': 'category:general',
                 'name': 'Threema Connector',
-                # https://fontawesome.com/icons/
-                'icon': 'question',
+                'icon': 'mobile',
                 'url': '/view/threema_connector',
                 'children': []
             }
