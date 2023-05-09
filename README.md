@@ -1,4 +1,3 @@
-# Ajenti plugin template
+# Ajenti plugin for Threema
 
-This is the plugin template used by ajenti-dev-multitool
-# ajenti-threema-plugin
+This plugin connects to your threema work account in order to facilitate the management of your users.
