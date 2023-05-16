@@ -8,8 +8,9 @@ angular
     $scope.reverse = false;
 
     $scope.sorts = [
-      { name: "Klasse", fx: (c) => classLevel(c.cls) },
+      { name: "Class", fx: (c) => classLevel(c.cls) },
       { name: "Name", fx: (c) => c.username },
+      { name: "Validation", fx: (c) => validationLevel(c.status) },
     ];
 
     $scope.sort = $scope.sorts[0];
@@ -95,6 +96,18 @@ angular
           console.error("Unrecognized class:", c);
           return -1;
         }
+      }
+    }
+
+    function validationLevel(status) {
+      if (status === "SUGGESTION") {
+        return 0;
+      } else if (status === "UNMATCHED") {
+        return 1;
+      } else if (status === "OK") {
+        return 2;
+      } else {
+        return 3;
       }
     }
   });

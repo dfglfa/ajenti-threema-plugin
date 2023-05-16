@@ -61,7 +61,7 @@
           <span style="padding: 5px" ng:show="cred.status === 'OK'" class="text-success">OK</span>
           <span style="padding: 5px" ng:show="cred.status === 'UNMATCHED'" class="text-danger">No matching record found</span>
           <button
-            style="padding: 5px; border-radius: 5px"
+            style="padding: 5px; border-radius: 5px; margin: 2px 0"
             ng:show="cred.status === 'SUGGESTION'"
             class="btn btn-info"
             ng-repeat="sugg in cred.suggestions"
@@ -78,7 +78,7 @@
             </button>
             <ul uib-dropdown-menu class="dropdown-menu-right" style="margin-bottom: -30px; margin-right: 40px; z-index: 4000">
               <li>
-                <a ng:click="setPassword(cred.id)" translate>Set password</a>
+                <a ng:click="openCredentialsChangeModal(cred.id, cred.username, cred.username)" translate>Edit</a>
               </li>
               <li>
                 <a ng:click="delete(cred.id)" translate>Delete</a>

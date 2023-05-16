@@ -23,4 +23,8 @@ angular
           $scope.error = err;
         });
     };
+
+    $scope.cancel = () => {
+      $uibModalInstance.close();
+    };
   });
