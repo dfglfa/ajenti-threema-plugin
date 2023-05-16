@@ -46,36 +46,30 @@
       <tr>
         <th width="30" class="text-center"><span translate> Class </span></th>
         <th width="120">Threema Username</th>
+        <th width="120"><span ng:show="validated">Status</span></th>
         <th width="30"></th>
       </tr>
-      <!--<tr ng:repeat="cred in credentials|filter:filter|orderBy:sort.fx|page:paging.page:paging.pageSize">-->
-      <tr ng:repeat="cred in credentials|filter:filter|orderBy:sort.fx:reverse">
-        <td width="30" class="text-center" ng:show="cred.cls !== '?'"><strong>{{cred.cls}}</strong></td>
-        <td width="30" class="text-center text-bold text-danger" ng:show="cred.cls === '?'"><i class="fa fa-question"></i></td>
-        <td width="120" class="text-left">
+      <tr ng:repeat="cred in credentials|filter:filter|orderBy:sort.fx:reverse|page:paging.page:paging.pageSize">
+        <td width="30" style="vertical-align: middle" class="text-center" ng:show="cred.cls !== '?'"><strong>{{cred.cls}}</strong></td>
+        <td width="30" style="vertical-align: middle" class="text-center text-bold text-danger" ng:show="cred.cls === '?'">
+          <i class="fa fa-question"></i>
+        </td>
+        <td width="120" style="vertical-align: middle" class="text-left">
           <i>{{cred.username}}</i>
         </td>
-        <td width="30">
+        <td width="120" style="vertical-align: middle" class="text-left"><span ng:show="cred.status">{{ cred.status }}</span></td>
+        <td width="30" class="text-right" style="vertical-align: middle">
           <span uib-dropdown class="dropup">
             <button class="btn btn-default" uib-dropdown-toggle>
-              <i class="fa fa-key"></i>
+              <i class="fa fa-pen"></i>
               <span class="caret"></span>
             </button>
             <ul uib-dropdown-menu class="dropdown-menu-right" style="margin-bottom: -30px; margin-right: 40px; z-index: 4000">
               <li>
-                <a ng:click="showFirstPassword(cred.sAMAccountName)" translate> Show initial password </a>
+                <a ng:click="setPassword(cred.id)" translate>Set password</a>
               </li>
               <li>
-                <a ng:click="resetFirstPassword(cred.sAMAccountName)" translate> Restore initial password </a>
-              </li>
-              <li>
-                <a ng:click="setRandomFirstPassword(cred.sAMAccountName)" translate> Set random initial password </a>
-              </li>
-              <li>
-                <a ng:click="setCustomPassword(cred, 'first')" translate> Set custom first password </a>
-              </li>
-              <li>
-                <a ng:click="setCustomPassword(cred, 'current')" translate> Set current user password </a>
+                <a ng:click="delete(cred.id)" translate>Delete</a>
               </li>
             </ul>
           </span>
@@ -94,31 +88,10 @@
       rotate="true"
       boundary-links="true"
     ></ul>
+  </div>
+  <br />
 
-    <div class="floating-toolbar-padder"></div>
-    <floating-toolbar>
-      <div uib-dropdown ng:show="haveSelection()" class="btn-group dropup">
-        <button uib-dropdown-toggle class="btn btn-lmn" translate>
-          <i class="fa fa-key"></i> For selected
-          <span class="caret"></span>
-        </button>
-        <ul uib-dropdown-menu class="dropdown-menu-left">
-          <li>
-            <a ng:click="batchResetFirstPassword()" translate>Set initial password</a>
-          </li>
-          <li>
-            <a ng:click="batchSetRandomFirstPassword()" translate>Set random password</a>
-          </li>
-          <li>
-            <a ng:click="batchSetCustomFirstPassword()" translate>Set custom password</a>
-          </li>
-          <li>
-            <a ng:click="printSelectedPasswords()" translate>Print passwords</a>
-          </li>
-        </ul>
-        <br />
-      </div>
-      <br />
-    </floating-toolbar>
+  <div>
+    <button class="btn btn-primary" ng:click="validate()">Validate all</button>
   </div>
 </div>

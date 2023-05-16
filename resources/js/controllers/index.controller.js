@@ -2,6 +2,7 @@ angular.module("example.threema_connector").controller("ThreemaConnectorIndexCon
   pageTitle.set(gettext("ThreemaConnector"));
 
   $scope.credentials = undefined;
+  $scope.validated = false;
   $scope.reverse = false;
 
   $scope.sorts = [
@@ -10,7 +11,7 @@ angular.module("example.threema_connector").controller("ThreemaConnectorIndexCon
   ];
 
   $scope.sort = $scope.sorts[0];
-  $scope.paging = { pageSize: 20, page: 0 };
+  $scope.paging = { pageSize: 20, page: 1 };
 
   $scope.sortClicked = (s) => {
     if ($scope.sort.name === s.name) {
@@ -20,18 +21,42 @@ angular.module("example.threema_connector").controller("ThreemaConnectorIndexCon
     }
   };
 
-  // GET a result through Python API
   $http.get("/api/threema_connector/credentials").then((resp) => {
     const creds = [];
 
     for (let c of resp.data) {
       const [cls, username] = c.username.indexOf("_") !== -1 ? c.username.split("_") : ["?", c.username];
 
-      creds.push({ cls, username });
+      creds.push({ id: c.id, cls, username: c.username });
     }
 
     $scope.credentials = creds;
   });
+
+  $scope.validate = validate;
+
+  function validate() {
+    $http.get("/api/threema_connector/credentials/check").then((resp) => {
+      $scope.validated = true;
+      const { ok, suggestions, unmatched, unused } = resp.data;
+      const ok_ids = ok.map((c) => c.id);
+      const unmatched_ids = unmatched.map((c) => c.id);
+      const suggestions_ids = suggestions.map((c) => c.id);
+
+      for (let cred of $scope.credentials) {
+        if (ok_ids.indexOf(cred.id) > -1) {
+          cred.status = "OK";
+        } else if (unmatched_ids.indexOf(cred.id) > -1) {
+          cred.status = "UNMATCHED";
+        } else if (suggestions_ids.indexOf(cred.id) > -1) {
+          cred.status = "SUGGESTION";
+          cred.suggestions = suggestions.find((c) => c.id == cred.id).matches;
+        } else {
+          cred.status = "UNKNOWN";
+        }
+      }
+    });
+  }
 
   function classLevel(c) {
     if (c === "?") {
