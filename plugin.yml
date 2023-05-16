@@ -18,10 +18,10 @@ dependencies:
   #   binary_name: curl
   # }
 resources:
-  - "resources/js/module.es"
-  - "resources/js/routing.es"
-  - "resources/js/controllers/index.controller.es"
-  - "resources/js/controllers/consistency.controller.es"
+  - "resources/js/module.js"
+  - "resources/js/routing.js"
+  - "resources/js/controllers/index.controller.js"
+  - "resources/js/controllers/consistency.controller.js"
   - "resources/partial/index.html"
   - "resources/partial/consistency.html"
   - "resources/css/styles.css"

@@ -1,11 +1,124 @@
 <br />
 
-<h1>{{my_title}}</h1>
-<div>
-  <hr />
-  <h2 translate>Manage your threema users here</h2>
-  <p>Check consistency of database and current threema user list:</p>
-  <a class="btn btn-default" ng-href="threema_connector/consistency">
-    Check consistency
-  </a>
+<progress-spinner ng:show="credentials === undefined"></progress-spinner>
+
+<div ng:show="!!credentials">
+  <div ng:show="credentials.length === 0">
+    <br />
+    <div class="alert alert-info">
+      <i class="fa fa-info-circle"></i>
+      <span translate="">There are no credentials to manage yet.</span>.
+    </div>
+  </div>
+  <div ng:show="credentials.length > 0">
+    <div class="input-group">
+      <input ng:model="filter" type="search" autofocus class="form-control" placeholder="Filter" typeahead-min-length="1" />
+      <div uib-dropdown class="input-group-btn">
+        <button class="btn btn-default" uib-dropdown-toggle>
+          <i class="fa fa-sort-amount-asc"></i> {{sort.name}}
+          <span class="caret"></span>
+        </button>
+        <ul uib-dropdown-menu class="dropdown-menu-right" style="width: 150px">
+          <li ng:repeat="sort in sorts">
+            <a ng:click="sortClicked(sort)"> <i class="fa fa-sort-amount-asc"></i> {{sort.name}} </a>
+          </li>
+        </ul>
+      </div>
+      <div uib-dropdown class="input-group-btn" auto-close="outsideClick">
+        <button class="btn btn-default" uib-dropdown-toggle>
+          <i class="fa fa-list-ol"></i> {{'Rows'|translate}}
+          <span class="caret"></span>
+        </button>
+        <ul uib-dropdown-menu class="dropdown-menu-right" style="width: 200px">
+          <li ng:repeat="size in [10, 50, 100, 500, 1000]">
+            <a ng:click="paging.pageSize = size"><i class="fa fa-list-ol"></i> {{size}} <span translate>credentials</span></a>
+          </li>
+          <li>
+            <div class="input-group" style="display: table">
+              <div class="input-group-addon">Other:</div>
+              <input ng:model="paging.pageSize" type="number" autofocus class="form-control" />
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <table class="table" ng:class="{'lmn-blurred': blurred}" style="width: 100%">
+      <tr>
+        <th width="30" class="text-center"><span translate> Class </span></th>
+        <th width="120">Threema Username</th>
+        <th width="30"></th>
+      </tr>
+      <!--<tr ng:repeat="cred in credentials|filter:filter|orderBy:sort.fx|page:paging.page:paging.pageSize">-->
+      <tr ng:repeat="cred in credentials|filter:filter|orderBy:sort.fx:reverse">
+        <td width="30" class="text-center" ng:show="cred.cls !== '?'"><strong>{{cred.cls}}</strong></td>
+        <td width="30" class="text-center text-bold text-danger" ng:show="cred.cls === '?'"><i class="fa fa-question"></i></td>
+        <td width="120" class="text-left">
+          <i>{{cred.username}}</i>
+        </td>
+        <td width="30">
+          <span uib-dropdown class="dropup">
+            <button class="btn btn-default" uib-dropdown-toggle>
+              <i class="fa fa-key"></i>
+              <span class="caret"></span>
+            </button>
+            <ul uib-dropdown-menu class="dropdown-menu-right" style="margin-bottom: -30px; margin-right: 40px; z-index: 4000">
+              <li>
+                <a ng:click="showFirstPassword(cred.sAMAccountName)" translate> Show initial password </a>
+              </li>
+              <li>
+                <a ng:click="resetFirstPassword(cred.sAMAccountName)" translate> Restore initial password </a>
+              </li>
+              <li>
+                <a ng:click="setRandomFirstPassword(cred.sAMAccountName)" translate> Set random initial password </a>
+              </li>
+              <li>
+                <a ng:click="setCustomPassword(cred, 'first')" translate> Set custom first password </a>
+              </li>
+              <li>
+                <a ng:click="setCustomPassword(cred, 'current')" translate> Set current user password </a>
+              </li>
+            </ul>
+          </span>
+        </td>
+      </tr>
+    </table>
+
+    <br />
+    <ul
+      uib-pagination
+      ng:show="credentials.length > paging.pageSize"
+      ng-model="paging.page"
+      total-items="credentials.length"
+      items-per-page="paging.pageSize"
+      max-size="10"
+      rotate="true"
+      boundary-links="true"
+    ></ul>
+
+    <div class="floating-toolbar-padder"></div>
+    <floating-toolbar>
+      <div uib-dropdown ng:show="haveSelection()" class="btn-group dropup">
+        <button uib-dropdown-toggle class="btn btn-lmn" translate>
+          <i class="fa fa-key"></i> For selected
+          <span class="caret"></span>
+        </button>
+        <ul uib-dropdown-menu class="dropdown-menu-left">
+          <li>
+            <a ng:click="batchResetFirstPassword()" translate>Set initial password</a>
+          </li>
+          <li>
+            <a ng:click="batchSetRandomFirstPassword()" translate>Set random password</a>
+          </li>
+          <li>
+            <a ng:click="batchSetCustomFirstPassword()" translate>Set custom password</a>
+          </li>
+          <li>
+            <a ng:click="printSelectedPasswords()" translate>Print passwords</a>
+          </li>
+        </ul>
+        <br />
+      </div>
+      <br />
+    </floating-toolbar>
+  </div>
 </div>
