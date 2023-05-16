@@ -38,9 +38,10 @@ class Handler(HttpPlugin):
     def handle_api_post_credentials_update(self, http_context):
         body = http_context.json_body()
 
-        threemaId, changedName = body.get("threemaId"), body.get("changedName")
+        threemaId, changedName, changedPassword = body.get(
+            "threemaId"), body.get("changedName"), body.get("changedPassword")
 
         self.client.updateCredentials(
-            threemaId=threemaId, username=changedName)
+            threemaId=threemaId, username=changedName, password=changedPassword)
 
         return "ok"

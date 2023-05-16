@@ -46,7 +46,7 @@
       <tr>
         <th width="30" class="text-center"><span translate> Class </span></th>
         <th width="120">Threema Username</th>
-        <th width="120"><span ng:show="validated">Status</span></th>
+        <th width="120"><span ng:show="validated">Validation</span></th>
         <th width="30"></th>
       </tr>
       <tr ng:repeat="cred in credentials|filter:filter|orderBy:sort.fx:reverse|page:paging.page:paging.pageSize">
@@ -67,7 +67,7 @@
             ng-repeat="sugg in cred.suggestions"
             ng:click="openCredentialsChangeModal(cred.id, cred.username, sugg)"
           >
-            => {{sugg[0]}}
+            => {{sugg}}
           </button>
         </td>
         <td width="30" class="text-right" style="vertical-align: middle">

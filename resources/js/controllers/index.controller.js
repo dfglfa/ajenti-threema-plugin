@@ -52,7 +52,7 @@ angular
             cred.status = "UNMATCHED";
           } else if (suggestions_ids.indexOf(cred.id) > -1) {
             cred.status = "SUGGESTION";
-            cred.suggestions = suggestions.find((c) => c.id == cred.id).matches;
+            cred.suggestions = suggestions.find((c) => c.id == cred.id).matches.map((m) => m[0]);
           } else {
             cred.status = "UNKNOWN";
           }
