@@ -57,7 +57,19 @@
         <td width="120" style="vertical-align: middle" class="text-left">
           <i>{{cred.username}}</i>
         </td>
-        <td width="120" style="vertical-align: middle" class="text-left"><span ng:show="cred.status">{{ cred.status }}</span></td>
+        <td width="120" style="vertical-align: middle" class="text-left">
+          <span style="padding: 5px" ng:show="cred.status === 'OK'" class="text-success">OK</span>
+          <span style="padding: 5px" ng:show="cred.status === 'UNMATCHED'" class="text-danger">No matching record found</span>
+          <button
+            style="padding: 5px; border-radius: 5px"
+            ng:show="cred.status === 'SUGGESTION'"
+            class="btn btn-info"
+            ng-repeat="sugg in cred.suggestions"
+            ng:click="openCredentialsChangeModal(cred.id, cred.username, sugg)"
+          >
+            => {{sugg[0]}}
+          </button>
+        </td>
         <td width="30" class="text-right" style="vertical-align: middle">
           <span uib-dropdown class="dropup">
             <button class="btn btn-default" uib-dropdown-toggle>
