@@ -67,7 +67,7 @@
             ng-repeat="sugg in cred.suggestions"
             ng:click="openCredentialsChangeModal(cred.id, cred.username, sugg)"
           >
-            => {{sugg}}
+            <i class="fa fa-lightbulb"></i>&nbsp; {{sugg}}
           </button>
         </td>
         <td width="30" class="text-right" style="vertical-align: middle">

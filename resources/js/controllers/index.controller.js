@@ -38,27 +38,32 @@ angular
     $scope.validate = validate;
     $scope.openCredentialsChangeModal = openCredentialsChangeModal;
 
-    function validate() {
-      $http.get("/api/threema_connector/credentials/check").then((resp) => {
-        $scope.validated = true;
-        const { ok, suggestions, unmatched, unused } = resp.data;
-        const ok_ids = ok.map((c) => c.id);
-        const unmatched_ids = unmatched.map((c) => c.id);
-        const suggestions_ids = suggestions.map((c) => c.id);
+    function validate(credentialsSubset) {
+      const credentials = credentialsSubset || $scope.credentials;
+      $http
+        .post("/api/threema_connector/credentials/check", {
+          credentialsToCheck: credentialsSubset ? credentialsSubset.map((c) => c.id) : null,
+        })
+        .then((resp) => {
+          $scope.validated = true;
+          const { ok, suggestions, unmatched, unused } = resp.data;
+          const ok_ids = ok.map((c) => c.id);
+          const unmatched_ids = unmatched.map((c) => c.id);
+          const suggestions_ids = suggestions.map((c) => c.id);
 
-        for (let cred of $scope.credentials) {
-          if (ok_ids.indexOf(cred.id) > -1) {
-            cred.status = "OK";
-          } else if (unmatched_ids.indexOf(cred.id) > -1) {
-            cred.status = "UNMATCHED";
-          } else if (suggestions_ids.indexOf(cred.id) > -1) {
-            cred.status = "SUGGESTION";
-            cred.suggestions = suggestions.find((c) => c.id == cred.id).matches.map((m) => m[0]);
-          } else {
-            cred.status = "UNKNOWN";
+          for (let cred of credentials) {
+            if (ok_ids.indexOf(cred.id) > -1) {
+              cred.status = "OK";
+            } else if (unmatched_ids.indexOf(cred.id) > -1) {
+              cred.status = "UNMATCHED";
+            } else if (suggestions_ids.indexOf(cred.id) > -1) {
+              cred.status = "SUGGESTION";
+              cred.suggestions = suggestions.find((c) => c.id == cred.id).matches.map((m) => m[0]);
+            } else {
+              cred.status = "UNKNOWN";
+            }
           }
-        }
-      });
+        });
     }
 
     function openCredentialsChangeModal(threemaId, oldName, newName) {

@@ -28,9 +28,10 @@ class Handler(HttpPlugin):
         return [c.toJsonDict() for c in self.client.getAllCredentials(
             page=page, pageSize=pageSize)]
 
-    @get(r'/api/threema_connector/credentials/check')
+    @post(r'/api/threema_connector/credentials/check')
     @endpoint(api=True)
     def handle_api_check_credentials(self, http_context):
+        body = http_context.json_body()
         return self.client.checkConsistencyForAllStudents()
 
     @post(r'/api/threema_connector/credentials/update')
