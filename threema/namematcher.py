@@ -3,7 +3,7 @@ import difflib
 from operator import itemgetter
 from .datamodel import Credentials
 
-from .utils import getNameWithClassPrefix, sanitizeName
+from .utils import normalizeName, sanitizeName
 
 
 class NameMatcher:
@@ -17,7 +17,7 @@ class NameMatcher:
                 key = sanitizeName(rec['Prenom'], rec['Nom'])
                 cls = rec["Classe"]
 
-                normalizedName = getNameWithClassPrefix(key, cls)
+                normalizedName = normalizeName(key, cls)
                 self.normalized_names.append(normalizedName)
                 self.nameToClass[normalizedName] = cls
 
@@ -51,13 +51,15 @@ class NameMatcher:
                 match_result["unmatched"].append(
                     {"id": threemaId, "username": username})
             else:
-                classOfFirstMatchWithPrefix = matches[0][1]
-                if username.startswith(classOfFirstMatchWithPrefix):
-                    # This username already has a matching prefix ...
-                    # might be better to check if first and last name are already contained,
-                    # but for now this is ok
+                if username == matches[0][0]:
                     match_result["ok"].append(
                         {"id": threemaId, "username": username})
+                elif username.startswith(matches[0][1]):
+                    # If the first match contains the correct class, suggest
+                    # only this match and no others.
+                    match_result["suggestions"].append({
+                        "id": threemaId, "username": username, "matches": matches[:1]
+                    })
                 else:
                     match_result["suggestions"].append({
                         "id": threemaId, "username": username, "matches": matches

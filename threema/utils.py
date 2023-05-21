@@ -22,8 +22,13 @@ def sanitizeName(firstname, lastname):
         "utf-8").replace("-", "")
 
 
-def getNameWithClassPrefix(normalizedName, className):
-    return f"{className}_{normalizedName}"
+def normalizeName(sanitizedName, className):
+    """
+    A normalized name contains the class as prefix, followed by an underscore
+    and then <lastname><firstname(s)> with capitalized first letters, e.g. 
+    "3II_MuellerPeterHansi" for Peter Hansi Müller in the 3ème II.
+    """
+    return f"{className}_{sanitizedName}"
 
 
 classToLevel = {
