@@ -5,6 +5,7 @@ angular
 
     $scope.credentials = undefined;
     $scope.validated = false;
+    $scope.isValidating = false;
     $scope.reverse = false;
 
     $scope.sorts = [
@@ -40,6 +41,7 @@ angular
     $scope.openCredentialsDeleteModal = openCredentialsDeleteModal;
 
     function validate(credentialsSubset) {
+      $scope.isValidating = true;
       const credentials = credentialsSubset || $scope.credentials;
       $http
         .post("/api/threema_connector/credentials/check", {
@@ -64,7 +66,8 @@ angular
               cred.status = "UNKNOWN";
             }
           }
-        });
+        })
+        .finally(() => ($scope.isValidating = false));
     }
 
     function openCredentialsChangeModal(threemaId, oldName, newName) {

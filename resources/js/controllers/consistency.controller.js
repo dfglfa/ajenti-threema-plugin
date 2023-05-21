@@ -3,12 +3,13 @@ angular
   .controller("ThreemaConnectorConcistencyController", function ($scope, $http, $uibModal, pageTitle, gettext, notify) {
     pageTitle.set(gettext("Consistency"));
 
-    $scope.updatePending = false;
+    $scope.isUpdating = false;
     $scope.add = addCredentials;
     $scope.addAll = addCredentialsForAll;
     $scope.delete = openCredentialsDeleteModal;
 
     // Check on page load
+    $scope.results = undefined;
     check();
 
     function check() {
@@ -18,10 +19,14 @@ angular
     }
 
     function addCredentials(username, doCheck) {
-      return $http.put("/api/threema_connector/credentials", { username }).then(() => {
-        notify.success(`User ${username} successfully created`);
-        doCheck && check();
-      });
+      $scope.isUpdating = true;
+      return $http
+        .put("/api/threema_connector/credentials", { username })
+        .then(() => {
+          notify.success(`User ${username} successfully created`);
+          doCheck && check();
+        })
+        .finally(() => ($scope.isUpdating = false));
     }
 
     function addCredentialsForAll() {

@@ -1,29 +1,37 @@
 <h1>Consistency check</h1>
 
-<div ng-if="(!results.unmatched || !results.unmatched.length) && (!results.unused || !results.unused.length)">
-  Everything seems to be fine.
+<progress-spinner ng-show="results === undefined"></progress-spinner>
+
+<div ng-if="results && (!results.unmatched || results.unmatched.length === 0) && (!results.unused || results.unused.length === 0)">
+  <div class="bg-success defaultBlock" style="padding: 5px; margin: 10px 0">Everything seems to be fine.</div>
 </div>
 
 <div ng-if="results">
   <div ng-if="results.unmatched && results.unmatched.length > 0">
     <div class="bg-warning defaultBlock" style="padding: 5px; margin: 10px 0">The following threema users do not appear in the database:</div>
-      <div ng-repeat="u in results.unmatched" class="row" style="padding: 2px 0; display: flex; align-items: center;">
-        <div class="col-xs-6 col-sm-4">{{u.username}}</div>
-        <div class="col-xs-6 col-sm-4"><button class="btn btn-danger" ng-click="delete(u.id, u.username)"><i class="fa fa-trash"></i> &nbsp; Delete</button></div>
+    <div ng-repeat="u in results.unmatched" class="row" style="padding: 2px 0; display: flex; align-items: center">
+      <div class="col-xs-6 col-sm-4">{{u.username}}</div>
+      <div class="col-xs-6 col-sm-4">
+        <button class="btn btn-danger" ng-click="delete(u.id, u.username)"><i class="fa fa-trash"></i> &nbsp; Delete</button>
       </div>
-      <br />
-      <!--<button class="btn btn-danger"><i class="fa fa-skull"></i> &nbsp; Delete ALL</button>-->
     </div>
+    <br />
+    <!--<button class="btn btn-danger"><i class="fa fa-skull"></i> &nbsp; Delete ALL</button>-->
   </div>
+</div>
 
-  <div ng-if="results.unused && results.unused.length > 0">
-    <div class="bg-info defaultBlock" style="padding: 5px; margin: 20px 0">Database users without a matching threema account:</div>
-      <div ng-repeat="u in results.unused" class="row" style="padding: 2px 0; display: flex; align-items: center;">
-        <div class="col-xs-6 col-sm-4">{{u}}</div>
-        <div class="col-xs-6 col-sm-4"><button class="btn btn-primary" ng-click="add(u, true)"><i class="fa fa-user"></i> &nbsp; Add account with random PW</button></div>
-      </div>
-      <br />
-      <button class="btn btn-primary" ng-click="addAll()"><i class="fa fa-layer-group"></i> &nbsp; Add accounts for ALL</button>
+<div ng-if="results.unused && results.unused.length > 0">
+  <div class="bg-info defaultBlock" style="padding: 5px; margin: 20px 0">Database users without matching threema credentials:</div>
+  <div ng-repeat="u in results.unused" class="row" style="padding: 2px 0; display: flex; align-items: center">
+    <div class="col-xs-6 col-sm-4">{{u}}</div>
+    <div class="col-xs-6 col-sm-4">
+      <button class="btn btn-primary" ng-click="add(u, true)" ng-disabled="isUpdating">
+        <i class="fa fa-user"></i> &nbsp; Add credentials with random PW
+      </button>
     </div>
   </div>
+  <br />
+  <button class="btn btn-primary" ng-click="addAll()" ng-disabled="isUpdating">
+    <i class="fa fa-layer-group"></i> &nbsp; Add credentials for ALL ({{results.unused.length}})
+  </button>
 </div>
