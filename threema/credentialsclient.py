@@ -134,7 +134,12 @@ class CredentialsClient:
         return self.nameMatcher.checkConsistency(self.getAll())
 
     def checkConsistencyForStudentIds(self, threemaIds):
-        filtered = [self.getDetails(tid) for tid in threemaIds]
+        if len(threemaIds) > 5:
+            # pretty random cutoff ... for more than 5 ids it might be more
+            # efficient to just fetch all creds and apply a filter on those.
+            filtered = [c for c in self.getAll() if c.id in threemaIds]
+        else:
+            filtered = [self.getDetails(tid) for tid in threemaIds]
         return self.nameMatcher.checkConsistency(filtered)
 
     def _getUrlForId(self, threemaId):
