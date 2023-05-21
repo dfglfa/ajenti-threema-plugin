@@ -37,6 +37,7 @@ angular
 
     $scope.validate = validate;
     $scope.openCredentialsChangeModal = openCredentialsChangeModal;
+    $scope.openCredentialsDeleteModal = openCredentialsDeleteModal;
 
     function validate(credentialsSubset) {
       const credentials = credentialsSubset || $scope.credentials;
@@ -46,7 +47,7 @@ angular
         })
         .then((resp) => {
           $scope.validated = true;
-          const { ok, suggestions, unmatched, unused } = resp.data;
+          const { ok, suggestions, unmatched } = resp.data;
           const ok_ids = ok.map((c) => c.id);
           const unmatched_ids = unmatched.map((c) => c.id);
           const suggestions_ids = suggestions.map((c) => c.id);
@@ -88,6 +89,23 @@ angular
           cred.cls = _getClass(newName);
           validate([cred]);
         }
+      });
+    }
+
+    function openCredentialsDeleteModal(threemaId, username) {
+      const modal = $uibModal.open({
+        templateUrl: "/threema_connector:resources/partial/credentialsDelete.modal.html",
+        controller: "CredentialsDeleteController",
+        size: "lg",
+        resolve: {
+          threemaId: () => threemaId,
+          username: () => username,
+        },
+      });
+
+      modal.result.then(() => {
+        notify.success(gettext("Deleted"));
+        $scope.credentials = $scope.credentials.filter((c) => c.id !== threemaId);
       });
     }
 

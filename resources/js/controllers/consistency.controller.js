@@ -1,30 +1,54 @@
-angular.module("example.threema_connector").controller("ThreemaConnectorConcistencyController", function ($scope, $http, pageTitle, gettext, notify) {
-  pageTitle.set(gettext("Consistency"));
+angular
+  .module("example.threema_connector")
+  .controller("ThreemaConnectorConcistencyController", function ($scope, $http, $uibModal, pageTitle, gettext, notify) {
+    pageTitle.set(gettext("Consistency"));
 
-  $scope.updatePending = false;
+    $scope.updatePending = false;
+    $scope.add = addCredentials;
+    $scope.addAll = addCredentialsForAll;
+    $scope.delete = openCredentialsDeleteModal;
 
-  check();
+    // Check on page load
+    check();
 
-  $scope.applySuggestion = (threemaId, changedName) => {
-    $scope.updatePending = true;
-    $http
-      .post("/api/threema_connector/credentials/update", {
-        threemaId,
-        changedName,
-      })
-      .then((resp) => {
-        $scope.check().then(() => {
-          $scope.updatePending = false;
-        });
-      })
-      .catch(() => {
-        $scope.updatePending = false;
+    function check() {
+      return $http.post("/api/threema_connector/credentials/check", {}).then((resp) => {
+        $scope.results = resp.data;
       });
-  };
+    }
 
-  function check() {
-    return $http.post("/api/threema_connector/credentials/check", {}).then((resp) => {
-      $scope.results = resp.data;
-    });
-  }
-});
+    function addCredentials(username, doCheck) {
+      return $http.put("/api/threema_connector/credentials", { username }).then(() => {
+        notify.success(`User ${username} successfully created`);
+        doCheck && check();
+      });
+    }
+
+    function addCredentialsForAll() {
+      const allTasks = [];
+      for (let uname of $scope.results.unused) {
+        allTasks.push(addCredentials(uname));
+      }
+      Promise.all(allTasks).then(() => {
+        notify.success("All credentials created");
+        check();
+      });
+    }
+
+    function openCredentialsDeleteModal(threemaId, username) {
+      const modal = $uibModal.open({
+        templateUrl: "/threema_connector:resources/partial/credentialsDelete.modal.html",
+        controller: "CredentialsDeleteController",
+        size: "lg",
+        resolve: {
+          threemaId: () => threemaId,
+          username: () => username,
+        },
+      });
+
+      modal.result.then(() => {
+        notify.success(gettext("Deleted"));
+        $scope.results.unmatched = $scope.results.unmatched.filter((c) => c.id !== threemaId);
+      });
+    }
+  });

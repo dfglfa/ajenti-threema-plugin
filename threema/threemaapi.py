@@ -51,3 +51,6 @@ class ThreemaAdminClient:
 
     def getCredentialsDetails(self, threemaId):
         return self.credentialsClient.getDetails(threemaId)
+
+    def deleteCredentials(self, threemaId):
+        return self.credentialsClient.deleteCredentials(threemaId)

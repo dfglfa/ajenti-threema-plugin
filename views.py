@@ -1,7 +1,7 @@
 import json
 from jadi import component
 
-from aj.api.http import get, post, HttpPlugin
+from aj.api.http import get, post, delete, put, HttpPlugin
 from aj.auth import authorize
 from aj.api.endpoint import endpoint, EndpointError
 
@@ -51,3 +51,16 @@ class Handler(HttpPlugin):
             threemaId=threemaId, username=changedName, password=changedPassword)
 
         return "ok"
+
+    @put(r'/api/threema_connector/credentials')
+    @endpoint(api=True)
+    def handle_api_create_credentials(self, http_context):
+        body = http_context.json_body()
+        username = body.get("username")
+
+        return self.client.createCredentials(username, password="")
+
+    @delete(r'/api/threema_connector/credentials/(?P<threemaId>.+)')
+    @endpoint(api=True)
+    def handle_api_delete_credentials(self, http_context, threemaId=""):
+        return self.client.deleteCredentials(threemaId)

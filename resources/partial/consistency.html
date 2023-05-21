@@ -1,37 +1,29 @@
 <h1>Consistency check</h1>
 
+<div ng-if="(!results.unmatched || !results.unmatched.length) && (!results.unused || !results.unused.length)">
+  Everything seems to be fine.
+</div>
+
 <div ng-if="results">
-  <div class="bg-success defaultBlock" style="padding: 5px; margin: 10px 0">
-    Found <strong>{{results.ok.length}} users</strong> that seem to have a correct threema name
-  </div>
-  <div ng-if="results.unmatched">
+  <div ng-if="results.unmatched && results.unmatched.length > 0">
     <div class="bg-warning defaultBlock" style="padding: 5px; margin: 10px 0">The following threema users do not appear in the database:</div>
-    <div>
-      <div ng-repeat="u in results.unmatched">{{u.username}}</div>
-    </div>
-  </div>
-
-  <div ng-if="results.unused">
-    <div class="bg-info defaultBlock" style="padding: 5px; margin: 10px 0">Database users without a matching threema account:</div>
-    <div>
-      <div ng-repeat="u in results.unused">{{u}}</div>
-    </div>
-  </div>
-
-  <div ng-if="results.suggestions && results.suggestions.length">
-    <div class="bg-primary defaultBlock" style="padding: 5px; margin: 10px 0">For the following users I have name change suggestions:</div>
-    <div>
-      <div ng-repeat="sugg in results.suggestions" style="margin: 10px 0">
-        <h4>{{sugg.username}}</h4>
-        <div ng-repeat="match in sugg.matches track by $index">
-          <div style="display: inline-block; width: 350px; height: 30px">
-            <span ng-if="$index === 0">Suggested change:</span>
-            <span ng-if="$index > 0">Alternative {{$index}}:</span>
-            <strong>{{match[0]}}</strong>
-          </div>
-          <button ng-disabled="updatePending" type="button" class="btn btn-danger" ng:click="applySuggestion(sugg.id, match[0])">Apply</button>
-        </div>
+      <div ng-repeat="u in results.unmatched" class="row" style="padding: 2px 0; display: flex; align-items: center;">
+        <div class="col-xs-6 col-sm-4">{{u.username}}</div>
+        <div class="col-xs-6 col-sm-4"><button class="btn btn-danger" ng-click="delete(u.id, u.username)"><i class="fa fa-trash"></i> &nbsp; Delete</button></div>
       </div>
+      <br />
+      <!--<button class="btn btn-danger"><i class="fa fa-skull"></i> &nbsp; Delete ALL</button>-->
+    </div>
+  </div>
+
+  <div ng-if="results.unused && results.unused.length > 0">
+    <div class="bg-info defaultBlock" style="padding: 5px; margin: 20px 0">Database users without a matching threema account:</div>
+      <div ng-repeat="u in results.unused" class="row" style="padding: 2px 0; display: flex; align-items: center;">
+        <div class="col-xs-6 col-sm-4">{{u}}</div>
+        <div class="col-xs-6 col-sm-4"><button class="btn btn-primary" ng-click="add(u, true)"><i class="fa fa-user"></i> &nbsp; Add account with random PW</button></div>
+      </div>
+      <br />
+      <button class="btn btn-primary" ng-click="addAll()"><i class="fa fa-layer-group"></i> &nbsp; Add accounts for ALL</button>
     </div>
   </div>
 </div>

@@ -23,7 +23,7 @@ class User:
             setattr(self, key, val)
 
     def __repr__(self):
-        return f"{self.nickname}: ({self.firstName} {self.lastName}, ID: {self.id})"
+        return f"{getattr(self, 'nickname', 'NONAME')}: ({getattr(self, 'firstName', 'NOFIRSTNAME')} {getattr(self, 'lastName', 'NOLASTNAME')}, ID: {self.id})"
 
     def toJsonDict(self):
         return {

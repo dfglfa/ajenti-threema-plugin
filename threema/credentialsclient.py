@@ -1,4 +1,6 @@
 import json
+import random
+import string
 import requests
 
 from .datamodel import Credentials
@@ -45,7 +47,8 @@ class CredentialsClient:
 
     def create(self, username: str, password: str) -> User:
         url = f"{self.baseUrl}/credentials"
-        resp = requests.post(url, json={"username": username, "password": password},
+        resp = requests.post(url, json={"username": username,
+                                        "password": password or self._get_random_password()},
                              headers=self.authHeader)
 
         if resp.status_code >= 400:
@@ -142,6 +145,20 @@ class CredentialsClient:
             filtered = [self.getDetails(tid) for tid in threemaIds]
         return self.nameMatcher.checkConsistency(filtered)
 
+    def deleteCredentials(self, threemaId):
+        url = self._getUrlForId(threemaId)
+        resp = requests.delete(url, headers=self.authHeader)
+
+        if resp.status_code >= 400:
+            print("Error code", resp.status_code, ":", resp.content)
+            return []
+
+        if resp.status_code == 204:
+            print(
+                f"Credentials for threema ID {threemaId} successfully deleted")
+        else:
+            print(f"Response {resp.status_code}. Please check again.")
+
     def _getUrlForId(self, threemaId):
         return f"{self.baseUrl}/credentials/{quote(threemaId, safe='')}"
 
@@ -150,3 +167,6 @@ class CredentialsClient:
             if cred.username and cred.username.startswith(prefix):
                 return True
         return False
+
+    def _get_random_password(self):
+        return "".join(random.choice(string.ascii_letters) for _ in range(8))
