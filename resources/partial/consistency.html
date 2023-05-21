@@ -1,34 +1,25 @@
 <h1>Consistency check</h1>
 
-<a class="btn btn-primary" ng:click="check()">Check now</a>
-
 <div ng-if="results">
   <div class="bg-success defaultBlock" style="padding: 5px; margin: 10px 0">
-    Found <strong>{{results.ok.length}} users</strong> that seem to have a
-    correct threema name
+    Found <strong>{{results.ok.length}} users</strong> that seem to have a correct threema name
   </div>
   <div ng-if="results.unmatched">
-    <div class="bg-warning defaultBlock" style="padding: 5px; margin: 10px 0">
-      The following threema users do not appear in the database:
-    </div>
+    <div class="bg-warning defaultBlock" style="padding: 5px; margin: 10px 0">The following threema users do not appear in the database:</div>
     <div>
       <div ng-repeat="u in results.unmatched">{{u.username}}</div>
     </div>
   </div>
 
   <div ng-if="results.unused">
-    <div class="bg-info defaultBlock" style="padding: 5px; margin: 10px 0">
-      Database users without a matching threema account:
-    </div>
+    <div class="bg-info defaultBlock" style="padding: 5px; margin: 10px 0">Database users without a matching threema account:</div>
     <div>
       <div ng-repeat="u in results.unused">{{u}}</div>
     </div>
   </div>
 
   <div ng-if="results.suggestions && results.suggestions.length">
-    <div class="bg-primary defaultBlock" style="padding: 5px; margin: 10px 0">
-      For the following users I have name change suggestions:
-    </div>
+    <div class="bg-primary defaultBlock" style="padding: 5px; margin: 10px 0">For the following users I have name change suggestions:</div>
     <div>
       <div ng-repeat="sugg in results.suggestions" style="margin: 10px 0">
         <h4>{{sugg.username}}</h4>
@@ -38,14 +29,7 @@
             <span ng-if="$index > 0">Alternative {{$index}}:</span>
             <strong>{{match[0]}}</strong>
           </div>
-          <button
-            ng-disabled="updatePending"
-            type="button"
-            class="btn btn-danger"
-            ng:click="applySuggestion(sugg.id, match[0])"
-          >
-            Apply
-          </button>
+          <button ng-disabled="updatePending" type="button" class="btn btn-danger" ng:click="applySuggestion(sugg.id, match[0])">Apply</button>
         </div>
       </div>
     </div>
