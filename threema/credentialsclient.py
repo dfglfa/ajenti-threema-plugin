@@ -62,7 +62,6 @@ class CredentialsClient:
 
     def getDetails(self, threemaId):
         url = self._getUrlForId(threemaId)
-        print("Requesting", url)
         resp = requests.get(url, headers=self.authHeader)
 
         if resp.status_code >= 400:
@@ -135,7 +134,7 @@ class CredentialsClient:
         return self.nameMatcher.checkConsistency(self.getAll())
 
     def checkConsistencyForStudentIds(self, threemaIds):
-        filtered = [c for c in self.getAll() if c.id in threemaIds]
+        filtered = [self.getDetails(tid) for tid in threemaIds]
         return self.nameMatcher.checkConsistency(filtered)
 
     def _getUrlForId(self, threemaId):
