@@ -32,7 +32,12 @@ class Handler(HttpPlugin):
     @endpoint(api=True)
     def handle_api_check_credentials(self, http_context):
         body = http_context.json_body()
-        return self.client.checkConsistencyForAllStudents()
+        idsToCheck = body.get("idsToCheck")
+
+        if idsToCheck:
+            return self.client.checkConsistencyForStudentIds(idsToCheck)
+        else:
+            return self.client.checkConsistencyForAllStudents()
 
     @post(r'/api/threema_connector/credentials/update')
     @endpoint(api=True)

@@ -11,12 +11,12 @@ angular
       $http
         .post("/api/threema_connector/credentials/update", {
           threemaId,
-          changedName: newName,
+          changedName: $scope.data.newName,
           changedPassword: $scope.password,
         })
         .then(() => {
           $scope.isUpdating = false;
-          $uibModalInstance.close();
+          $uibModalInstance.close($scope.data.newName);
         })
         .catch((err) => {
           $scope.isUpdating = false;
@@ -25,6 +25,6 @@ angular
     };
 
     $scope.cancel = () => {
-      $uibModalInstance.close();
+      $uibModalInstance.dismiss();
     };
   });

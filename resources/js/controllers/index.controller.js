@@ -28,7 +28,7 @@ angular
       const creds = [];
 
       for (let c of resp.data) {
-        const cls = c.username.indexOf("_") !== -1 ? c.username.split("_")[0] : "?";
+        const cls = _getClass(c.username);
         creds.push({ id: c.id, cls, username: c.username });
       }
 
@@ -42,7 +42,7 @@ angular
       const credentials = credentialsSubset || $scope.credentials;
       $http
         .post("/api/threema_connector/credentials/check", {
-          credentialsToCheck: credentialsSubset ? credentialsSubset.map((c) => c.id) : null,
+          idsToCheck: credentialsSubset ? credentialsSubset.map((c) => c.id) : null,
         })
         .then((resp) => {
           $scope.validated = true;
@@ -67,7 +67,7 @@ angular
     }
 
     function openCredentialsChangeModal(threemaId, oldName, newName) {
-      return $uibModal.open({
+      const modal = $uibModal.open({
         templateUrl: "/threema_connector:resources/partial/credentialsChange.modal.html",
         controller: "CredentialsChangeController",
         size: "lg",
@@ -76,6 +76,18 @@ angular
           oldName: () => oldName,
           newName: () => newName,
         },
+      });
+
+      modal.result.then((newName) => {
+        const changedCredentials = $scope.credentials.filter((c) => c.id == threemaId);
+        if (changedCredentials.length !== 1) {
+          console.error("Not exactly one match:" + changedCredentials);
+        } else {
+          const cred = changedCredentials[0];
+          cred.username = newName;
+          cred.cls = _getClass(newName);
+          validate([cred]);
+        }
       });
     }
 
@@ -114,5 +126,9 @@ angular
       } else {
         return 3;
       }
+    }
+
+    function _getClass(username) {
+      return username.indexOf("_") !== -1 ? username.split("_")[0] : "?";
     }
   });

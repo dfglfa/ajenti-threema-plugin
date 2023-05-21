@@ -134,6 +134,10 @@ class CredentialsClient:
     def checkConsistencyForAllStudents(self):
         return self.nameMatcher.checkConsistency(self.getAll())
 
+    def checkConsistencyForStudentIds(self, threemaIds):
+        filtered = [c for c in self.getAll() if c.id in threemaIds]
+        return self.nameMatcher.checkConsistency(filtered)
+
     def _getUrlForId(self, threemaId):
         return f"{self.baseUrl}/credentials/{quote(threemaId, safe='')}"
 

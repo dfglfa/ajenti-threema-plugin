@@ -43,6 +43,9 @@ class ThreemaAdminClient:
     def checkConsistencyForAllStudents(self):
         return self.credentialsClient.checkConsistencyForAllStudents()
 
+    def checkConsistencyForStudentIds(self, threemaIds):
+        return self.credentialsClient.checkConsistencyForStudentIds(threemaIds)
+
     def updateCredentials(self, threemaId, username="", password=""):
         return self.credentialsClient.update(threemaId, username, password)
 
