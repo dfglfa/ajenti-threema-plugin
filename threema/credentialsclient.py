@@ -31,7 +31,11 @@ class CredentialsClient:
 
     def getAll(self, **params):
         url = f"{self.baseUrl}/credentials"
-        resp = requests.get(url, params=params, headers=self.authHeader)
+
+        req_params = params
+        params["pageSize"] = 1000
+
+        resp = requests.get(url, params=req_params, headers=self.authHeader)
 
         if resp.status_code >= 400:
             print("Error code", resp.status_code, ":", resp.content)

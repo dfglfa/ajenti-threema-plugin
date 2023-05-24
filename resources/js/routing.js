@@ -4,8 +4,8 @@ angular.module("example.threema_connector").config(($routeProvider) => {
     controller: "ThreemaConnectorIndexController",
   });
 
-  $routeProvider.when("/view/threema_connector/consistency", {
-    templateUrl: "/threema_connector:resources/partial/consistency.html",
-    controller: "ThreemaConnectorConcistencyController",
+  $routeProvider.when("/view/threema_connector/missing", {
+    templateUrl: "/threema_connector:resources/partial/missing.html",
+    controller: "MissingController",
   });
 });

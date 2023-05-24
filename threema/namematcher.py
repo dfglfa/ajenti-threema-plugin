@@ -52,6 +52,7 @@ class NameMatcher:
                     {"id": threemaId, "username": username})
             else:
                 if username == matches[0][0]:
+                    print("User name", username, "matches", matches[0][0])
                     match_result["ok"].append(
                         {"id": threemaId, "username": username})
                 elif username.startswith(matches[0][1]):

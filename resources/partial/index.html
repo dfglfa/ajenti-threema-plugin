@@ -1,5 +1,3 @@
-<br />
-
 <progress-spinner ng:show="credentials === undefined"></progress-spinner>
 
 <div ng:show="!!credentials">
@@ -46,7 +44,7 @@
       <tr>
         <th width="30" class="text-center"><span translate> Class </span></th>
         <th width="120">Threema Username</th>
-        <th width="120"><span ng:show="validated">Validation</span></th>
+        <th width="120">ENT match</th>
         <th width="30"></th>
       </tr>
       <tr ng:repeat="cred in credentials|filter:filter|orderBy:sort.fx:reverse|page:paging.page:paging.pageSize">
@@ -58,8 +56,9 @@
           <i>{{cred.username}}</i>
         </td>
         <td width="120" style="vertical-align: middle" class="text-left">
+          <span style="padding: 5px" ng:show="!cred.status">-</span>
           <span style="padding: 5px" ng:show="cred.status === 'OK'" class="text-success">OK</span>
-          <span style="padding: 5px" ng:show="cred.status === 'UNMATCHED'" class="text-danger">No matching record found</span>
+          <span style="padding: 5px" ng:show="cred.status === 'UNMATCHED'" class="text-danger">No matching ENT record found</span>
           <button
             style="padding: 5px; border-radius: 5px; margin: 2px 0"
             ng:show="cred.status === 'SUGGESTION'"
@@ -102,8 +101,16 @@
     ></ul>
 
     <div style="margin-bottom: 30px">
-      <button class="btn btn-primary" ng:click="validate()" ng-disabled="isValidating">Validate all</button>
-      <a class="btn btn-warning" ng:href="./threema_connector/consistency">Check consistency</a>
+      <button class="btn btn-primary" ng:click="validate()">Match against ENT</button>
+      <a class="btn btn-warning" ng:show="countENTRecordsNotFoundInThreema" ng:href="./threema_connector/missing">
+        Add missing ({{countENTRecordsNotFoundInThreema}})
+      </a>
+      <button class="btn btn-warning" ng:show="countSuggestionsForNameChange" ng:click="applyAllSuggestions()">
+        Apply renaming suggestions ({{countSuggestionsForNameChange}})
+      </button>
+      <button class="btn btn-danger" ng:show="countThreemaRecordsNotFoundInENT" ng:click="deleteUnmatchedFromThreema()">
+        Delete unmatched from Threema ({{countThreemaRecordsNotFoundInENT}})
+      </button>
     </div>
   </div>
 </div>

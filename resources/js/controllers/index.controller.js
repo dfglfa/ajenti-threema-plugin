@@ -4,12 +4,15 @@ angular
     pageTitle.set(gettext("ThreemaConnector"));
 
     $scope.credentials = undefined;
-    $scope.validated = false;
-    $scope.isValidating = false;
     $scope.reverse = false;
 
+    $scope.isValidating = false;
+    $scope.countThreemaRecordsNotFoundInENT = 0;
+    $scope.countENTRecordsNotFoundInThreema = 0;
+    $scope.countSuggestionsForNameChange = 0;
+
     $scope.sorts = [
-      { name: "Class", fx: (c) => classLevel(c.cls) },
+      { name: "Class", fx: (c) => _getClassLevel(c.cls) },
       { name: "Name", fx: (c) => c.username },
       { name: "Validation", fx: (c) => validationLevel(c.status) },
     ];
@@ -49,10 +52,14 @@ angular
         })
         .then((resp) => {
           $scope.validated = true;
-          const { ok, suggestions, unmatched } = resp.data;
+          const { ok, suggestions, unmatched, unused } = resp.data;
           const ok_ids = ok.map((c) => c.id);
           const unmatched_ids = unmatched.map((c) => c.id);
           const suggestions_ids = suggestions.map((c) => c.id);
+
+          $scope.countENTRecordsNotFoundInThreema = unused.length;
+          $scope.countThreemaRecordsNotFoundInENT = unmatched_ids.length;
+          $scope.countSuggestionsForNameChange = suggestions_ids.length;
 
           for (let cred of credentials) {
             if (ok_ids.indexOf(cred.id) > -1) {
@@ -112,31 +119,6 @@ angular
       });
     }
 
-    function classLevel(c) {
-      if (c === "?") {
-        return -1;
-      } else if (c.startsWith("T")) {
-        return 12;
-      } else {
-        if (c.startsWith("5")) {
-          if (c.startsWith("5I")) {
-            return 7;
-          } else {
-            return 5;
-          }
-        } else if (c.match("^[1-9]")) {
-          if (c.match("^[1-9][ab]")) {
-            return +c[0];
-          } else {
-            return 12 - c[0];
-          }
-        } else {
-          console.error("Unrecognized class:", c);
-          return -1;
-        }
-      }
-    }
-
     function validationLevel(status) {
       if (status === "SUGGESTION") {
         return 0;
@@ -149,7 +131,54 @@ angular
       }
     }
 
+    const classToLevel = {
+      "5a": 5,
+      "5b": 5,
+      "6a": 6,
+      "6b": 6,
+      "7a": 7,
+      "7b": 7,
+      "8a": 8,
+      "8b": 8,
+      "9a": 9,
+      "9b": 9,
+      "6I": 6,
+      "6II": 6,
+      "5I": 7,
+      "5II": 7,
+      "4I": 8,
+      "4II": 8,
+      "3I": 9,
+      "3II": 9,
+      "2L1": 10,
+      "2L2": 10,
+      "2ES": 10,
+      "2S1": 10,
+      "2S2": 10,
+      "1L1": 11,
+      "1L2": 11,
+      "1ES": 11,
+      "1SMP": 11,
+      "1SBC1": 11,
+      "1SBC2": 11,
+      TL1: 12,
+      TL2: 12,
+      TES: 12,
+      TSMP: 12,
+      TSBC1: 12,
+      TSBC2: 12,
+    };
+
     function _getClass(username) {
-      return username.indexOf("_") !== -1 ? username.split("_")[0] : "?";
+      for (let [name] of Object.entries(classToLevel)) {
+        if (username.startsWith(name + "_")) {
+          return name;
+        }
+      }
+      return "?";
+    }
+
+    function _getClassLevel(c) {
+      return classToLevel[c] || -1;
     }
   });

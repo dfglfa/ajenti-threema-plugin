@@ -31,7 +31,7 @@ def normalizeName(sanitizedName, className):
     return f"{className}_{sanitizedName}"
 
 
-classToLevel = {
+CLASS_TO_LEVEL = {
     "5a": 5,
     "5b": 5,
     "6a": 6,
@@ -71,8 +71,8 @@ classToLevel = {
 
 
 def getClassLevel(className):
-    return classToLevel.get(className)
+    return CLASS_TO_LEVEL.get(className)
 
 
 def getClassDifference(cl1, cl2):
-    return classToLevel.get(cl1, 100) - classToLevel.get(cl2, -100)
+    return CLASS_TO_LEVEL.get(cl1, 100) - CLASS_TO_LEVEL.get(cl2, -100)
