@@ -13,4 +13,9 @@ angular.module("example.threema_connector").config(($routeProvider) => {
     templateUrl: "/threema_connector:resources/partial/unmatched.html",
     controller: "UnmatchedController",
   });
+
+  $routeProvider.when("/view/threema_connector/suggestions", {
+    templateUrl: "/threema_connector:resources/partial/suggestions.html",
+    controller: "SuggestionsController",
+  });
 });
