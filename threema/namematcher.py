@@ -74,4 +74,15 @@ class NameMatcher:
         match_result["unused"].sort()
         match_result["suggestions"].sort(key=lambda s: s["username"])
 
+        # Make sure no validated names appear as suggestions
+        all_ok_names = [u["username"] for u in match_result["ok"]]
+        for sugg in match_result["suggestions"]:
+            sugg["matches"] = [
+                sm for sm in sugg["matches"] if sm[0] not in all_ok_names]
+            if not sugg["matches"]:
+                match_result["unmatched"].append(
+                    {"id": sugg["id"], "username": sugg["username"]})
+        match_result["suggestions"] = [
+            mr for mr in match_result["suggestions"] if mr["matches"]]
+
         return match_result
