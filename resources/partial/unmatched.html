@@ -1,0 +1,29 @@
+<div style="padding: 20px">
+  <h1>Delete unmatched threema credentials</h1>
+
+  <progress-spinner ng-show="results === undefined"></progress-spinner>
+
+  <div ng-if="results">
+    <i class="fa fa-backward"></i>&nbsp;&nbsp;<a ng:href="/view/threema_connector/">Back to threema overview</a>
+
+    <div ng-if="!results.unmatched || results.unmatched.length === 0">
+      <div class="bg-success defaultBlock" style="padding: 5px; margin: 10px 0">No unmatched Threema users found.</div>
+    </div>
+
+    <div ng-if="results.unmatched && results.unmatched.length > 0">
+      <div class="bg-warning defaultBlock" style="padding: 5px; margin: 10px 0">The following threema users do not appear in ENT:</div>
+      <div ng-repeat="u in results.unmatched" class="row" style="padding: 2px 0; display: flex; align-items: center">
+        <div class="col-xs-6 col-sm-4">{{u.username}}</div>
+        <div class="col-xs-6 col-sm-4">
+          <button class="btn btn-danger" ng-click="delete(u.id, u.username, true)" ng-disabled="isUpdating">
+            <i class="fa fa-trash"></i> &nbsp; Delete
+          </button>
+        </div>
+      </div>
+      <br />
+      <button class="btn btn-danger" ng-disabled="isUpdating" ng-click="openCredentialsDeleteModal()">
+        <i class="fa fa-skull"></i> &nbsp; Delete ALL
+      </button>
+    </div>
+  </div>
+</div>

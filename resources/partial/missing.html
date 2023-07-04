@@ -6,23 +6,9 @@
   <div ng-if="results">
     <i class="fa fa-backward"></i>&nbsp;&nbsp;<a ng:href="/view/threema_connector/">Back to threema overview</a>
 
-    <div ng-if="(!results.unmatched || results.unmatched.length === 0) && (!results.unused || results.unused.length === 0)">
+    <div ng-if="!results.unused || results.unused.length === 0">
       <div class="bg-success defaultBlock" style="padding: 5px; margin: 10px 0">No users from ENT seem to be missing in Threema.</div>
     </div>
-
-    <!--
-  <div ng-if="results.unmatched && results.unmatched.length > 0">
-    <div class="bg-warning defaultBlock" style="padding: 5px; margin: 10px 0">The following threema users do not appear in the database:</div>
-    <div ng-repeat="u in results.unmatched" class="row" style="padding: 2px 0; display: flex; align-items: center">
-      <div class="col-xs-6 col-sm-4">{{u.username}}</div>
-      <div class="col-xs-6 col-sm-4">
-        <button class="btn btn-danger" ng-click="delete(u.id, u.username)"><i class="fa fa-trash"></i> &nbsp; Delete</button>
-      </div>
-    </div>
-    <br />
-    <button class="btn btn-danger"><i class="fa fa-skull"></i> &nbsp; Delete ALL</button>
-  </div>
-  -->
 
     <div ng-if="results.unused && results.unused.length > 0">
       <div class="bg-info defaultBlock" style="padding: 5px; margin: 20px 0">Database users without matching threema credentials:</div>

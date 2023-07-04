@@ -18,16 +18,3 @@ class ItemProvider(SidebarItemProvider):
                 'children': []
             }
         ]
-
-# Uncomment the following lines to set a new permission
-# from aj.auth import PermissionProvider
-# @component(PermissionProvider)
-# class Permissions (PermissionProvider):
-#     def provide(self):
-#         return [
-#             {
-#                 'id': 'threema_connector:show',
-#                 'name': _('Show the Python binding example'),
-#                 'default': False,
-#             },
-#         ]

@@ -7,21 +7,21 @@ angular.module("example.threema_connector").controller("MissingController", func
 
   // Check on page load
   $scope.results = undefined;
-  check();
+  loadResults();
 
-  function check() {
+  function loadResults() {
     return $http.post("/api/threema_connector/credentials/check", {}).then((resp) => {
       $scope.results = resp.data;
     });
   }
 
-  function addCredentials(username, doCheck) {
+  function addCredentials(username, reloadOnFinish) {
     $scope.isUpdating = true;
     return $http
       .put("/api/threema_connector/credentials", { username })
       .then(() => {
         notify.success(`User ${username} successfully created`);
-        doCheck && check();
+        reloadOnFinish && loadResults();
       })
       .finally(() => ($scope.isUpdating = false));
   }
@@ -33,7 +33,7 @@ angular.module("example.threema_connector").controller("MissingController", func
     }
     Promise.all(allTasks).then(() => {
       notify.success("All credentials created");
-      check();
+      loadResults();
     });
   }
 });

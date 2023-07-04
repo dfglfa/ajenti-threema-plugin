@@ -108,7 +108,7 @@
       <button class="btn btn-warning" ng:show="countSuggestionsForNameChange" ng:click="applyAllSuggestions()">
         Apply renaming suggestions ({{countSuggestionsForNameChange}})
       </button>
-      <button class="btn btn-danger" ng:show="countThreemaRecordsNotFoundInENT" ng:click="deleteUnmatchedFromThreema()">
+      <button class="btn btn-danger" ng:show="countThreemaRecordsNotFoundInENT" ng:href="./threema_connector/unmatched">
         Delete unmatched from Threema ({{countThreemaRecordsNotFoundInENT}})
       </button>
     </div>
