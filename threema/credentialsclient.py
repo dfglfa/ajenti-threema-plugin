@@ -1,4 +1,5 @@
 import json
+import logging
 import random
 import string
 import requests
@@ -9,6 +10,7 @@ from .namematcher import NameMatcher
 from urllib.parse import quote
 from .config import STUDENTS_DATA_FILE
 import os
+from aj.api.endpoint import EndpointError
 
 GRADES_NAMES_COLLEGE_GERMAN = range(5, 10)
 GRADES_NAMES_COLLEGE_FRENCH = range(6, 2, -1)
@@ -38,7 +40,7 @@ class CredentialsClient:
         resp = requests.get(url, params=req_params, headers=self.authHeader)
 
         if resp.status_code >= 400:
-            print("Error code", resp.status_code, ":", resp.content)
+            self._handleError(resp)
             return []
 
         try:
@@ -46,7 +48,7 @@ class CredentialsClient:
             credentialsList = data["credentials"]
             return [Credentials(**c) for c in credentialsList]
         except TypeError as te:
-            print("Error while decoding:", te)
+            logging.exception(f"Error while decoding: {te}")
             return []
 
     def create(self, username: str, password: str) -> User:
@@ -56,15 +58,15 @@ class CredentialsClient:
                              headers=self.authHeader)
 
         if resp.status_code >= 400:
-            print("Error code", resp.status_code, ":", resp.content)
+            self._handleError(resp)
             return []
 
         try:
             data = json.loads(resp.content)
             user = User(**data)
-            print(f"Successfully created new user:\n{user}")
+            logging.info(f"Successfully created new user: {user}")
         except TypeError as te:
-            print("Error while decoding:", te)
+            logging.exception(f"Error while decoding: {te}")
             return []
 
     def getDetails(self, threemaId):
@@ -72,14 +74,14 @@ class CredentialsClient:
         resp = requests.get(url, headers=self.authHeader)
 
         if resp.status_code >= 400:
-            print("Error code", resp.status_code, ":", resp.content)
+            self._handleError(resp)
             return []
 
         try:
             data = json.loads(resp.content)
             return Credentials(**data)
         except TypeError as te:
-            print("Error while decoding:", te)
+            logging.exception(f"Error while decoding: {te}")
             return []
 
     def update(self, threemaId, username, password):
@@ -94,13 +96,12 @@ class CredentialsClient:
                             headers=self.authHeader)
 
         if resp.status_code >= 400:
-            print("Error code", resp.status_code, ":", resp.content)
-            return []
+            self._handleError(resp)
 
         if resp.status_code == 204:
-            print("User successfully updated")
+            logging.info("User successfully updated")
         else:
-            print(f"Response {resp.status_code}. Please check again.")
+            logging.error(f"Response {resp.status_code}. Please check again.")
 
     def checkNamingScheme(self) -> dict:
         creds = self.getAll()
@@ -121,7 +122,7 @@ class CredentialsClient:
     def correctNamingScheme(self):
         candidates = self.checkNamingScheme()["not_ok"]
 
-        print(f"Checking {len(candidates)} values for correction")
+        logging.debug(f"Checking {len(candidates)} values for correction")
         res = {
             "suggestions": {},
             "notFixable": []
@@ -142,7 +143,7 @@ class CredentialsClient:
 
     def checkConsistencyForStudentIds(self, threemaIds):
         if len(threemaIds) > 5:
-            # pretty random cutoff ... for more than 5 ids it might be more
+            # pretty random cutoff ... idea: for more than 5 ids it might be more
             # efficient to just fetch all creds and apply a filter on those.
             filtered = [c for c in self.getAll() if c.id in threemaIds]
         else:
@@ -154,14 +155,14 @@ class CredentialsClient:
         resp = requests.delete(url, headers=self.authHeader)
 
         if resp.status_code >= 400:
-            print("Error code", resp.status_code, ":", resp.content)
+            self._handleError(resp)
             return []
 
         if resp.status_code == 204:
-            print(
+            logging.info(
                 f"Credentials for threema ID {threemaId} successfully deleted")
         else:
-            print(f"Response {resp.status_code}. Please check again.")
+            logging.error(f"Response {resp.status_code}. Please check again.")
 
     def _getUrlForId(self, threemaId):
         return f"{self.baseUrl}/credentials/{quote(threemaId, safe='')}"
@@ -174,3 +175,13 @@ class CredentialsClient:
 
     def _get_random_password(self):
         return "".join(random.choice(string.ascii_letters) for _ in range(8))
+
+    def _handleError(self, response):
+        try:
+            content = json.loads(response.content)
+            message = content["error"]
+        except Exception:
+            message = "No content"
+        logging.error(f"Error code {response.status_code}: {message}")
+        raise EndpointError(
+            f"Error code {response.status_code}: {message}")

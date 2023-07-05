@@ -1,5 +1,6 @@
 import csv
 import difflib
+import logging
 from operator import itemgetter
 from .datamodel import Credentials
 
@@ -22,10 +23,10 @@ class NameMatcher:
                 self.nameToClass[normalizedName] = cls
 
         if len(self.nameToClass) != len(self.normalized_names):
-            print(
+            logging.warn(
                 f"WARNING - Inconsistency detected: {len(self.nameToClass)} entries in class dict but {len(self.normalized_names)} normalized names found. Check list for duplicates!")
 
-        print(
+        logging.info(
             f"**** Name database successfully initialized with {len(self.nameToClass)} entries ****")
 
     def findMatches(self, name) -> list:
@@ -52,7 +53,8 @@ class NameMatcher:
                     {"id": threemaId, "username": username})
             else:
                 if username == matches[0][0]:
-                    print("User name", username, "matches", matches[0][0])
+                    logging.debug(
+                        f"User name {username} matches {matches[0][0]}")
                     match_result["ok"].append(
                         {"id": threemaId, "username": username})
                 elif username.startswith(matches[0][1]):

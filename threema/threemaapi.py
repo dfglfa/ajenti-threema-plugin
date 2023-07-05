@@ -1,12 +1,16 @@
 
+import logging
+
+
 try:
     from .config import API_KEY
 except ImportError:
-    print("*" * 50)
-    print("WARNING: API_KEY not readable from config.py")
-    print("Please rename _config.py -> config.py and insert your API key there.")
-    print("Threema access will not work otherwise.")
-    print("*" * 50)
+    logging.error("*" * 50)
+    logging.error("WARNING: API_KEY not readable from config.py")
+    logging.error(
+        "Please rename _config.py -> config.py and insert your API key there.")
+    logging.error("Threema access will not work otherwise.")
+    logging.error("*" * 50)
     API_KEY = ""
 
 from .credentialsclient import CredentialsClient

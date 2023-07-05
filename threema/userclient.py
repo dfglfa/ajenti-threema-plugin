@@ -1,4 +1,5 @@
 import json
+import logging
 import requests
 
 from .datamodel import User
@@ -19,5 +20,5 @@ class UserClient:
             users = data["users"]
             return [User(**u) for u in users]
         except TypeError as te:
-            print("Error while decoding:", te)
+            logging.exception("Error while decoding:", te)
             return []
