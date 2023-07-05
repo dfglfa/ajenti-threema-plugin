@@ -60,7 +60,6 @@ target/
 .DS_Store
 crash*.txt
 .vscode
-threema/config.py
 notes.txt
 ent_dummy_data.csv
 threema_dummy_data.csv

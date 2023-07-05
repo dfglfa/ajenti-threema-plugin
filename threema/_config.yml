@@ -1,0 +1,3 @@
+config:
+  threema_api_key: "YOUR_API_KEY"
+  students_data_file: "YOUR_STUDENTS_DATA_FILE.csv"

@@ -8,7 +8,7 @@ from .datamodel import Credentials
 from .datamodel import User
 from .namematcher import NameMatcher
 from urllib.parse import quote
-from .config import STUDENTS_DATA_FILE
+from .config_loader import getStudentsFileName
 import os
 from aj.api.endpoint import EndpointError
 
@@ -28,7 +28,7 @@ class CredentialsClient:
         self.baseUrl = baseUrl
         self.authHeader = authHeader
 
-        students_data_file = os.path.join(os.getcwd(), STUDENTS_DATA_FILE)
+        students_data_file = os.path.join(os.getcwd(), getStudentsFileName())
         self.nameMatcher = NameMatcher(students_data_file)
 
     def getAll(self, **params):

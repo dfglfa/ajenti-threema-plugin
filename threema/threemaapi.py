@@ -2,20 +2,17 @@
 import logging
 
 
-try:
-    from .config import API_KEY
-except ImportError:
-    logging.error("*" * 50)
-    logging.error("WARNING: API_KEY not readable from config.py")
-    logging.error(
-        "Please rename _config.py -> config.py and insert your API key there.")
-    logging.error("Threema access will not work otherwise.")
-    logging.error("*" * 50)
-    API_KEY = ""
-
+from .config_loader import getThreemaApiKey
 from .credentialsclient import CredentialsClient
 from .userclient import UserClient
 
+API_KEY = getThreemaApiKey()
+if not API_KEY:
+    logging.error("*" * 50)
+    logging.error(
+        "WARNING: API_KEY not readable from standard location /etc/linuxmuster/webui/threema.yml")
+    logging.error("Threema access will NOT work.")
+    logging.error("*" * 50)
 
 DEFAULT_BASE_URL = "https://work.threema.ch/api/v1"
 AUTH_HEADER = {"X-Api-Key": API_KEY}
