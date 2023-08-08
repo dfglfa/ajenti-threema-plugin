@@ -63,3 +63,4 @@ crash*.txt
 notes.txt
 ent_dummy_data.csv
 threema_dummy_data.csv
+**/._*

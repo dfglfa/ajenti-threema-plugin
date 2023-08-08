@@ -1,8 +1,8 @@
-import random
-
+import logging
 from aj.api.endpoint import endpoint
 from aj.api.http import HttpPlugin, delete, get, post, put
 from jadi import component
+from .threema.utils import CLASS_TO_LEVEL
 
 from .threema.threemaapi import ThreemaAdminClient
 
@@ -57,3 +57,14 @@ class Handler(HttpPlugin):
     @endpoint(api=True)
     def handle_api_delete_credentials(self, http_context, threemaId=""):
         return self.client.deleteCredentials(threemaId)
+
+    # TODO: require admin privileges
+    @get(r'/api/threema_connector/credentials_with_passwords')
+    @endpoint(api=True)
+    def handle_api_get_all_credentials_with_passwords(self, http_context):
+        classname = http_context.query.get("classname", "")
+        if classname not in CLASS_TO_LEVEL:
+            logging.error(
+                "You must specify a class name, unfiltered is not allowed")
+            return []
+        return [c.toJsonDict(includePasswords=True) for c in self.client.getAllCredentials(classname=classname)]

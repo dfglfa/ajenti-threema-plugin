@@ -61,8 +61,11 @@ class Credentials:
     def __str__(self):
         return f"Username: {self.username:35} ID: {self.id}"
 
-    def toJsonDict(self):
-        return {
+    def toJsonDict(self, includePasswords=False):
+        d = {
             "id": self.id,
             "username": self.username,
         }
+        if includePasswords:
+            d["password"] = self.password
+        return d

@@ -52,10 +52,12 @@ class CredentialsClient:
             self._handleError(resp)
             return []
 
+        filter_prefix = f"{params['classname']}_" if params.get(
+            "classname") else ""
         try:
             data = json.loads(resp.content)
             credentialsList = data["credentials"]
-            return [Credentials(**c) for c in credentialsList]
+            return [Credentials(**c) for c in credentialsList if c["username"].startswith(filter_prefix)]
         except TypeError as te:
             logging.exception(f"Error while decoding: {te}")
             return []

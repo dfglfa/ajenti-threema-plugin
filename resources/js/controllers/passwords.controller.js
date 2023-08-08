@@ -1,4 +1,17 @@
 angular.module("dfglfa.threema_connector").controller("ThreemaPasswordsController", function ($scope, $http, pageTitle, gettext, notify, $uibModal) {
+  $scope.selectedClass = undefined;
+  $scope.select = (cls) => {
+    if (cls) {
+      $scope.students = undefined;
+      $scope.selectedClass = cls;
+      $http.get("/api/threema_connector/credentials_with_passwords", { params: { classname: cls } }).then((resp) => {
+        $scope.students = resp.data;
+      });
+    } else {
+      $scope.selectedClass = undefined;
+    }
+  };
+
   $scope.classesForLevel = {
     5: ["5a", "5b"],
     6: ["6a", "6b", "6I", "6II"],
@@ -10,54 +23,18 @@ angular.module("dfglfa.threema_connector").controller("ThreemaPasswordsControlle
     12: ["TL1", "TL2", "TES", "TSMP", "TSBC1", "TSBC2"],
   };
 
-  const classToLevel = {
-    "5a": 5,
-    "5b": 5,
-    "6a": 6,
-    "6b": 6,
-    "7a": 7,
-    "7b": 7,
-    "8a": 8,
-    "8b": 8,
-    "9a": 9,
-    "9b": 9,
-    "6I": 6,
-    "6II": 6,
-    "5I": 7,
-    "5II": 7,
-    "4I": 8,
-    "4II": 8,
-    "3I": 9,
-    "3II": 9,
-    "2L1": 10,
-    "2L2": 10,
-    "2ES": 10,
-    "2S1": 10,
-    "2S2": 10,
-    "1L1": 11,
-    "1L2": 11,
-    "1ES": 11,
-    "1SMP": 11,
-    "1SBC1": 11,
-    "1SBC2": 11,
-    TL1: 12,
-    TL2: 12,
-    TES: 12,
-    TSMP: 12,
-    TSBC1: 12,
-    TSBC2: 12,
+  $scope.downloadPasswordList = () => {
+    const content = $scope.students.map((s) => `Benutzername: ${s.username}\nPasswort: ${s.password}`).join("\n\n");
+    createAndDownloadTextFile(content, `passwords_${$scope.selectedClass}.txt`);
   };
 
-  function _getClass(username) {
-    for (let [name] of Object.entries(classToLevel)) {
-      if (username.startsWith(name + "_")) {
-        return name;
-      }
-    }
-    return "?";
-  }
-
-  function _getClassLevel(c) {
-    return classToLevel[c] || -1;
+  function createAndDownloadTextFile(textContent, filename) {
+    const blob = new Blob([textContent], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = filename;
+    anchor.click();
+    URL.revokeObjectURL(url);
   }
 });
