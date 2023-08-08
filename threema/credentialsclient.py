@@ -31,6 +31,15 @@ class CredentialsClient:
         students_data_file = os.path.join(os.getcwd(), getStudentsFileName())
         self.nameMatcher = NameMatcher(students_data_file)
 
+    def getAllMocked(self, **params):
+        students = []
+        with open("threema_dummy_data.csv") as data:
+            for line in data:
+                sid = random.randint(10 ** 5, 10 ** 10)
+                username = line.split(",")[0]
+                students.append({"id": sid, "username": username})
+        return [Credentials(**c) for c in students]
+
     def getAll(self, **params):
         url = f"{self.baseUrl}/credentials"
 

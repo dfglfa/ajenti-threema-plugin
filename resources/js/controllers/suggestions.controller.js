@@ -1,7 +1,11 @@
-angular.module("example.threema_connector").controller("SuggestionsController", function ($scope, $http, $uibModal, pageTitle, gettext, notify) {
+angular.module("dfglfa.threema_connector").controller("SuggestionsController", function ($scope, $http, $timeout, notify) {
   $scope.isUpdating = false;
   $scope.apply = applySuggestion;
   $scope.applyAll = applyAllSuggestions;
+
+  $scope.queue = [];
+  $scope.done = 0;
+  $scope.total = 0;
 
   // Check on page load
   $scope.results = undefined;
@@ -13,28 +17,57 @@ angular.module("example.threema_connector").controller("SuggestionsController", 
     });
   }
 
-  function applySuggestion(threemaId, newName, reloadOnFinish) {
-    $scope.isUpdating = true;
+  function applySuggestion(threemaId, newName, singleUpdate) {
+    if (singleUpdate) {
+      $scope.isUpdating = true;
+    }
+
     return $http
       .post("/api/threema_connector/credentials/update", {
         threemaId,
         changedName: newName,
       })
       .then(() => {
-        notify.success(`User successfully renamed`);
-        reloadOnFinish && loadResults();
+        notify.success(`User successfully renamed to ${newName}`);
+        singleUpdate && loadResults();
       })
-      .finally(() => ($scope.isUpdating = false));
+      .catch(() => {
+        notify.error(`Error renaming user to ${newName}`);
+      })
+      .finally(() => {
+        if (singleUpdate) {
+          $scope.isUpdating = false;
+        }
+      });
   }
 
   function applyAllSuggestions() {
     const allTasks = [];
     for (let suggestion of $scope.results.suggestions) {
-      allTasks.push(applySuggestion(suggestion.id, suggestion.matches[0][0]));
+      allTasks.push([suggestion.id, suggestion.matches[0][0]]);
     }
-    Promise.all(allTasks).then(() => {
-      notify.success("Successfully renamed " + allTasks.length + " users.");
-      loadResults();
-    });
+
+    $scope.isUpdating = true;
+    $scope.queue = allTasks;
+    $scope.total = allTasks.length;
+    $scope.done = 0;
+    $timeout(processQueue, 1000);
+  }
+
+  function processQueue() {
+    if ($scope.queue.length === 0) {
+      $timeout(() => {
+        $scope.total = 0;
+        $scope.done = 0;
+        $scope.isUpdating = false;
+        loadResults();
+      }, 500);
+    } else {
+      const [threemaId, newName] = $scope.queue.pop();
+      applySuggestion(threemaId, newName).then(() => {
+        $scope.done++;
+        $timeout(processQueue, 500);
+      });
+    }
   }
 });

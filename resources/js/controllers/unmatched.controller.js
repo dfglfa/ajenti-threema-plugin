@@ -1,4 +1,4 @@
-angular.module("example.threema_connector").controller("UnmatchedController", function ($scope, $http, $uibModal, pageTitle, gettext, notify) {
+angular.module("dfglfa.threema_connector").controller("UnmatchedController", function ($scope, $http, $uibModal, $timeout, notify) {
   $scope.isUpdating = false;
   $scope.delete = deleteCredentials;
   $scope.deleteAll = deleteAllCredentials;
@@ -8,32 +8,32 @@ angular.module("example.threema_connector").controller("UnmatchedController", fu
   $scope.results = undefined;
   loadResults();
 
+  $scope.queue = [];
+  $scope.done = 0;
+  $scope.total = 0;
+
   function loadResults() {
     return $http.post("/api/threema_connector/credentials/check", {}).then((resp) => {
       $scope.results = resp.data;
     });
   }
 
-  function deleteCredentials(threemaId, username, reloadOnFinish) {
-    $scope.isUpdating = true;
+  function deleteCredentials(threemaId, username, singleDelete) {
+    if (singleDelete) {
+      $scope.isUpdating = true;
+    }
+
     return $http
       .delete("/api/threema_connector/credentials/" + threemaId)
       .then(() => {
         notify.success(`Threema user ${username} successfully deleted`);
-        reloadOnFinish && loadResults();
+        singleDelete && loadResults();
       })
-      .finally(() => ($scope.isUpdating = false));
-  }
-
-  function deleteAllCredentials() {
-    const allTasks = [];
-    for (let unmatched of $scope.results.unmatched) {
-      allTasks.push(deleteCredentials(unmatched.id, unmatched.username));
-    }
-    Promise.all(allTasks).then(() => {
-      notify.success("Successfully deleted " + allTasks.length + " unmatched credentials.");
-      loadResults();
-    });
+      .finally(() => {
+        if (singleDelete) {
+          $scope.isUpdating = false;
+        }
+      });
   }
 
   function openCredentialsDeleteModal() {
@@ -43,10 +43,41 @@ angular.module("example.threema_connector").controller("UnmatchedController", fu
       size: "lg",
       resolve: {
         threemaId: () => undefined,
-        username: () => "ALL users",
+        username: () => undefined,
+        allUsers: () => true,
       },
     });
 
     modal.result.then(deleteAllCredentials);
+  }
+
+  function deleteAllCredentials() {
+    const allTasks = [];
+    for (let unmatched of $scope.results.unmatched) {
+      allTasks.push([unmatched.id, unmatched.username]);
+    }
+
+    $scope.isUpdating = true;
+    $scope.queue = allTasks;
+    $scope.total = allTasks.length;
+    $scope.done = 0;
+    $timeout(processQueue, 1000);
+  }
+
+  function processQueue() {
+    if ($scope.queue.length === 0) {
+      $timeout(() => {
+        $scope.total = 0;
+        $scope.done = 0;
+        $scope.isUpdating = false;
+        loadResults();
+      }, 500);
+    } else {
+      const [threemaId, username] = $scope.queue.pop();
+      deleteCredentials(threemaId, username).then(() => {
+        $scope.done++;
+        $timeout(processQueue, 500);
+      });
+    }
   }
 });

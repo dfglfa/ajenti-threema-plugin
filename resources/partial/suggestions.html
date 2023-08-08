@@ -7,11 +7,17 @@
     <i class="fa fa-backward"></i>&nbsp;&nbsp;<a ng:href="/view/threema_connector/">Back to threema overview</a>
 
     <div ng-if="!results.suggestions || results.suggestions.length === 0">
-      <div class="bg-success defaultBlock" style="padding: 5px; margin: 10px 0">No renaming suggestions found.</div>
+      <div class="alert alert-success" style="padding: 15px; margin: 10px 0">No renaming suggestions found.</div>
+    </div>
+
+    <div class="progress" style="margin-top: 20px" ng-if="total > 0">
+      <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" ng-style="{'width': (100*done/total) + '%'}">
+        <span>{{done}} / {{total}}</span>
+      </div>
     </div>
 
     <div ng-if="results.suggestions && results.suggestions.length > 0">
-      <div class="bg-warning defaultBlock" style="padding: 5px; margin: 10px 0">The following renamings are suggested:</div>
+      <div ng-if="!total" class="bg-warning defaultBlock" style="padding: 15px; margin: 10px 0">There were deviations from the naming scheme.</div>
       <div ng-repeat="u in results.suggestions">
         <div ng-repeat="match in u.matches" class="row" style="padding: 2px 0; display: flex; align-items: center">
           <div class="col-xs-6 col-sm-4">{{u.username}}</div>
@@ -25,7 +31,7 @@
         </div>
       </div>
       <br />
-      <button class="btn btn-info" ng-disabled="isUpdating" ng-click="applyAll()">
+      <button class="btn btn-info" ng-disabled="isUpdating" ng-click="applyAll()" ng-show="results.suggestions && results.suggestions.length > 1">
         <i class="fa fa-lightbulb"></i> &nbsp; Apply ALL suggestions
       </button>
     </div>

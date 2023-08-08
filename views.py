@@ -1,9 +1,8 @@
-import json
-from jadi import component
+import random
 
-from aj.api.http import get, post, delete, put, HttpPlugin
-from aj.auth import authorize
-from aj.api.endpoint import endpoint, EndpointError
+from aj.api.endpoint import endpoint
+from aj.api.http import HttpPlugin, delete, get, post, put
+from jadi import component
 
 from .threema.threemaapi import ThreemaAdminClient
 
@@ -13,12 +12,6 @@ class Handler(HttpPlugin):
     def __init__(self, context):
         self.context = context
         self.client = ThreemaAdminClient()
-
-    @get(r'/api/threema_connector')
-    @endpoint(api=True)
-    def handle_api_get_example_threema_connector(self, http_context):
-        text = "This content was generated through a GET call to Python !"
-        return text
 
     @get(r'/api/threema_connector/credentials')
     @endpoint(api=True)

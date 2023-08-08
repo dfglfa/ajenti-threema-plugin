@@ -7,11 +7,19 @@
     <i class="fa fa-backward"></i>&nbsp;&nbsp;<a ng:href="/view/threema_connector/">Back to threema overview</a>
 
     <div ng-if="!results.unused || results.unused.length === 0">
-      <div class="bg-success defaultBlock" style="padding: 5px; margin: 10px 0">No users from ENT seem to be missing in Threema.</div>
+      <div class="alert alert-success" style="padding: 15px; margin: 10px 0">No users from ENT seem to be missing in Threema.</div>
+    </div>
+
+    <div class="progress" style="margin-top: 20px" ng-if="total > 0">
+      <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" ng-style="{'width': (100*done/total) + '%'}">
+        <span>{{done}} / {{total}}</span>
+      </div>
     </div>
 
     <div ng-if="results.unused && results.unused.length > 0">
-      <div class="bg-info defaultBlock" style="padding: 5px; margin: 20px 0">Database users without matching threema credentials:</div>
+      <div ng-if="!total" class="alert alert-info" style="padding: 15px; margin: 20px 0">
+        ENT users without matching threema credentials have been found.
+      </div>
       <div ng-repeat="u in results.unused" class="row" style="padding: 2px 0; display: flex; align-items: center">
         <div class="col-xs-6 col-sm-4">{{u}}</div>
         <div class="col-xs-6 col-sm-4">
@@ -21,7 +29,7 @@
         </div>
       </div>
       <br />
-      <button class="btn btn-primary" ng-click="addAll()" ng-disabled="isUpdating">
+      <button class="btn btn-primary" ng-click="addAll()" ng-disabled="isUpdating" ng-show="results.unused && results.unused.length > 1">
         <i class="fa fa-layer-group"></i> &nbsp; Add credentials for ALL ({{results.unused.length}})
       </button>
     </div>

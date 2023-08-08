@@ -1,7 +1,6 @@
 
 import logging
 
-
 from .config_loader import getThreemaApiKey
 from .credentialsclient import CredentialsClient
 from .userclient import UserClient
@@ -15,6 +14,10 @@ if not API_KEY:
     logging.error("*" * 50)
 
 DEFAULT_BASE_URL = "https://work.threema.ch/api/v1"
+
+# Change when using mock server during development
+# DEFAULT_BASE_URL = "http://192.168.178.59:8888"
+
 AUTH_HEADER = {"X-Api-Key": API_KEY}
 
 

@@ -1,4 +1,4 @@
-angular.module("example.threema_connector").controller("MissingController", function ($scope, $http, pageTitle, gettext, notify) {
+angular.module("dfglfa.threema_connector").controller("MissingController", function ($scope, $http, $timeout, pageTitle, gettext, notify) {
   pageTitle.set(gettext("Missing"));
 
   $scope.isUpdating = false;
@@ -9,31 +9,61 @@ angular.module("example.threema_connector").controller("MissingController", func
   $scope.results = undefined;
   loadResults();
 
+  $scope.queue = [];
+  $scope.done = 0;
+  $scope.total = 0;
+
   function loadResults() {
     return $http.post("/api/threema_connector/credentials/check", {}).then((resp) => {
       $scope.results = resp.data;
     });
   }
 
-  function addCredentials(username, reloadOnFinish) {
-    $scope.isUpdating = true;
+  function addCredentials(username, singleUpdate) {
+    if (singleUpdate) {
+      $scope.isUpdating = true;
+    }
+
     return $http
       .put("/api/threema_connector/credentials", { username })
       .then(() => {
         notify.success(`User ${username} successfully created`);
-        reloadOnFinish && loadResults();
+        singleUpdate && loadResults();
       })
-      .finally(() => ($scope.isUpdating = false));
+      .finally(() => {
+        if (singleUpdate) {
+          $scope.isUpdating = false;
+        }
+      });
   }
 
   function addCredentialsForAll() {
     const allTasks = [];
     for (let uname of $scope.results.unused) {
-      allTasks.push(addCredentials(uname));
+      allTasks.push(uname);
     }
-    Promise.all(allTasks).then(() => {
-      notify.success("All credentials created");
-      loadResults();
-    });
+
+    $scope.isUpdating = true;
+    $scope.queue = allTasks;
+    $scope.total = allTasks.length;
+    $scope.done = 0;
+    processQueue();
+  }
+
+  function processQueue() {
+    if ($scope.queue.length === 0) {
+      $timeout(() => {
+        $scope.total = 0;
+        $scope.done = 0;
+        $scope.isUpdating = false;
+        loadResults();
+      }, 500);
+    } else {
+      const newName = $scope.queue.pop();
+      addCredentials(newName).then(() => {
+        $scope.done++;
+        $timeout(processQueue, 300);
+      });
+    }
   }
 });

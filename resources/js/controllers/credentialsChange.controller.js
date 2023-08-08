@@ -1,5 +1,5 @@
 angular
-  .module("example.threema_connector")
+  .module("dfglfa.threema_connector")
   .controller("CredentialsChangeController", function ($scope, $http, $uibModalInstance, threemaId, oldName, newName) {
     $scope.data = { oldName, newName };
     $scope.password = "";
