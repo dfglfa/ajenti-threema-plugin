@@ -38,6 +38,9 @@ class Credentials:
     """
     :param credentialsData: Threema response parsed from JSON.
 
+    Note: The response seems to contain the key "usage" instead of 
+    "licenseAmount" (from the documentation). 
+
     Example:
 
     {
@@ -46,6 +49,7 @@ class Credentials:
         "username": "alice",
         "password": "3mawrk",
         "licenseAmount": 0,
+        "usage": 1,
         "hash": false,
         "lock": tr
     }
@@ -65,6 +69,8 @@ class Credentials:
         d = {
             "id": self.id,
             "username": self.username,
+            "licenseAmount": getattr(self, "licenseAmount", -1),
+            "usage": getattr(self, "usage", -1)
         }
         if includePasswords:
             d["password"] = self.password

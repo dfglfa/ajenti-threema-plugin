@@ -13,6 +13,7 @@ angular.module("dfglfa.threema_connector").controller("ThreemaUserListController
     { name: "Class", fx: (c) => _getClassLevel(c.cls) },
     { name: "Name", fx: (c) => c.username },
     { name: "Validation", fx: (c) => validationLevel(c.status) },
+    { name: "Active", fx: (c) => c.usage },
   ];
 
   $scope.sort = $scope.sorts[0];
@@ -31,7 +32,7 @@ angular.module("dfglfa.threema_connector").controller("ThreemaUserListController
 
     for (let c of resp.data) {
       const cls = _getClass(c.username);
-      creds.push({ id: c.id, cls, username: c.username });
+      creds.push({ ...c, cls });
     }
 
     $scope.credentials = creds;
