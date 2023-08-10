@@ -1,4 +1,4 @@
-angular.module("dfglfa.threema_connector").controller("ThreemaPasswordsController", function ($scope, $http, pageTitle, gettext, notify, $uibModal) {
+angular.module("dfglfa.threema_connector").controller("ThreemaPasswordsController", function ($scope, $http) {
   $scope.selectedClass = undefined;
   $scope.select = (cls) => {
     if (cls) {
@@ -10,6 +10,14 @@ angular.module("dfglfa.threema_connector").controller("ThreemaPasswordsControlle
     } else {
       $scope.selectedClass = undefined;
     }
+  };
+
+  $scope.showPassword = (studentId) => {
+    $scope.students.forEach((s) => {
+      if (s.id === studentId) {
+        s.showPassword = true;
+      }
+    });
   };
 
   $scope.classesForLevel = {
