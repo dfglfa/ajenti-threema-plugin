@@ -12,10 +12,10 @@ angular.module("dfglfa.threema_connector").controller("ThreemaPasswordsControlle
     }
   };
 
-  $scope.showPassword = (studentId) => {
+  $scope.toggleVisibility = (studentId) => {
     $scope.students.forEach((s) => {
       if (s.id === studentId) {
-        s.showPassword = true;
+        s.showPassword = !s.showPassword;
       }
     });
   };
@@ -32,8 +32,11 @@ angular.module("dfglfa.threema_connector").controller("ThreemaPasswordsControlle
   };
 
   $scope.downloadPasswordList = () => {
-    const content = $scope.students.map((s) => `Benutzername: ${s.username}\nPasswort: ${s.password}`).join("\n\n");
-    createAndDownloadTextFile(content, `passwords_${$scope.selectedClass}.txt`);
+    let content = "Benutzername,Passwort\n";
+    $scope.students.forEach((s) => {
+      content += `${s.username},${s.password}\n`;
+    });
+    createAndDownloadTextFile(content, `passwords_${$scope.selectedClass}.csv`);
   };
 
   function createAndDownloadTextFile(textContent, filename) {
