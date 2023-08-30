@@ -1,0 +1,20 @@
+globaladministrator:
+  - "lm:threema:list: true"
+  - "lm:threema:change: true"
+  - "lm:threema:passwords: true"
+  - "sidebar:view:/view/threema_connector: true"
+schooladministrator:
+  - "lm:threema:list: true"
+  - "lm:threema:change: true"
+  - "lm:threema:passwords: true"
+  - "sidebar:view:/view/threema_connector: true"
+student:
+  - "lm:threema:list: false"
+  - "lm:threema:change: false"
+  - "lm:threema:passwords: false"
+  - "sidebar:view:/view/threema_connector: false"
+teacher:
+  - "lm:threema:list: false"
+  - "lm:threema:change: false"
+  - "lm:threema:passwords: false"
+  - "sidebar:view:/view/threema_connector: false"
