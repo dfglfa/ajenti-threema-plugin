@@ -9,7 +9,6 @@ from .datamodel import User
 from .namematcher import NameMatcher
 from urllib.parse import quote
 from .config_loader import getStudentsFileName
-import os
 from aj.api.endpoint import EndpointError
 
 GRADES_NAMES_COLLEGE_GERMAN = range(5, 10)
@@ -28,7 +27,7 @@ class CredentialsClient:
         self.baseUrl = baseUrl
         self.authHeader = authHeader
 
-        students_data_file = os.path.join(os.getcwd(), getStudentsFileName())
+        students_data_file = getStudentsFileName()
         self.nameMatcher = NameMatcher(students_data_file)
 
     def getAllMocked(self, **params):
