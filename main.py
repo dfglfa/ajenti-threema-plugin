@@ -13,7 +13,7 @@ class ItemProvider(SidebarItemProvider):
         return [
             {
                 'attach': 'category:general',
-                'name': 'Threema Connector',
+                'name': 'Threema',
                 'icon': 'mobile',
                 'url': '/view/threema_connector',
                 'children': []
