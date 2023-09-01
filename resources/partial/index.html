@@ -1,6 +1,9 @@
-<uib:tabset active="activetab" style="margin: 20px 0">
-  <uib:tab heading="{{'Threema Users'|translate}}">
-    <user-list />
+<uib:tabset active="activetab" style="margin: 20px 0" ng-show="studentsCredentials && teachersCredentials">
+  <uib:tab heading="{{'Students'|translate}}">
+    <user-list credentials="studentsCredentials" on-credentials-change="onCredsChange" />
+  </uib:tab>
+  <uib:tab heading="{{'Teachers'|translate}}">
+    <user-list credentials="teachersCredentials" on-credentials-change="onCredsChange" />
   </uib:tab>
   <uib:tab heading="{{'Passwords'|translate}}">
     <passwords />
