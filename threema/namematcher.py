@@ -1,4 +1,3 @@
-import csv
 import difflib
 import logging
 from operator import itemgetter
@@ -8,19 +7,17 @@ from .utils import normalizeName, sanitizeName
 
 
 class NameMatcher:
-    def __init__(self, csv_filename):
+    def __init__(self, users_data):
         self.nameToClass = {}
         self.normalized_names = []
 
-        with open(csv_filename, "r") as csv_file:
-            reader = csv.DictReader(csv_file, delimiter=",")
-            for rec in reader:
-                key = sanitizeName(rec['Prenom'], rec['Nom'])
-                cls = rec["Classe"]
+        for user in users_data:
+            key = sanitizeName(user['givenName'], user['sn'])
+            cls = user["sophomorixAdminClass"]
 
-                normalizedName = normalizeName(key, cls)
-                self.normalized_names.append(normalizedName)
-                self.nameToClass[normalizedName] = cls
+            normalizedName = normalizeName(key, cls)
+            self.normalized_names.append(normalizedName)
+            self.nameToClass[normalizedName] = cls
 
         if len(self.nameToClass) != len(self.normalized_names):
             logging.warn(

@@ -8,8 +8,9 @@ from .datamodel import Credentials
 from .datamodel import User
 from .namematcher import NameMatcher
 from urllib.parse import quote
-from .config_loader import getStudentsFileName
 from aj.api.endpoint import EndpointError
+from aj.plugins.lmn_common.ldap.requests import LMNLdapRequests
+
 
 GRADES_NAMES_COLLEGE_GERMAN = range(5, 10)
 GRADES_NAMES_COLLEGE_FRENCH = range(6, 2, -1)
@@ -26,9 +27,12 @@ class CredentialsClient:
     def __init__(self, baseUrl: str, authHeader: dict):
         self.baseUrl = baseUrl
         self.authHeader = authHeader
+        self.lr = LMNLdapRequests(None)
 
-        students_data_file = getStudentsFileName()
-        self.nameMatcher = NameMatcher(students_data_file)
+        users_data  = self.lr.get('/role/student', school_oriented=False)
+        users_data += self.lr.get('/role/teacher', school_oriented=False)
+
+        self.nameMatcher = NameMatcher(users_data)
 
     def getAllMocked(self, **params):
         students = []
