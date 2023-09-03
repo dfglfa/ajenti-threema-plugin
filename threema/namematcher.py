@@ -30,6 +30,7 @@ class NameMatcher:
                 normalizedName = normalizeName(key, cls)
                 self.normalized_names.append(normalizedName)
                 self.nameToClass[normalizedName] = cls
+            logging.info("LDAP user data successfully loaded")
         except Exception as ex:
             logging.error("Could not fetch user via LDAP", ex)
             logging.warn("Falling back to dummy data from csv")
