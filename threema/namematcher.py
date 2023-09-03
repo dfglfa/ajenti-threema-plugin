@@ -17,10 +17,11 @@ class NameMatcher:
         self.normalized_names = []
 
         try:
-            self.lr = LMNLdapRequests(None)
+            logging.info("Accessing user data via LDAP")
+            lr = LMNLdapRequests(None)
 
-            users_data = self.lr.get('/role/student', school_oriented=False)
-            users_data += self.lr.get('/role/teacher', school_oriented=False)
+            users_data = lr.get('/role/student', school_oriented=False)
+            users_data += lr.get('/role/teacher', school_oriented=False)
 
             for user in users_data:
                 key = sanitizeName(user['givenName'], user['sn'])
@@ -31,6 +32,7 @@ class NameMatcher:
                 self.nameToClass[normalizedName] = cls
         except Exception as ex:
             logging.error("Could not fetch user via LDAP", ex)
+            logging.warn("Falling back to dummy data from csv")
 
             with open(getStudentsFileName(), "r") as csv_file:
                 reader = csv.DictReader(csv_file, delimiter=",")
