@@ -1,6 +1,9 @@
+import csv
 import difflib
 import logging
 from operator import itemgetter
+
+from threema.config_loader import getStudentsFileName
 from .datamodel import Credentials
 
 from .utils import normalizeName, sanitizeName
@@ -11,13 +14,26 @@ class NameMatcher:
         self.nameToClass = {}
         self.normalized_names = []
 
-        for user in users_data:
-            key = sanitizeName(user['givenName'], user['sn'])
-            cls = user["sophomorixAdminClass"]
+        try:
+            for user in users_data:
+                key = sanitizeName(user['givenName'], user['sn'])
+                cls = user["sophomorixAdminClass"]
 
-            normalizedName = normalizeName(key, cls)
-            self.normalized_names.append(normalizedName)
-            self.nameToClass[normalizedName] = cls
+                normalizedName = normalizeName(key, cls)
+                self.normalized_names.append(normalizedName)
+                self.nameToClass[normalizedName] = cls
+        except Exception as ex:
+            logging.error("Could not fetch user via LDAP", ex)
+
+            with open(getStudentsFileName(), "r") as csv_file:
+                reader = csv.DictReader(csv_file, delimiter=",")
+                for rec in reader:
+                    key = sanitizeName(rec['Prenom'], rec['Nom'])
+                    cls = rec["Classe"]
+
+                    normalizedName = normalizeName(key, cls)
+                    self.normalized_names.append(normalizedName)
+                    self.nameToClass[normalizedName] = cls
 
         if len(self.nameToClass) != len(self.normalized_names):
             logging.warn(
