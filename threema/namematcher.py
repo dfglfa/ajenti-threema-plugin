@@ -4,17 +4,24 @@ import logging
 from operator import itemgetter
 
 from threema.config_loader import getStudentsFileName
+
 from .datamodel import Credentials
 
 from .utils import normalizeName, sanitizeName
+from aj.plugins.lmn_common.ldap.requests import LMNLdapRequests
 
 
 class NameMatcher:
-    def __init__(self, users_data):
+    def __init__(self):
         self.nameToClass = {}
         self.normalized_names = []
 
         try:
+            self.lr = LMNLdapRequests(None)
+
+            users_data = self.lr.get('/role/student', school_oriented=False)
+            users_data += self.lr.get('/role/teacher', school_oriented=False)
+
             for user in users_data:
                 key = sanitizeName(user['givenName'], user['sn'])
                 cls = user["sophomorixAdminClass"]
