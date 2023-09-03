@@ -3,7 +3,7 @@ import difflib
 import logging
 from operator import itemgetter
 
-from threema.config_loader import getStudentsFileName
+from .config_loader import getStudentsFileName
 
 from .datamodel import Credentials
 
