@@ -75,3 +75,15 @@ class Handler(HttpPlugin):
                 "You must specify a class name, unfiltered is not allowed")
             return []
         return [c.toJsonDict(includePasswords=True) for c in self.client.getAllCredentials(classname=classname)]
+
+    @get(r'/api/threema_connector/groups')
+    @authorize('lm:threema:list')
+    @endpoint(api=True)
+    def handle_api_get_all_groups(self, http_context):
+        return self.client.getGroups()
+
+    @get(r'/api/threema_connector/users')
+    @authorize('lm:threema:list')
+    @endpoint(api=True)
+    def handle_api_get_all_users(self, http_context):
+        return self.client.getAllUsers()

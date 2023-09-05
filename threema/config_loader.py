@@ -15,9 +15,19 @@ def _loadConfig():
 
 def getThreemaApiKey():
     config = _loadConfig()
-    return config["threema_api_key"]
+    return config.get("threema_api_key")
 
 
 def getStudentsFileName():
     config = _loadConfig()
-    return config["students_data_file"]
+    return config.get("students_data_file")
+
+
+def getThreemaBroadcastId():
+    config = _loadConfig()
+    return config.get("threema_broadcast_id")
+
+
+def getThreemaBroadcastApiKey():
+    config = _loadConfig()
+    return config.get("threema_broadcast_api_key")

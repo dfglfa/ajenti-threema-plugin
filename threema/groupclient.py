@@ -2,24 +2,22 @@ import json
 import logging
 import requests
 
-from .datamodel import User
 
-
-class UserClient:
-    def __init__(self, baseUrl, authHeader):
+class GroupClient:
+    def __init__(self, broadcastId, baseUrl, authHeader):
+        self.broadcastId = broadcastId
         self.baseUrl = baseUrl
         self.authHeader = authHeader
 
-    def getAll(self, **params):
-        url = f"{self.baseUrl}/users"
+    def getAllGroups(self, **params):
+        url = f"{self.baseUrl}/identities/{self.broadcastId}/groups"
 
         resp = requests.get(url, params=params,
                             headers=self.authHeader)
         try:
-            print("*****************************", resp.content)
+            logging.info(f"Found content: {resp.content} for url {url}")
             data = json.loads(resp.content)
-            users = data["users"]
-            return [User(**u) for u in users]
+            logging.info(f"Found groups: {data}")
         except TypeError as te:
             logging.exception("Error while decoding:", te)
             return []

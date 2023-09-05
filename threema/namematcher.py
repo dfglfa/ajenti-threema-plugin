@@ -8,7 +8,12 @@ from .config_loader import getStudentsFileName
 from .datamodel import Credentials
 
 from .utils import normalizeName, sanitizeName
-from aj.plugins.lmn_common.ldap.requests import LMNLdapRequests
+
+try:
+    from aj.plugins.lmn_common.ldap.requests import LMNLdapRequests
+except ImportError:
+    logging.warn("ldap module not available, falling back to dummy data")
+    LMNLdapRequests = None
 
 
 class NameMatcher:
@@ -16,7 +21,7 @@ class NameMatcher:
         self.nameToClass = {}
         self.normalized_names = []
 
-        try:
+        if LMNLdapRequests:
             logging.info("Accessing user data via LDAP")
             lr = LMNLdapRequests(None)
 
@@ -31,10 +36,7 @@ class NameMatcher:
                 self.normalized_names.append(normalizedName)
                 self.nameToClass[normalizedName] = cls
             logging.info("LDAP user data successfully loaded")
-        except Exception as ex:
-            logging.error("Could not fetch user via LDAP", ex)
-            logging.warn("Falling back to dummy data from csv")
-
+        else:
             with open(getStudentsFileName(), "r") as csv_file:
                 reader = csv.DictReader(csv_file, delimiter=",")
                 for rec in reader:

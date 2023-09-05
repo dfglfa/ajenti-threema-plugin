@@ -1,6 +1,6 @@
 angular
   .module("dfglfa.threema_connector")
-  .controller("ThreemaUserListController", function ($scope, $http, pageTitle, gettext, notify, $uibModal, TEACHER_PREFIX) {
+  .controller("ThreemaUserListController", function ($scope, $http, pageTitle, gettext, notify, $uibModal, classService) {
     pageTitle.set(gettext("ThreemaConnector"));
 
     $scope.reverse = false;
@@ -12,7 +12,7 @@ angular
     $scope.countSuggestionsForNameChange = 0;
 
     $scope.sorts = [
-      { name: "Class", fx: (c) => _getClassLevel(c.cls) },
+      { name: "Class", fx: (c) => classService.getClassLevel(c.cls) },
       { name: "Name", fx: (c) => c.username },
       { name: "Validation", fx: (c) => validationLevel(c.status) },
       { name: "Active", fx: (c) => c.usage },
@@ -38,7 +38,7 @@ angular
         if (!c.username) {
           continue;
         }
-        const cls = _getClass(c.username);
+        const cls = classService.getClass(c.username);
         c["cls"] = cls;
       }
     });
@@ -105,7 +105,7 @@ angular
         } else {
           const cred = changedCredentials[0];
           cred.username = newName;
-          cred.cls = _getClass(newName);
+          cred.cls = classService.getClass(newName);
           $scope.validated && validate();
           $scope.onCredentialsChange(threemaId);
         }
@@ -140,65 +140,5 @@ angular
       } else {
         return 3;
       }
-    }
-
-    const classToLevel = {
-      "5a": 5,
-      "5b": 5,
-      "6a": 6,
-      "6b": 6,
-      "7a": 7,
-      "7b": 7,
-      "8a": 8,
-      "8b": 8,
-      "9a": 9,
-      "9b": 9,
-      "6I": 6,
-      "6II": 6,
-      "5I": 7,
-      "5II": 7,
-      "4I": 8,
-      "4II": 8,
-      "3I": 9,
-      "3II": 9,
-      "2L1": 10,
-      "2L2": 10,
-      "2ES": 10,
-      "2S1": 10,
-      "2S2": 10,
-      "1L1": 11,
-      "1L2": 11,
-      "1ES": 11,
-      "1SMP": 11,
-      "1SBC1": 11,
-      "1SBC2": 11,
-      TL1: 12,
-      TL2: 12,
-      TES: 12,
-      TSMP: 12,
-      TSBC1: 12,
-      TSBC2: 12,
-      Lehrer: 100,
-    };
-
-    function _getClass(username) {
-      if (!username) {
-        return "?";
-      }
-
-      for (let [name] of Object.entries(classToLevel)) {
-        if (username.startsWith(name + "_")) {
-          return name;
-        }
-      }
-
-      if (username.startsWith(TEACHER_PREFIX)) {
-        return "Lehrer";
-      }
-      return "?";
-    }
-
-    function _getClassLevel(c) {
-      return classToLevel[c] || -1;
     }
   });
