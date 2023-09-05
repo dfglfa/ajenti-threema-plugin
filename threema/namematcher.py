@@ -3,18 +3,26 @@ import difflib
 import logging
 from operator import itemgetter
 
-from threema.config_loader import getStudentsFileName
+from .config_loader import getStudentsFileName
+
 from .datamodel import Credentials
 
 from .utils import normalizeName, sanitizeName
+from aj.plugins.lmn_common.ldap.requests import LMNLdapRequests
 
 
 class NameMatcher:
-    def __init__(self, users_data):
+    def __init__(self):
         self.nameToClass = {}
         self.normalized_names = []
 
         try:
+            logging.info("Accessing user data via LDAP")
+            lr = LMNLdapRequests(None)
+
+            users_data = lr.get('/role/student', school_oriented=False)
+            users_data += lr.get('/role/teacher', school_oriented=False)
+
             for user in users_data:
                 key = sanitizeName(user['givenName'], user['sn'])
                 cls = user["sophomorixAdminClass"]
@@ -22,8 +30,10 @@ class NameMatcher:
                 normalizedName = normalizeName(key, cls)
                 self.normalized_names.append(normalizedName)
                 self.nameToClass[normalizedName] = cls
+            logging.info("LDAP user data successfully loaded")
         except Exception as ex:
             logging.error("Could not fetch user via LDAP", ex)
+            logging.warn("Falling back to dummy data from csv")
 
             with open(getStudentsFileName(), "r") as csv_file:
                 reader = csv.DictReader(csv_file, delimiter=",")
