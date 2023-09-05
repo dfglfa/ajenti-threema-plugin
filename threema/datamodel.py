@@ -29,8 +29,8 @@ class User:
         return {
             "id": self.id,
             "nickname": self.nickname,
-            "firstname": self.firstname,
-            "lastname": self.lastname
+            "firstname": self.firstName,
+            "lastname": self.lastName
         }
 
 

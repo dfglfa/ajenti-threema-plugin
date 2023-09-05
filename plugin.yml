@@ -8,7 +8,7 @@ icon: mobile
 # dependency on Core is required for UI plugins
 dependencies:
   - !PluginDependency { plugin_name: core }
-  #- !PluginDependency { plugin_name: lmn_common }
+  - !PluginDependency { plugin_name: lmn_common }
   # - !OptionalPluginDependency {
   #   plugin_name: my_other_plugin
   # }
@@ -28,10 +28,10 @@ resources:
   - "resources/js/controllers/credentialsChange.controller.js"
   - "resources/js/controllers/credentialsDelete.controller.js"
   - "resources/js/controllers/userList.controller.js"
-  - "resources/js/controllers/passwords.controller.js"
+  - "resources/js/controllers/groups.controller.js"
   - "resources/js/directives/studentsList.js"
   - "resources/js/directives/teachersList.js"
-  - "resources/js/directives/passwords.js"
+  - "resources/js/directives/groups.js"
   - "resources/js/services/classService.js"
   - "resources/partial/index.html"
   - "resources/partial/missing.html"
@@ -40,6 +40,6 @@ resources:
   - "resources/partial/credentialsChange.modal.html"
   - "resources/partial/credentialsDelete.modal.html"
   - "resources/partial/userList.html"
-  - "resources/partial/passwords.html"
+  - "resources/partial/groups.html"
   - "resources/css/styles.css"
   - "ng:dfglfa.threema_connector"

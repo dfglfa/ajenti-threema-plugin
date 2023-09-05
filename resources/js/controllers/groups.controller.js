@@ -1,4 +1,4 @@
-angular.module("dfglfa.threema_connector").controller("ThreemaPasswordsController", function ($scope, $http) {
+angular.module("dfglfa.threema_connector").controller("ThreemaGroupsController", function ($scope, $http) {
   $scope.selectedClass = undefined;
   $scope.select = (cls) => {
     if (cls) {
@@ -6,6 +6,7 @@ angular.module("dfglfa.threema_connector").controller("ThreemaPasswordsControlle
       $scope.selectedClass = cls;
       $http.get("/api/threema_connector/credentials_with_passwords", { params: { classname: cls } }).then((resp) => {
         $scope.students = resp.data;
+        loadUserData();
       });
     } else {
       $scope.selectedClass = undefined;
@@ -38,6 +39,21 @@ angular.module("dfglfa.threema_connector").controller("ThreemaPasswordsControlle
     });
     createAndDownloadTextFile(content, `passwords_${$scope.selectedClass}.csv`);
   };
+
+  function loadUserData() {
+    for (const sd of $scope.students) {
+      if (sd.usage > 0) {
+        $http.get(`/api/threema_connector/users?filterUsername=${sd.username}`).then((resp) => {
+          const linkedUsers = resp.data;
+          if (linkedUsers && linkedUsers.length === 1) {
+            sd.nickname = linkedUsers[0].nickname;
+          } else {
+            console.error("No user data found for active credentials", sd);
+          }
+        });
+      }
+    }
+  }
 
   function createAndDownloadTextFile(textContent, filename) {
     const blob = new Blob([textContent], { type: "text/plain" });

@@ -86,4 +86,5 @@ class Handler(HttpPlugin):
     @authorize('lm:threema:list')
     @endpoint(api=True)
     def handle_api_get_all_users(self, http_context):
-        return self.client.getAllUsers()
+        filterUsername = http_context.query.get("filterUsername")
+        return [u.toJsonDict() for u in self.client.getAllUsers(filterUsername=filterUsername)]

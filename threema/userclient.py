@@ -12,6 +12,8 @@ class UserClient:
 
     def getAll(self, **params):
         url = f"{self.baseUrl}/users"
+        if "filterUsername" in params:
+            url += f"?filterUsername={params['filterUsername']}"
 
         resp = requests.get(url, params=params,
                             headers=self.authHeader)
