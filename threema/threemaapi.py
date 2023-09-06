@@ -29,17 +29,19 @@ DEFAULT_BROADCAST_BASE_URL = "https://broadcast.threema.ch/api/v1"
 
 class ThreemaAdminClient:
 
-    def __init__(self, baseUrl=DEFAULT_USERS_BASE_URL):
-        self.baseUrl = baseUrl
+    def __init__(self):
         self.userClient = UserClient(
-            baseUrl, authHeader={"X-Api-Key": API_KEY})
+            DEFAULT_USERS_BASE_URL, authHeader={"X-Api-Key": API_KEY})
         self.credentialsClient = CredentialsClient(
-            baseUrl, authHeader={"X-Api-Key": API_KEY})
+            DEFAULT_USERS_BASE_URL, authHeader={"X-Api-Key": API_KEY})
         self.groupsClient = GroupClient(BROADCAST_ID,
                                         DEFAULT_BROADCAST_BASE_URL, authHeader={"X-Api-Key": BROADCAST_API_KEY})
 
     def getAllUsers(self, **params):
         return self.userClient.getAll(**params)
+
+    def getUsersWithLinkedCredentials(self):
+        return self.userClient.getUsersWithLinkedCredentials()
 
     def getAllCredentials(self, **params):
         return self.credentialsClient.getAll(**params)
@@ -70,3 +72,12 @@ class ThreemaAdminClient:
 
     def getGroups(self):
         return self.groupsClient.getAllGroups()
+
+    def getGroupMembers(self, groupId):
+        return self.groupsClient.getGroupMembers(groupId)
+
+    def createGroup(self, name, members):
+        return self.groupsClient.createGroup(name, members)
+
+    def addGroupMembers(self, groupId, members):
+        return self.groupsClient.addGroupMembers(groupId, members)

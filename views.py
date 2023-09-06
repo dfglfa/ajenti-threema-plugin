@@ -82,9 +82,29 @@ class Handler(HttpPlugin):
     def handle_api_get_all_groups(self, http_context):
         return self.client.getGroups()
 
-    @get(r'/api/threema_connector/users')
+    @get(r'/api/threema_connector/group_members')
     @authorize('lm:threema:list')
     @endpoint(api=True)
-    def handle_api_get_all_users(self, http_context):
-        filterUsername = http_context.query.get("filterUsername")
-        return [u.toJsonDict() for u in self.client.getAllUsers(filterUsername=filterUsername)]
+    def handle_api_get_group_members(self, http_context):
+        groupId = http_context.query.get("groupId")
+        return self.client.getGroupMembers(groupId=groupId)
+
+    @post(r'/api/threema_connector/group_members')
+    @authorize('lm:threema:list')
+    @endpoint(api=True)
+    def handle_api_add_group_members(self, http_context):
+        body = http_context.json_body()
+        return self.client.addGroupMembers(groupId=body.get("groupId"), members=body.get("members"))
+
+    @post(r'/api/threema_connector/groups')
+    @authorize('lm:threema:list')
+    @endpoint(api=True)
+    def handle_api_create_group(self, http_context):
+        body = http_context.json_body()
+        return self.client.createGroup(name=body.get("name"), members=body.get("members"))
+
+    @get(r'/api/threema_connector/users_with_credentials')
+    @authorize('lm:threema:list')
+    @endpoint(api=True)
+    def handle_api_get_users_with_linked_credentials(self, http_context):
+        return self.client.getUsersWithLinkedCredentials()
