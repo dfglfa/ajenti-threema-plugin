@@ -28,6 +28,12 @@ def normalizeName(sanitizedName, className):
     and then <lastname><firstname(s)> with capitalized first letters, e.g. 
     "3II_MuellerPeterHansi" for Peter Hansi Müller in the 3ème II.
     """
+
+    if className not in CLASS_TO_LEVEL.keys():
+        classNameCaseInsensitive = [
+            c for c in CLASS_TO_LEVEL.keys() if c.lower() == className.lower()]
+        className = classNameCaseInsensitive[0] if len(
+            classNameCaseInsensitive) == 1 else className
     return f"{className}_{sanitizedName}"
 
 

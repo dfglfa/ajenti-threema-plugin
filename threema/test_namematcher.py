@@ -2,7 +2,7 @@ import tempfile
 from .namematcher import NameMatcher
 
 HEADER = "Nom,Prenom,Classe"
-DATA = ["Mueller,Lisa,TES", "Meier,Rainer,5II",
+DATA = ["Mueller,Lisa,tes", "Meier,Rainer,5II",
         "Fährmann,Anaïs-Dörte,8b", "Ruß-Mœllerû,Brìt,3II"]
 
 

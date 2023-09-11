@@ -8,7 +8,7 @@ icon: mobile
 # dependency on Core is required for UI plugins
 dependencies:
   - !PluginDependency { plugin_name: core }
-  - !PluginDependency { plugin_name: lmn_common }
+  #- !PluginDependency { plugin_name: lmn_common }
   # - !OptionalPluginDependency {
   #   plugin_name: my_other_plugin
   # }
