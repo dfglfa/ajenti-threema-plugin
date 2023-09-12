@@ -76,6 +76,7 @@ class NameMatcher:
 
     def findMatches(self, name) -> list:
         studentName = self._extractStudentName(name)
+        logging.info(f"Extracted {studentName} from {name}")
         for cn in CLASS_NAMES:
             if name.lower() == f"{cn}_{studentName}".lower() or name.lower() == f"{cn}{studentName}".lower():
                 logging.info(f"Found class change match for {name}")
