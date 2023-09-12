@@ -80,7 +80,7 @@ class NameMatcher:
         for cn in CLASS_NAMES:
             if name.lower() == f"{cn}_{studentName}".lower() or name.lower() == f"{cn}{studentName}".lower():
                 logging.info(f"Found class change match for {name}")
-                return [f"{cn}_{studentName}"]
+                return [(f"{cn}_{studentName}", cn)]
         return self.findMatchesFuzzy(name)
 
     def checkConsistency(self, credentials: list[Credentials]):
