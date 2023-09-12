@@ -66,11 +66,16 @@ class NameMatcher:
         else:
             return []
 
-    def findMatches(self, name) -> list:
-        if "_" not in name:
-            return self.findMatchesFuzzy(name)
+    def _extractStudentName(self, rawName):
+        if "_" in rawName:
+            return rawName.split("_", 1)[1]
+        for cn in CLASS_NAMES:
+            if rawName.lower().startswith(cn.lower()):
+                return rawName[len(cn):]
+        return rawName
 
-        _, studentName = name.split("_", 1)
+    def findMatches(self, name) -> list:
+        studentName = self._extractStudentName(name)
         for cn in CLASS_NAMES:
             if name.lower() == f"{cn}_{studentName}".lower() or name.lower() == f"{cn}{studentName}".lower():
                 logging.info(f"Found class change match for {name}")
