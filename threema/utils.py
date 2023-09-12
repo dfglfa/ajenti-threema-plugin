@@ -13,6 +13,10 @@ def replaceUmlauteAndSz(name):
         .replace("ß", "ss")
 
 
+def formatName(firstname, lastname):
+    return f"{lastname}{firstname.split()[0]}"
+
+
 def sanitizeName(firstname, lastname):
     fn, ln = map(replaceUmlauteAndSz, [firstname, lastname])
 

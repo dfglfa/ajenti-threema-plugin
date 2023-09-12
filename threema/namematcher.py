@@ -7,7 +7,7 @@ from .config_loader import getStudentsFileName
 
 from .datamodel import Credentials
 
-from .utils import normalizeName, sanitizeName
+from .utils import normalizeName, formatName
 
 try:
     from aj.plugins.lmn_common.ldap.requests import LMNLdapRequests
@@ -29,7 +29,8 @@ class NameMatcher:
             users_data += lr.get('/role/teacher', school_oriented=False)
 
             for user in users_data:
-                key = sanitizeName(user['givenName'], user['sn'])
+                # key = sanitizeName(user['givenName'], user['sn'])
+                key = formatName(user['givenName'], user['sn'])
                 cls = user["sophomorixAdminClass"]
 
                 normalizedName = normalizeName(key, cls)
@@ -40,7 +41,7 @@ class NameMatcher:
             with open(getStudentsFileName(), "r") as csv_file:
                 reader = csv.DictReader(csv_file, delimiter=",")
                 for rec in reader:
-                    key = sanitizeName(rec['Prenom'], rec['Nom'])
+                    key = formatName(rec['Prenom'], rec['Nom'])
                     cls = rec["Classe"]
 
                     normalizedName = normalizeName(key, cls)
@@ -56,7 +57,7 @@ class NameMatcher:
 
     def findMatches(self, name) -> list:
         match = difflib.get_close_matches(
-            name, self.nameToClass.keys(), 2, cutoff=0.7)
+            name, self.nameToClass.keys(), 2, cutoff=0.9)
         if match:
             return [(res, self.nameToClass[res]) for res in match]
         else:
