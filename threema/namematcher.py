@@ -59,8 +59,9 @@ class NameMatcher:
 
     def findMatchesFuzzy(self, name) -> list:
         match = difflib.get_close_matches(
-            name, self.nameToClass.keys(), 2, cutoff=0.75)
+            name, self.nameToClass.keys(), 2, cutoff=0.6)
         if match:
+            logging.info(f"Found fuzzy match for {name}")
             return [(res, self.nameToClass[res]) for res in match]
         else:
             return []
@@ -72,6 +73,7 @@ class NameMatcher:
         _, studentName = name.split("_", 1)
         for cn in CLASS_NAMES:
             if name == f"{cn}_{studentName}" or name == f"{cn}{studentName}":
+                logging.info(f"Found class change match for {name}")
                 return [f"{cn}_{studentName}"]
         return self.findMatchesFuzzy(name)
 
@@ -86,6 +88,7 @@ class NameMatcher:
         creds_keys = [(c.id, c.username or "unknown") for c in credentials]
         for threemaId, username in creds_keys:
             if username in self.normalized_names:
+                logging.info(f"Found exact match for {username}")
                 match_result["ok"].append(
                     {"id": threemaId, "username": username})
             else:
