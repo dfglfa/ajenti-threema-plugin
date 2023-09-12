@@ -59,7 +59,7 @@ class NameMatcher:
 
     def findMatchesFuzzy(self, name) -> list:
         match = difflib.get_close_matches(
-            name, self.nameToClass.keys(), 2, cutoff=0.6)
+            name, self.nameToClass.keys(), 2, cutoff=0.8)
         if match:
             logging.info(f"Found fuzzy match for {name}")
             return [(res, self.nameToClass[res]) for res in match]
