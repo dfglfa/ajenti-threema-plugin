@@ -57,7 +57,7 @@ class NameMatcher:
 
     def findMatches(self, name) -> list:
         match = difflib.get_close_matches(
-            name, self.nameToClass.keys(), 2, cutoff=0.9)
+            name, self.nameToClass.keys(), 2, cutoff=0.8)
         if match:
             return [(res, self.nameToClass[res]) for res in match]
         else:
