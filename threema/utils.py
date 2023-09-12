@@ -26,19 +26,22 @@ def sanitizeName(firstname, lastname):
         "utf-8").replace("-", "")
 
 
-def normalizeName(sanitizedName, className):
+def normalizeName(formattedName, className):
     """
     A normalized name contains the class as prefix, followed by an underscore
     and then <lastname><firstname(s)> with capitalized first letters, e.g. 
     "3II_MuellerPeterHansi" for Peter Hansi Müller in the 3ème II.
     """
 
+    if className.lower() == "teachers":
+        return formattedName
+
     if className not in CLASS_TO_LEVEL.keys():
         classNameCaseInsensitive = [
             c for c in CLASS_TO_LEVEL.keys() if c.lower() == className.lower()]
         className = classNameCaseInsensitive[0] if len(
             classNameCaseInsensitive) == 1 else className
-    return f"{className}_{sanitizedName}"
+    return f"{className}_{formattedName}"
 
 
 CLASS_TO_LEVEL = {
