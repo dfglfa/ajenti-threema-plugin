@@ -7,13 +7,15 @@ from .config_loader import getStudentsFileName
 
 from .datamodel import Credentials
 
-from .utils import normalizeName, formatName
+from .utils import normalizeName, formatName, CLASS_TO_LEVEL
 
 try:
     from aj.plugins.lmn_common.ldap.requests import LMNLdapRequests
 except ImportError:
     logging.warn("ldap module not available, falling back to dummy data")
     LMNLdapRequests = None
+
+CLASS_NAMES = CLASS_TO_LEVEL.keys()
 
 
 class NameMatcher:
@@ -55,13 +57,23 @@ class NameMatcher:
         logging.info(
             f"**** Name database successfully initialized with {len(self.nameToClass)} entries ****")
 
-    def findMatches(self, name) -> list:
+    def findMatchesFuzzy(self, name) -> list:
         match = difflib.get_close_matches(
-            name, self.nameToClass.keys(), 2, cutoff=0.8)
+            name, self.nameToClass.keys(), 2, cutoff=0.75)
         if match:
             return [(res, self.nameToClass[res]) for res in match]
         else:
             return []
+
+    def findMatches(self, name) -> list:
+        if "_" not in name:
+            return self.findMatchesFuzzy(name)
+
+        _, studentName = name.split("_", 1)
+        for cn in CLASS_NAMES:
+            if name == f"{cn}_{studentName}" or name == f"{cn}{studentName}":
+                return [f"{cn}_{studentName}"]
+        return self.findMatchesFuzzy(name)
 
     def checkConsistency(self, credentials: list[Credentials]):
         match_result = {
@@ -73,27 +85,33 @@ class NameMatcher:
         mapped_keys = set()
         creds_keys = [(c.id, c.username or "unknown") for c in credentials]
         for threemaId, username in creds_keys:
-            matches = self.findMatches(username)
-            if not matches:
-                match_result["unmatched"].append(
+            if username in self.normalized_names:
+                match_result["ok"].append(
                     {"id": threemaId, "username": username})
             else:
-                if username == matches[0][0]:
-                    logging.debug(
-                        f"User name {username} matches {matches[0][0]}")
-                    match_result["ok"].append(
+                matches = self.findMatches(username)
+                if not matches:
+                    match_result["unmatched"].append(
                         {"id": threemaId, "username": username})
-                elif username.startswith(matches[0][1]):
-                    # If the first match contains the correct class, suggest
-                    # only this match and no others.
-                    match_result["suggestions"].append({
-                        "id": threemaId, "username": username, "matches": matches[:1]
-                    })
+                    continue
                 else:
-                    match_result["suggestions"].append({
-                        "id": threemaId, "username": username, "matches": matches
-                    })
-                mapped_keys = mapped_keys.union(map(itemgetter(0), matches))
+                    if username == matches[0][0]:
+                        logging.debug(
+                            f"User name {username} matches {matches[0][0]}")
+                        match_result["ok"].append(
+                            {"id": threemaId, "username": username})
+                    elif username.startswith(matches[0][1]):
+                        # If the first match contains the correct class, suggest
+                        # only this match and no others.
+                        match_result["suggestions"].append({
+                            "id": threemaId, "username": username, "matches": matches[:1]
+                        })
+                    else:
+                        match_result["suggestions"].append({
+                            "id": threemaId, "username": username, "matches": matches
+                        })
+
+            mapped_keys = mapped_keys.union(map(itemgetter(0), matches))
 
         for nn in self.normalized_names:
             if nn not in mapped_keys:
