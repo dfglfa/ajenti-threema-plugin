@@ -72,7 +72,7 @@ class NameMatcher:
 
         _, studentName = name.split("_", 1)
         for cn in CLASS_NAMES:
-            if name == f"{cn}_{studentName}" or name == f"{cn}{studentName}":
+            if name.lower() == f"{cn}_{studentName}".lower() or name.lower() == f"{cn}{studentName}".lower():
                 logging.info(f"Found class change match for {name}")
                 return [f"{cn}_{studentName}"]
         return self.findMatchesFuzzy(name)
