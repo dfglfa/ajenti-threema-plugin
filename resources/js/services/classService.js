@@ -2,6 +2,7 @@ angular.module("dfglfa.threema_connector").service("classService", function () {
   const api = this;
   api.getClass = _getClass;
   api.getClassLevel = _getClassLevel;
+  api.containsClass = _containsClass;
 
   const classToLevel = {
     "5a": 5,
@@ -54,6 +55,20 @@ angular.module("dfglfa.threema_connector").service("classService", function () {
     }
 
     return null;
+  }
+
+  function _containsClass(username) {
+    if (!username) {
+      return false;
+    }
+
+    for (let [name] of Object.entries(classToLevel)) {
+      if (username.startsWith(name)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   function _getClassLevel(c) {

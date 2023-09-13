@@ -18,7 +18,7 @@ angular.module("dfglfa.threema_connector").controller("UnmatchedController", fun
       const unmatchedStudents = [];
       const unmatchedTeachers = [];
       for (const user of resp.data.unmatched) {
-        if (user.username && classService.getClass(user.username)) {
+        if (user.username && classService.containsClass(user.username)) {
           unmatchedStudents.push(user);
         } else {
           unmatchedTeachers.push(user);
