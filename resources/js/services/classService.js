@@ -43,6 +43,8 @@ angular.module("dfglfa.threema_connector").service("classService", function () {
     Lehrer: 100,
   };
 
+  const incorrectClassnames = ["6I", "6II", "5I", "5II", "4I", "4II", "3I", "3II"];
+
   function _getClass(username) {
     if (!username) {
       return null;
@@ -63,6 +65,13 @@ angular.module("dfglfa.threema_connector").service("classService", function () {
     }
 
     for (let [name] of Object.entries(classToLevel)) {
+      if (username.startsWith(name)) {
+        return true;
+      }
+    }
+
+    // backwards compat for initial migration
+    for (let name of incorrectClassnames) {
       if (username.startsWith(name)) {
         return true;
       }
