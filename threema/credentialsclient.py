@@ -4,6 +4,8 @@ import random
 import string
 import requests
 
+from .userdataprovider import UserDataProvider
+
 from .datamodel import Credentials
 from .datamodel import User
 from .namematcher import NameMatcher
@@ -26,7 +28,7 @@ class CredentialsClient:
     def __init__(self, baseUrl: str, authHeader: dict):
         self.baseUrl = baseUrl
         self.authHeader = authHeader
-        self.nameMatcher = NameMatcher()
+        self.nameMatcher = NameMatcher(UserDataProvider())
 
     def getAllMocked(self, **params):
         students = []

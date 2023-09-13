@@ -9,46 +9,25 @@ from .datamodel import Credentials
 
 from .utils import normalizeName, formatName, CLASS_TO_LEVEL
 
-try:
-    from aj.plugins.lmn_common.ldap.requests import LMNLdapRequests
-except ImportError:
-    logging.warn("ldap module not available, falling back to dummy data")
-    LMNLdapRequests = None
 
 CLASS_NAMES = CLASS_TO_LEVEL.keys()
 
 
 class NameMatcher:
-    def __init__(self):
+    def __init__(self, userdata_provider):
         self.nameToClass = {}
         self.normalized_names = []
 
-        if LMNLdapRequests:
-            logging.info("Accessing user data via LDAP")
-            lr = LMNLdapRequests(None)
+        user_data = userdata_provider.getUserData()
 
-            users_data = lr.get('/role/student', school_oriented=False)
-            users_data += lr.get('/role/teacher', school_oriented=False)
+        for user in user_data:
+            key = formatName(user['givenName'], user['sn'])
+            cls = user["sophomorixAdminClass"]
 
-            for user in users_data:
-                # key = sanitizeName(user['givenName'], user['sn'])
-                key = formatName(user['givenName'], user['sn'])
-                cls = user["sophomorixAdminClass"]
-
-                normalizedName = normalizeName(key, cls)
-                self.normalized_names.append(normalizedName)
-                self.nameToClass[normalizedName] = cls
+            normalizedName = normalizeName(key, cls)
+            self.normalized_names.append(normalizedName)
+            self.nameToClass[normalizedName] = cls
             logging.info("LDAP user data successfully loaded")
-        else:
-            with open(getStudentsFileName(), "r") as csv_file:
-                reader = csv.DictReader(csv_file, delimiter=",")
-                for rec in reader:
-                    key = formatName(rec['Prenom'], rec['Nom'])
-                    cls = rec["Classe"]
-
-                    normalizedName = normalizeName(key, cls)
-                    self.normalized_names.append(normalizedName)
-                    self.nameToClass[normalizedName] = cls
 
         if len(self.nameToClass) != len(self.normalized_names):
             logging.warn(

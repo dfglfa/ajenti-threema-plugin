@@ -13,15 +13,15 @@ def test_same_class():
     assert getClassDifference("1SBC2", "1L1") == 0
     assert getClassDifference("1L1", "1L2") == 0
     assert getClassDifference("5a", "5b") == 0
-    assert getClassDifference("6a", "6I") == 0
-    assert getClassDifference("7a", "5I") == 0
-    assert getClassDifference("8a", "4I") == 0
-    assert getClassDifference("9a", "3I") == 0
+    assert getClassDifference("6a", "6eI") == 0
+    assert getClassDifference("7a", "5eI") == 0
+    assert getClassDifference("8a", "4eI") == 0
+    assert getClassDifference("9a", "3eI") == 0
 
 
 def test_diffs():
     assert getClassDifference("TES", "5a") == 7
-    assert getClassDifference("9a", "6II") == 3
+    assert getClassDifference("9a", "6eII") == 3
     assert getClassDifference("1SMP", "7a") == 4
 
 
