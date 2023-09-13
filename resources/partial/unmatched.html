@@ -36,7 +36,7 @@
 
     <div ng-if="unmatchedTeachers.length > 0">
       <div ng-if="!total" class="bg-warning defaultBlock" style="padding: 15px; margin: 10px 0">
-        Teachers were detected in Threema that do not appear in ENT.
+        Teachers (or students not recognized as such) were detected in Threema that do not appear in ENT.
       </div>
       <div ng-repeat="u in unmatchedTeachers" class="row" style="padding: 2px 0; display: flex; align-items: center">
         <div class="col-xs-6 col-sm-4">{{u.username}}</div>
