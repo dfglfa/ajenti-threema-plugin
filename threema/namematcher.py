@@ -34,23 +34,6 @@ class NameMatcher:
         logging.info(
             f"**** Name database successfully initialized with {len(self.prefixedNameToClass)} entries ****")
 
-    def findMatchesFuzzy(self, name) -> list:
-        match = difflib.get_close_matches(
-            name, self.prefixedNameToClass.keys(), 2, cutoff=0.7)
-        if match:
-            logging.info(f"Found fuzzy match for {name}")
-            return [(res, self.prefixedNameToClass[res]) for res in match]
-        else:
-            return []
-
-    def _extractStudentName(self, rawName):
-        if "_" in rawName:
-            return rawName.split("_", 1)[1]
-        for cn in CLASS_NAMES:
-            if rawName.lower().startswith(cn.lower()):
-                return rawName[len(cn):]
-        return rawName
-
     def findMatches(self, name) -> list:
         studentName = self._extractStudentName(name)
         logging.info(f"Extracted {studentName} from {name}")
@@ -59,7 +42,7 @@ class NameMatcher:
             cls = self.formattedNameToClass[studentName]
             return [(f"{cls}_{studentName}", cls)]
 
-        return self.findMatchesFuzzy(name)
+        return self._findFuzzyMatches(name)
 
     def checkConsistency(self, credentials: list[Credentials]):
         match_result = {
@@ -120,3 +103,20 @@ class NameMatcher:
             mr for mr in match_result["suggestions"] if mr["matches"]]
 
         return match_result
+
+    def _findFuzzyMatches(self, name) -> list:
+        match = difflib.get_close_matches(
+            name, self.prefixedNameToClass.keys(), 2, cutoff=0.8)
+        if match:
+            logging.info(f"Found fuzzy match for {name}")
+            return [(res, self.prefixedNameToClass[res]) for res in match]
+        else:
+            return []
+
+    def _extractStudentName(self, rawName):
+        if "_" in rawName:
+            return rawName.split("_", 1)[1]
+        for cn in CLASS_NAMES:
+            if rawName.lower().startswith(cn.lower()):
+                return rawName[len(cn):]
+        return rawName
