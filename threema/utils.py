@@ -14,7 +14,7 @@ def replaceUmlauteAndSz(name):
 
 
 def formatName(firstname, lastname):
-    return f"{lastname}{firstname.split()[0]}"
+    return f"{lastname.replace(' ', '')}{firstname.split()[0]}"
 
 
 def sanitizeName(firstname, lastname):
@@ -42,6 +42,14 @@ def normalizeName(formattedName, className):
         className = classNameCaseInsensitive[0] if len(
             classNameCaseInsensitive) == 1 else className
     return f"{className}_{formattedName}"
+
+
+def normalizeClassName(cls):
+    cl = cls.lower()
+    for k in CLASS_TO_LEVEL:
+        if k.lower() == cl:
+            return k
+    return cls
 
 
 CLASS_TO_LEVEL = {

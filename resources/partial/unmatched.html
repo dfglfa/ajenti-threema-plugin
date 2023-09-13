@@ -1,12 +1,12 @@
 <div style="padding: 20px">
   <h1>Delete unmatched threema credentials</h1>
 
-  <progress-spinner ng-show="results === undefined"></progress-spinner>
+  <progress-spinner ng-show="unmatchedStudents === undefined"></progress-spinner>
 
-  <div ng-if="results">
+  <div ng-if="unmatchedStudents || unmatchedTeachers">
     <i class="fa fa-backward"></i>&nbsp;&nbsp;<a ng:href="/view/threema_connector/">Back to threema overview</a>
 
-    <div ng-if="!results.unmatched || results.unmatched.length === 0">
+    <div ng-if="unmatchedStudents.length === 0 && unmatchedTeachers.length === 0">
       <div class="alert alert-success" style="padding: 15px; margin: 10px 0">No unmatched Threema users found.</div>
     </div>
 
@@ -16,11 +16,11 @@
       </div>
     </div>
 
-    <div ng-if="results.unmatched && results.unmatched.length > 0">
+    <div ng-if="unmatchedStudents.length > 0">
       <div ng-if="!total" class="bg-warning defaultBlock" style="padding: 15px; margin: 10px 0">
-        Threema users were detected that do not appear in ENT.
+        Students were detected in Threema that do not appear in ENT.
       </div>
-      <div ng-repeat="u in results.unmatched" class="row" style="padding: 2px 0; display: flex; align-items: center">
+      <div ng-repeat="u in unmatchedStudents" class="row" style="padding: 2px 0; display: flex; align-items: center">
         <div class="col-xs-6 col-sm-4">{{u.username}}</div>
         <div class="col-xs-6 col-sm-4">
           <button class="btn btn-danger" ng-click="delete(u.id, u.username, true)" ng-disabled="isUpdating">
@@ -29,14 +29,23 @@
         </div>
       </div>
       <br />
-      <button
-        class="btn btn-danger"
-        ng-disabled="isUpdating"
-        ng-click="openCredentialsDeleteModal()"
-        ng-show="results.unmatched && results.unmatched.length > 1"
-      >
-        <i class="fa fa-skull"></i> &nbsp; Delete ALL
+      <button class="btn btn-danger" ng-disabled="isUpdating" ng-click="openCredentialsDeleteModal()" ng-show="unmatchedStudents.length > 1">
+        <i class="fa fa-skull"></i> &nbsp; Delete ALL unmatched students
       </button>
+    </div>
+
+    <div ng-if="unmatchedTeachers.length > 0">
+      <div ng-if="!total" class="bg-warning defaultBlock" style="padding: 15px; margin: 10px 0">
+        Teachers were detected in Threema that do not appear in ENT.
+      </div>
+      <div ng-repeat="u in unmatchedTeachers" class="row" style="padding: 2px 0; display: flex; align-items: center">
+        <div class="col-xs-6 col-sm-4">{{u.username}}</div>
+        <div class="col-xs-6 col-sm-4">
+          <button class="btn btn-danger" ng-click="delete(u.id, u.username, true)" ng-disabled="isUpdating">
+            <i class="fa fa-trash"></i> &nbsp; Delete
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </div>

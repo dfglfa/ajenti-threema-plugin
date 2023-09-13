@@ -1,13 +1,10 @@
-import csv
 import difflib
 import logging
 from operator import itemgetter
 
-from .config_loader import getStudentsFileName
-
 from .datamodel import Credentials
 
-from .utils import normalizeName, formatName, CLASS_TO_LEVEL
+from .utils import normalizeName, formatName, normalizeClassName, CLASS_TO_LEVEL
 
 
 CLASS_NAMES = CLASS_TO_LEVEL.keys()
@@ -15,33 +12,34 @@ CLASS_NAMES = CLASS_TO_LEVEL.keys()
 
 class NameMatcher:
     def __init__(self, userdata_provider):
-        self.nameToClass = {}
+        self.prefixedNameToClass = {}
+        self.formattedNameToClass = {}
         self.normalized_names = []
 
         user_data = userdata_provider.getUserData()
 
         for user in user_data:
-            key = formatName(user['givenName'], user['sn'])
-            cls = user["sophomorixAdminClass"]
+            formattedName = formatName(user['givenName'], user['sn'])
+            cls = normalizeClassName(user["sophomorixAdminClass"])
 
-            normalizedName = normalizeName(key, cls)
+            normalizedName = normalizeName(formattedName, cls)
             self.normalized_names.append(normalizedName)
-            self.nameToClass[normalizedName] = cls
-            logging.info("LDAP user data successfully loaded")
+            self.prefixedNameToClass[normalizedName] = cls
+            self.formattedNameToClass[formattedName] = cls
 
-        if len(self.nameToClass) != len(self.normalized_names):
+        if len(self.prefixedNameToClass) != len(self.normalized_names):
             logging.warn(
-                f"WARNING - Inconsistency detected: {len(self.nameToClass)} entries in class dict but {len(self.normalized_names)} normalized names found. Check list for duplicates!")
+                f"WARNING - Inconsistency detected: {len(self.prefixedNameToClass)} entries in class dict but {len(self.normalized_names)} normalized names found. Check list for duplicates!")
 
         logging.info(
-            f"**** Name database successfully initialized with {len(self.nameToClass)} entries ****")
+            f"**** Name database successfully initialized with {len(self.prefixedNameToClass)} entries ****")
 
     def findMatchesFuzzy(self, name) -> list:
         match = difflib.get_close_matches(
-            name, self.nameToClass.keys(), 2, cutoff=0.8)
+            name, self.prefixedNameToClass.keys(), 2, cutoff=0.8)
         if match:
             logging.info(f"Found fuzzy match for {name}")
-            return [(res, self.nameToClass[res]) for res in match]
+            return [(res, self.prefixedNameToClass[res]) for res in match]
         else:
             return []
 
@@ -56,10 +54,11 @@ class NameMatcher:
     def findMatches(self, name) -> list:
         studentName = self._extractStudentName(name)
         logging.info(f"Extracted {studentName} from {name}")
-        for cn in CLASS_NAMES:
-            if name.lower() == f"{cn}_{studentName}".lower() or name.lower() == f"{cn}{studentName}".lower():
-                logging.info(f"Found class change match for {name}")
-                return [(f"{cn}_{studentName}", cn)]
+
+        if studentName in self.formattedNameToClass:
+            cls = self.formattedNameToClass[studentName]
+            return [(f"{cls}_{studentName}", cls)]
+
         return self.findMatchesFuzzy(name)
 
     def checkConsistency(self, credentials: list[Credentials]):
@@ -73,7 +72,7 @@ class NameMatcher:
         creds_keys = [(c.id, c.username or "unknown") for c in credentials]
         for threemaId, username in creds_keys:
             if username in self.normalized_names:
-                matches = [(username, self.nameToClass[username])]
+                matches = [(username, self.prefixedNameToClass[username])]
                 logging.info(f"Found exact match for {username}")
                 match_result["ok"].append(
                     {"id": threemaId, "username": username})
