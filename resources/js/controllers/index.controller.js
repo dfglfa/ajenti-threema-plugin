@@ -1,5 +1,5 @@
 angular.module("dfglfa.threema_connector").controller("ThreemaConnectorIndexController", function ($scope, $http, classService) {
-  $scope.activetab = 2;
+  $scope.activetab = 0;
 
   loadCredentials();
 

@@ -73,6 +73,7 @@ class NameMatcher:
         creds_keys = [(c.id, c.username or "unknown") for c in credentials]
         for threemaId, username in creds_keys:
             if username in self.normalized_names:
+                matches = [(username, self.nameToClass[username])]
                 logging.info(f"Found exact match for {username}")
                 match_result["ok"].append(
                     {"id": threemaId, "username": username})

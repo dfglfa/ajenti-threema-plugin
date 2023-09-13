@@ -12,7 +12,7 @@ num_students = int(sys.argv[1]) if len(sys.argv) == 2 else 50
 
 
 def get_random_student():
-    return choice(FIRSTNAMES), choice(LASTNAMES), choice(list(CLASS_TO_LEVEL.keys()))
+    return choice(FIRSTNAMES), choice(LASTNAMES), choice(list(CLASS_TO_LEVEL.keys()) + ["teachers"])
 
 
 with open("ent_dummy_data.csv", "w") as ENT, open("threema_dummy_data.csv", "w") as THREEMA:
