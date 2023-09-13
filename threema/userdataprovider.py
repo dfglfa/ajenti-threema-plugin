@@ -1,7 +1,7 @@
 import csv
 import logging
 
-from threema.config_loader import getStudentsFileName
+from .config_loader import getStudentsFileName
 
 try:
     from aj.plugins.lmn_common.ldap.requests import LMNLdapRequests
