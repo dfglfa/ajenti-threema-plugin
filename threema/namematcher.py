@@ -116,7 +116,7 @@ class NameMatcher:
     def _extractStudentName(self, rawName):
         if "_" in rawName:
             return rawName.split("_", 1)[1]
-        for cn in CLASS_NAMES:
+        for cn in list(CLASS_NAMES) + ["6II", "6I", "5II", "5I", "4II", "4I", "3II", "3I"]:
             if rawName.lower().startswith(cn.lower()):
                 return rawName[len(cn):]
         return rawName
