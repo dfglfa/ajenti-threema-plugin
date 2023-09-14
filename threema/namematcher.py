@@ -62,8 +62,9 @@ class NameMatcher:
             else:
                 matches = self.findMatches(username)
                 if not matches:
-                    match_result["unmatched"].append(
-                        {"id": threemaId, "username": username})
+                    if self._extractStudentName(username) != username:
+                        match_result["unmatched"].append(
+                            {"id": threemaId, "username": username})
                     continue
                 else:
                     if username == matches[0][0]:
