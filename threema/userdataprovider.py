@@ -24,4 +24,7 @@ class UserDataProvider():
             with open(filename, "r") as csv_file:
                 reader = csv.DictReader(csv_file, delimiter=",")
                 return [{"sn": rec['Nom'], "givenName": rec['Prenom'], "sophomorixAdminClass": rec["Classe"]} for rec in reader]
-        return user_data
+
+        active_users = [
+            u for u in user_data if u["sophomorixAdminClass"].lower() != "attic"]
+        return active_users
