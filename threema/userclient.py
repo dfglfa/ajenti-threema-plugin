@@ -16,10 +16,6 @@ class UserClient:
         if params.get("filterUsername"):
             url += f"?filterUsername={params['filterUsername']}"
 
-        # Not ideal performance-wise ... consider caching or fetching each user
-        # record separately (= n requests for a class with n members)
-        params["pageSize"] = 2000
-
         resp = requests.get(url, params=params,
                             headers=self.authHeader)
         try:
@@ -32,12 +28,18 @@ class UserClient:
 
     def getUsersWithLinkedCredentials(self):
         url = f"{self.baseUrl}/users"
-        resp = requests.get(url, headers=self.authHeader)
+
+        # Not ideal performance-wise ... consider caching or fetching each user
+        # record separately (= n requests for a class with n members)
+        params = {"pageSize": 2000}
+
+        resp = requests.get(
+            url, params=params, headers=self.authHeader)
 
         data = json.loads(resp.content)
         users = data["users"]
 
-        print(users)
+        logging.info(f"**** Found {len(users)} users with credentials")
 
         return {self._extractCredsForUser(u): u for u in users}
 
