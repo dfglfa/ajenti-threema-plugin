@@ -16,6 +16,10 @@ class UserClient:
         if params.get("filterUsername"):
             url += f"?filterUsername={params['filterUsername']}"
 
+        # Not ideal performance-wise ... consider caching or fetching each user
+        # record separately (= n requests for a class with n members)
+        params["pageSize"] = 2000
+
         resp = requests.get(url, params=params,
                             headers=self.authHeader)
         try:
