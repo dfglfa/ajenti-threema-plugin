@@ -17,14 +17,17 @@ angular
 
     function loadResults() {
       return $http.post("/api/threema_connector/credentials/check", {}).then((resp) => {
+        $scope.results = resp.data;
+        /*
+        // Enable code to filter teachers from missing records
         const missing = [];
         for (const rec of resp.data.unused) {
           if (rec && classService.containsClass(rec)) {
             missing.push(rec);
           }
         }
-        $scope.results = resp.data;
         $scope.results.unused = missing;
+        */
       });
     }
 
