@@ -35,8 +35,6 @@ class UserClient:
             logging.info("Fetching all users from threema")
             url = f"{self.baseUrl}/users"
 
-            # Not ideal performance-wise ... consider caching or fetching each user
-            # record separately (= n requests for a class with n members)
             params = {"pageSize": 2000}
 
             resp = requests.get(
