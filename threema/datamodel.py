@@ -75,3 +75,51 @@ class Credentials:
         if includePasswords:
             d["password"] = self.password
         return d
+
+
+class Contact:
+    """
+
+    Example:
+
+    {
+    "_links": [
+        {
+        "ref": "detail",
+        "link": "https://work.threema.ch/api/v1/contacts/ECHOECHO"
+        },
+        {
+        "ref": "categories",
+        "link": "https://work.threema.ch/api/v1/contacts/ECHOECHO/categories"
+        },
+        {
+        "ref": "subscription",
+        "link": "https://work.threema.ch/api/v1"
+        }
+    ],
+    "threemaId": "B4UXXX11", => SEEMS TO BE "id" REALLY
+    "type": "auto",
+    "firstName": "Echo",
+    "lastName": "Ohce",
+    "enabled": true
+    }
+    """
+
+    def __init__(self, **credentialsData):
+        for key, val in credentialsData.items():
+            setattr(self, key, val)
+
+    def __repr__(self):
+        return f"Contact: {self.firstName} {self.lastName} ID: {self.id} enabled: {self.enabled}"
+
+    def __str__(self):
+        return f"Contact: {self.firstName} {self.lastName} ID: {self.id} enabled: {self.enabled}"
+
+    def toJsonDict(self):
+        d = {
+            "id": self.id,
+            "firstName": self.firstName,
+            "lastName": self.lastName,
+            "enabled": self.enabled
+        }
+        return d

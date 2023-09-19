@@ -1,0 +1,77 @@
+<progress-spinner ng:show="contacts === undefined"></progress-spinner>
+<div ng:show="!!contacts && contacts.length === 0">
+  <br />
+  <div class="alert alert-info">
+    <i class="fa fa-info-circle"></i>
+    <span translate="">There are no contacts to manage yet.</span>
+  </div>
+</div>
+<div ng:show="contacts.length > 0" style="padding-top: 20px">
+  <div class="input-group">
+    <input ng:model="filter" type="search" autofocus class="form-control" placeholder="Filter" typeahead-min-length="1" />
+    <div uib-dropdown class="input-group-btn">
+      <button class="btn btn-default" uib-dropdown-toggle>
+        <i class="fa fa-sort-amount-asc"></i> {{sort.name}}
+        <span class="caret"></span>
+      </button>
+      <ul uib-dropdown-menu class="dropdown-menu-right" style="width: 150px">
+        <li ng:repeat="sort in sorts">
+          <a ng:click="sortClicked(sort)"> <i class="fa fa-sort-amount-asc"></i> {{sort.name}} </a>
+        </li>
+      </ul>
+    </div>
+    <div uib-dropdown class="input-group-btn" auto-close="outsideClick">
+      <button class="btn btn-default" uib-dropdown-toggle>
+        <i class="fa fa-list-ol"></i> {{'Rows'|translate}}
+        <span class="caret"></span>
+      </button>
+      <ul uib-dropdown-menu class="dropdown-menu-right" style="width: 200px">
+        <li ng:repeat="size in [10, 50, 100, 500, 1000]">
+          <a ng:click="paging.pageSize = size"><i class="fa fa-list-ol"></i> {{size}} <span translate>contacts</span></a>
+        </li>
+        <li>
+          <div class="input-group" style="display: table">
+            <div class="input-group-addon">Other:</div>
+            <input ng:model="paging.pageSize" type="number" autofocus class="form-control" />
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <table class="table" ng:class="{'lmn-blurred': blurred}" style="width: 100%">
+    <tr>
+      <th width="50">Threema ID</th>
+      <th width="150">First name</th>
+      <th width="150">Last name</th>
+      <th width="30">Active</th>
+    </tr>
+    <tr ng:repeat="contact in contacts|filter:filter|orderBy:sort.fx:reverse|page:paging.page:paging.pageSize">
+      <td width="50" style="vertical-align: middle" class="text-left">{{contact.id}}</td>
+      <td width="150" style="vertical-align: middle" class="text-left">{{contact.firstName}}</td>
+      <td width="150" style="vertical-align: middle" class="text-left">{{contact.lastName}}</td>
+      <td width="30" style="vertical-align: middle" class="text-left">
+        <span ng:show="contact.enabled" class="badge" style="background-color: green"
+          ><strong><i class="fa fa-check"></i></strong
+        ></span>
+        <span ng:show="!contact.enabled">&dash;</span>
+      </td>
+    </tr>
+  </table>
+
+  <br />
+  <ul
+    uib-pagination
+    ng:show="contacts.length > paging.pageSize"
+    ng-model="paging.page"
+    total-items="contacts.length"
+    items-per-page="paging.pageSize"
+    max-size="10"
+    rotate="true"
+    boundary-links="true"
+  ></ul>
+
+  <div style="margin-bottom: 30px">
+    <button class="btn btn-primary" ng:click="match()"><i class="fa fa-user-check"></i> &nbsp; Match against users</button>
+    <button class="btn btn-warning" ng:click="sync()"><i class="fa fa-user-check"></i> &nbsp; Sync contacts to users</button>
+  </div>
+</div>

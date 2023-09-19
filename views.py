@@ -108,3 +108,9 @@ class Handler(HttpPlugin):
     @endpoint(api=True)
     def handle_api_get_users_with_linked_credentials(self, http_context):
         return self.client.getUsersWithLinkedCredentials()
+
+    @get(r'/api/threema_connector/contacts')
+    @authorize('lm:threema:list')
+    @endpoint(api=True)
+    def handle_api_get_contacts(self, http_context):
+        return self.client.getContacts()

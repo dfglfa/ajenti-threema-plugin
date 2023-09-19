@@ -1,6 +1,8 @@
 
 import logging
 
+from .contactsclient import ContactsClient
+
 
 from .config_loader import getThreemaApiKey, getThreemaBroadcastApiKey, getThreemaBroadcastId
 from .credentialsclient import CredentialsClient
@@ -33,6 +35,8 @@ class ThreemaAdminClient:
         self.userClient = UserClient(
             DEFAULT_USERS_BASE_URL, authHeader={"X-Api-Key": API_KEY})
         self.credentialsClient = CredentialsClient(
+            DEFAULT_USERS_BASE_URL, authHeader={"X-Api-Key": API_KEY})
+        self.contactsClient = ContactsClient(
             DEFAULT_USERS_BASE_URL, authHeader={"X-Api-Key": API_KEY})
         self.groupsClient = GroupClient(BROADCAST_ID,
                                         DEFAULT_BROADCAST_BASE_URL, authHeader={"X-Api-Key": BROADCAST_API_KEY})
@@ -81,3 +85,6 @@ class ThreemaAdminClient:
 
     def addGroupMembers(self, groupId, members):
         return self.groupsClient.addGroupMembers(groupId, members)
+
+    def getContacts(self):
+        return self.contactsClient.getAll()
