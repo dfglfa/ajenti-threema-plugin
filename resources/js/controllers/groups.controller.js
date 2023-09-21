@@ -65,7 +65,13 @@ angular.module("dfglfa.threema_connector").controller("ThreemaGroupsController",
   }
 
   function loadMatchingUserDataForListedCredentials() {
-    return $http.get("/api/threema_connector/users_with_credentials").then(({ data: userForCreds }) => {
+    return $http.get("/api/threema_connector/users").then(({ data: users }) => {
+      const userForCreds = {};
+
+      for (const u of users) {
+        userForCreds[u.credentials_id] = u;
+      }
+
       for (const sd of $scope.students) {
         if (sd.usage > 0 && userForCreds[sd.id]) {
           sd.nickname = userForCreds[sd.id].nickname;

@@ -1,14 +1,20 @@
 <uib:tabset active="activetab" style="margin: 20px 0">
   <uib:tab heading="{{'Students'|translate}}">
-    <students-list credentials="studentsCredentials" on-credentials-change="onCredsChange" />
+    <div ng-if="activetab === 0">
+      <students-list credentials="studentsCredentials" on-credentials-change="onCredsChange" />
+    </div>
   </uib:tab>
   <uib:tab heading="{{'Teachers'|translate}}">
-    <teachers-list credentials="teachersCredentials" on-credentials-change="onCredsChange" />
+    <div ng-if="activetab === 1">
+      <teachers-list credentials="teachersCredentials" on-credentials-change="onCredsChange" />
+    </div>
   </uib:tab>
   <uib:tab heading="{{'Groups'|translate}}">
-    <groups />
+    <div ng-if="activetab === 2">
+      <groups />
+    </div>
   </uib:tab>
-  <uib:tab heading="{{'Contacts'|translate}}">
-    <contacts />
+  <uib:tab heading="{{'Normalization'|translate}}">
+    <div ng-if="activetab === 3">Coming soon ...</div>
   </uib:tab>
 </uib:tabset>

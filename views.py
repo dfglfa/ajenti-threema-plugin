@@ -103,14 +103,20 @@ class Handler(HttpPlugin):
         body = http_context.json_body()
         return self.client.createGroup(name=body.get("name"), members=body.get("members"))
 
-    @get(r'/api/threema_connector/users_with_credentials')
+    @get(r'/api/threema_connector/users')
     @authorize('lm:threema:list')
     @endpoint(api=True)
-    def handle_api_get_users_with_linked_credentials(self, http_context):
-        return self.client.getUsersWithLinkedCredentials()
+    def handle_api_get_users(self, http_context):
+        return self.client.getAllUsers()
 
     @get(r'/api/threema_connector/contacts')
     @authorize('lm:threema:list')
     @endpoint(api=True)
     def handle_api_get_contacts(self, http_context):
-        return self.client.getContacts()
+        return [c.toJsonDict() for c in self.client.getContacts()]
+
+    @get(r'/api/threema_connector/normalizations')
+    @authorize('lm:threema:list')
+    @endpoint(api=True)
+    def handle_api_get_normalizations(self, http_context):
+        return self.client.findNormalizations()

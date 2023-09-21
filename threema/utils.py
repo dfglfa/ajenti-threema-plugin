@@ -14,7 +14,15 @@ def replaceUmlauteAndSz(name):
 
 
 def formatName(firstname, lastname):
-    return f"{lastname.replace(' ', '')}{firstname.split()[0]}"
+    return f"{formatLastname(lastname)}{formatFirstname(firstname)}"
+
+
+def formatFirstname(firstname):
+    return firstname.split()[0]
+
+
+def formatLastname(lastname):
+    return lastname.replace(' ', '')
 
 
 def sanitizeName(firstname, lastname):

@@ -1,9 +1,9 @@
 
 import logging
 
+
 from .contactsclient import ContactsClient
-
-
+from .normalizationClient import NormalizationClient
 from .config_loader import getThreemaApiKey, getThreemaBroadcastApiKey, getThreemaBroadcastId
 from .credentialsclient import CredentialsClient
 from .userclient import UserClient
@@ -40,12 +40,11 @@ class ThreemaAdminClient:
             DEFAULT_USERS_BASE_URL, authHeader={"X-Api-Key": API_KEY})
         self.groupsClient = GroupClient(BROADCAST_ID,
                                         DEFAULT_BROADCAST_BASE_URL, authHeader={"X-Api-Key": BROADCAST_API_KEY})
+        self.normalizationClient = NormalizationClient(
+            self.credentialsClient, self.userClient, self.contactsClient)
 
     def getAllUsers(self, **params):
-        return self.userClient.getAll(**params)
-
-    def getUsersWithLinkedCredentials(self):
-        return self.userClient.getUsersWithLinkedCredentials()
+        return self.userClient.getAll()
 
     def getAllCredentials(self, **params):
         return self.credentialsClient.getAll(**params)
@@ -88,3 +87,6 @@ class ThreemaAdminClient:
 
     def getContacts(self):
         return self.contactsClient.getAll()
+
+    def findNormalizations(self):
+        return self.normalizationClient.findNormalizations()

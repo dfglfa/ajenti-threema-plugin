@@ -4,7 +4,7 @@ from operator import itemgetter
 
 from .datamodel import Credentials
 
-from .utils import normalizeName, formatName, normalizeClassName, CLASS_TO_LEVEL
+from .utils import CLASS_TO_LEVEL
 
 
 CLASS_NAMES = CLASS_TO_LEVEL.keys()
@@ -19,13 +19,9 @@ class NameMatcher:
         user_data = userdata_provider.getUserData()
 
         for user in user_data:
-            formattedName = formatName(user['givenName'], user['sn'])
-            cls = normalizeClassName(user["sophomorixAdminClass"])
-
-            normalizedName = normalizeName(formattedName, cls)
-            self.normalized_names.append(normalizedName)
-            self.prefixedNameToClass[normalizedName] = cls
-            self.formattedNameToClass[formattedName] = cls
+            self.normalized_names.append(user["normalizedName"])
+            self.prefixedNameToClass[user["normalizedName"]] = user["cls"]
+            self.formattedNameToClass[user["formattedName"]] = user["cls"]
 
         if len(self.prefixedNameToClass) != len(self.normalized_names):
             logging.warn(

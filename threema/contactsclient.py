@@ -28,7 +28,7 @@ class ContactsClient:
                 contacts = data["contacts"]
                 print(f"Contacts: {contacts}")
 
-                contacts = [Contact(**c).toJsonDict() for c in contacts]
+                contacts = [Contact(**c) for c in contacts]
             except TypeError as te:
                 logging.exception("Error while decoding:", te)
                 contacts = []

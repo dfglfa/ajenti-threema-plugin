@@ -40,12 +40,15 @@
   </div>
   <table class="table" ng:class="{'lmn-blurred': blurred}" style="width: 100%">
     <tr>
+      <th width="150">Credentials username</th>
       <th width="50">Threema ID</th>
       <th width="150">First name</th>
       <th width="150">Last name</th>
       <th width="30">Active</th>
+      <th width="150">Nickname</th>
     </tr>
     <tr ng:repeat="contact in contacts|filter:filter|orderBy:sort.fx:reverse|page:paging.page:paging.pageSize">
+      <td width="150" style="vertical-align: middle" class="text-left">{{contact.credentialsUsername}}</td>
       <td width="50" style="vertical-align: middle" class="text-left">{{contact.id}}</td>
       <td width="150" style="vertical-align: middle" class="text-left">{{contact.firstName}}</td>
       <td width="150" style="vertical-align: middle" class="text-left">{{contact.lastName}}</td>
@@ -55,6 +58,7 @@
         ></span>
         <span ng:show="!contact.enabled">&dash;</span>
       </td>
+      <td width="150" style="vertical-align: middle" class="text-left">{{contact.matchingUsername}}</td>
     </tr>
   </table>
 

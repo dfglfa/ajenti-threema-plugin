@@ -27,8 +27,28 @@ angular.module("dfglfa.threema_connector").controller("ContactsController", func
   loadResults();
 
   function loadResults() {
-    return $http.get("/api/threema_connector/contacts", {}).then((resp) => {
-      $scope.contacts = resp.data;
+    return Promise.all([
+      $http.get("/api/threema_connector/credentials", {}),
+      $http.get("/api/threema_connector/users", {}),
+      $http.get("/api/threema_connector/contacts", {}),
+    ]).then(([{ data: credentials }, { data: users }, { data: contacts }]) => {
+      console.log("Credentials:", credentials);
+      console.log("Users:", users);
+      console.log("Contacts:", contacts);
+    });
+  }
+
+  function matchUsers() {
+    return $http.get("/api/threema_connector/users", {}).then(({ data: users }) => {
+      const user_dict = {};
+      for (const u of resp.data) {
+        user_dict[u.id] = u;
+      }
+      $scope.user_dict = user_dict;
+
+      for (const contact of $scope.contacts) {
+        contact.matchingUsername = user_dict[contact.id] ? user_dict[contact.id].nickname : "NO MATCH";
+      }
     });
   }
 
