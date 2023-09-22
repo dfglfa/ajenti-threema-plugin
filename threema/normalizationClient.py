@@ -57,7 +57,8 @@ class NormalizationClient():
                     "firstNameNormalized": expected_contact_firstname,
                     "lastName": contact.lastName,
                     "lastNameNormalized": lastName,
-                    "threemaId": user["id"]
+                    "threemaId": user["id"],
+                    "credentialsName": cred_name
                 }
                 changes.append(change)
 
