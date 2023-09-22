@@ -2,8 +2,6 @@ angular.module("dfglfa.threema_connector").controller("ContactsController", func
   pageTitle.set(gettext("Contacts"));
 
   $scope.isUpdating = false;
-  $scope.match = match;
-  $scope.synchronize = synchronize;
 
   $scope.sorts = [
     { name: "First name", fx: (c) => c.firstName },
@@ -24,47 +22,26 @@ angular.module("dfglfa.threema_connector").controller("ContactsController", func
 
   // Check on page load
   $scope.contacts = undefined;
-  loadResults();
+  loadResults().then(matchUsers);
 
   function loadResults() {
-    return Promise.all([
-      $http.get("/api/threema_connector/credentials", {}),
-      $http.get("/api/threema_connector/users", {}),
-      $http.get("/api/threema_connector/contacts", {}),
-    ]).then(([{ data: credentials }, { data: users }, { data: contacts }]) => {
-      console.log("Credentials:", credentials);
-      console.log("Users:", users);
-      console.log("Contacts:", contacts);
+    return $http.get("/api/threema_connector/contacts", {}).then(({ data: contacts }) => {
+      $scope.contacts = contacts;
     });
   }
 
   function matchUsers() {
     return $http.get("/api/threema_connector/users", {}).then(({ data: users }) => {
-      const user_dict = {};
-      for (const u of resp.data) {
-        user_dict[u.id] = u;
+      const userDict = {};
+      for (const u of users) {
+        userDict[u.id] = u;
       }
-      $scope.user_dict = user_dict;
 
-      for (const contact of $scope.contacts) {
-        contact.matchingUsername = user_dict[contact.id] ? user_dict[contact.id].nickname : "NO MATCH";
+      for (const c of $scope.contacts) {
+        if (userDict[c.id]) {
+          c.matchingUsername = userDict[c.id].nickname;
+        }
       }
     });
-  }
-
-  function match() {
-    return $http.get("/api/threema_connector/contacts/match").then(() => {
-      notify.success(`Match done`);
-    });
-  }
-
-  function synchronize() {
-    $scope.isUpdating = true;
-    return $http
-      .post("/api/threema_connector/contacts/sync")
-      .then(() => {
-        notify.success(`Sync done`);
-      })
-      .then(loadResults);
   }
 });

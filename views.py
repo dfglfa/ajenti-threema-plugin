@@ -120,3 +120,13 @@ class Handler(HttpPlugin):
     @endpoint(api=True)
     def handle_api_get_normalizations(self, http_context):
         return self.client.findNormalizations()
+
+    @post(r'/api/threema_connector/normalize')
+    @authorize('lm:threema:list')
+    @endpoint(api=True)
+    def handle_api_apply_change(self, http_context):
+        body = http_context.json_body()
+        threemaId = body.get("threemaId")
+        firstname = body.get("firstName")
+        lastname = body.get("lastName")
+        return self.client.applyContactChange(threemaId, firstname, lastname)

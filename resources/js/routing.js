@@ -18,4 +18,9 @@ angular.module("dfglfa.threema_connector").config(($routeProvider) => {
     templateUrl: "/threema_connector:resources/partial/suggestions.html",
     controller: "SuggestionsController",
   });
+
+  $routeProvider.when("/view/threema_connector/normalizations", {
+    templateUrl: "/threema_connector:resources/partial/normalizations.html",
+    controller: "NormalizationsController",
+  });
 });

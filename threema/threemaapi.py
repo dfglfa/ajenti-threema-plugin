@@ -90,3 +90,6 @@ class ThreemaAdminClient:
 
     def findNormalizations(self):
         return self.normalizationClient.findNormalizations()
+
+    def applyContactChange(self, threemaId, firstname, lastname):
+        return self.contactsClient.updateContact(threemaId, firstname, lastname)

@@ -1,0 +1,36 @@
+<div style="padding: 20px">
+  <h1>Normalize contact names</h1>
+
+  <progress-spinner ng-show="changes === undefined"></progress-spinner>
+
+  <div ng-if="changes">
+    <i class="fa fa-backward"></i>&nbsp;&nbsp;<a ng:href="/view/threema_connector/">Back to threema overview</a>
+
+    <div ng-if="changes.length === 0">
+      <div class="alert alert-success" style="padding: 15px; margin: 10px 0">
+        All contact names are in sync with their respective credentials names.
+      </div>
+    </div>
+
+    <div class="progress" style="margin-top: 20px" ng-if="total > 0">
+      <div class="progress-bar progress-bar-danger progress-bar-striped active" role="progressbar" ng-style="{'width': (100*done/total) + '%'}">
+        <span>{{done}} / {{total}}</span>
+      </div>
+    </div>
+
+    <div ng-if="changes.length > 0">
+      <div ng-if="!total" class="bg-warning defaultBlock" style="padding: 15px; margin: 10px 0">The following deviations were detected:</div>
+      <div ng-repeat="c in changes" class="row" style="padding: 2px 0; display: flex; align-items: center">
+        <div class="col-xs-12 col-sm-8">
+          <div>Credentials: <strong>{{c.credentialsName}}</strong></div>
+          <div ng-if="c.firstNameNormalized !== c.firstName">Contact first name: '{{c.firstName}}' => <strong>{{c.firstNameNormalized}}</strong></div>
+          <div ng-if="c.lastNameNormalized !== c.lastName">Contact last name: '{{c.lastName}}' => <strong>{{c.lastNameNormalized}}</strong></div>
+        </div>
+        <div class="col-xs-6 col-sm-4">
+          <button class="btn btn-danger" ng-click="apply(c)" ng-disabled="isUpdating" ng-show="!c.done">Apply</button>
+          <div class="text-success" ng-show="c.done">OK</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -37,3 +37,20 @@ class ContactsClient:
             CONTACTS_CACHE["contacts"] = contacts
             CONTACTS_CACHE["timestamp"] = now
         return CONTACTS_CACHE["contacts"]
+
+    def updateContact(self, threemaId, firstname, lastname):
+        url = f"{self.baseUrl}/contacts/{threemaId}"
+
+        logging.info(
+            f"Updating user {threemaId} to firstname '{firstname}' and lastname '{lastname}'")
+        resp = requests.put(url,
+                            json={"firstName": firstname,
+                                  "lastName": lastname, "enabled": True},
+                            headers=self.authHeader)
+
+        if resp.status_code <= 400:
+            # avoid caching
+            CONTACTS_CACHE["timestamp"] = None
+            return "ok"
+        else:
+            return "error"
