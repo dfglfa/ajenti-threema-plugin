@@ -35,7 +35,6 @@ class NormalizationClient():
                 continue
 
             firstName, lastName, cls = normalized_name_to_common_name[cred_name]
-            expected_nickname = f"{firstName} {lastName} {cls}"
 
             if cred_id not in cred_id_to_user:
                 logging.info(f"Cannot find user for credentials {cred_name}")

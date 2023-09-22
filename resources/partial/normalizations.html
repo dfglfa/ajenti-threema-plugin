@@ -27,7 +27,7 @@
           <div ng-if="c.lastNameNormalized !== c.lastName">Contact last name: '{{c.lastName}}' => <strong>{{c.lastNameNormalized}}</strong></div>
         </div>
         <div class="col-xs-6 col-sm-4">
-          <button class="btn btn-danger" ng-click="apply(c)" ng-disabled="isUpdating" ng-show="!c.done">Apply</button>
+          <button class="btn btn-info" ng-click="apply(c)" ng-disabled="isUpdating" ng-show="!c.done">Apply changes</button>
           <div class="text-success" ng-show="c.done">OK</div>
         </div>
       </div>
