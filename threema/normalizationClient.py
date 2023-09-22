@@ -47,7 +47,7 @@ class NormalizationClient():
                 continue
 
             contact = user_id_to_contact[user["id"]]
-            expected_contact_firstname = f"{cls} {firstName}"
+            expected_contact_firstname = f"{cls} {firstName}" if cls != "teachers" else firstName
             if contact.firstName != expected_contact_firstname or contact.lastName != lastName:
                 logging.info(
                     f"Deviation for contact {contact.firstName} {contact.lastName}, expected {expected_contact_firstname} {lastName}")
