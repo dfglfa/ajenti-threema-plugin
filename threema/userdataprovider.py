@@ -5,19 +5,18 @@ from .utils import formatFirstname, formatLastname, formatName, normalizeClassNa
 from .config_loader import getStudentsFileName
 
 try:
-    from aj.plugins.lmn_common.ldap.requests import LMNLdapRequests
+    from linuxmusterTools.ldapconnector import LMNLdapReader as ldapreader
 except ImportError:
-    LMNLdapRequests = None
+    ldapreader = None
 
 
 class UserDataProvider():
     def getUserData(self):
         user_data = []
-        if LMNLdapRequests:
+        if ldapreader:
             logging.info("Fetching user data via LDAP")
-            lr = LMNLdapRequests(None)
-            user_data += lr.get('/role/student', school_oriented=False)
-            user_data += lr.get('/role/teacher', school_oriented=False)
+            user_data += ldapreader.get('/roles/student')
+            user_data += ldapreader.get('/roles/teacher')
         else:
             filename = getStudentsFileName()
             logging.warn(
