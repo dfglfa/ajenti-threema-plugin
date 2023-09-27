@@ -1,13 +1,13 @@
 
 import logging
 
-
 from .contactsclient import ContactsClient
 from .normalizationClient import NormalizationClient
 from .config_loader import getThreemaApiKey, getThreemaBroadcastApiKey, getThreemaBroadcastId
 from .credentialsclient import CredentialsClient
 from .userclient import UserClient
 from .groupclient import GroupClient
+from .datamodel import User
 
 API_KEY = getThreemaApiKey()
 if not API_KEY:
@@ -44,7 +44,7 @@ class ThreemaAdminClient:
             self.credentialsClient, self.userClient, self.contactsClient)
 
     def getAllUsers(self, **params):
-        return self.userClient.getAll()
+        return self.userClient.getAll(**params)
 
     def getAllCredentials(self, **params):
         return self.credentialsClient.getAll(**params)
@@ -76,8 +76,9 @@ class ThreemaAdminClient:
     def getGroups(self):
         return self.groupsClient.getAllGroups()
 
-    def getGroupMembers(self, groupId):
-        return self.groupsClient.getGroupMembers(groupId)
+    def getGroupMembers(self, groupId) -> list[User]:
+        members = self.groupsClient.getGroupMembers(groupId)
+        return self.userClient.getAll(filterIds=[m["id"] for m in members])
 
     def createGroup(self, name, members):
         return self.groupsClient.createGroup(name, members)

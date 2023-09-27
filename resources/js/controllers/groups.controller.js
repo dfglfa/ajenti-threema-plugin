@@ -1,11 +1,12 @@
-angular.module("dfglfa.threema_connector").controller("ThreemaGroupsController", function ($scope, $http) {
-  $scope.selectedClass = undefined;
+angular.module("dfglfa.threema_connector").controller("ThreemaGroupsController", function ($scope, $http, classService) {
+  $scope.selectedGroup = undefined;
 
   // Global dict with classNames as keys if group exists and current members as a list of userids
   $scope.threemaGroupMembers = {};
   $scope.groupIdForName = {};
+  $scope.otherGroups = [];
 
-  $scope.selectClass = selectClass;
+  $scope.selectGroup = selectGroup;
   $scope.toggleVisibility = toggleVisibility;
   $scope.downloadPasswordList = downloadPasswordList;
   $scope.createGroupWithActiveMembers = createGroupWithActiveMembers;
@@ -22,23 +23,25 @@ angular.module("dfglfa.threema_connector").controller("ThreemaGroupsController",
     12: ["TL1", "TL2", "TES", "TSMP", "TSBC1", "TSBC2"],
   };
 
+  const CLASS_NAMES = classService.getClassNames();
+
   loadDataForAllGroups();
 
-  function selectClass(cls) {
-    if (cls) {
-      $scope.selectedClass = cls;
-      reloadStudentsDataForSelectedClass().then(loadMembersForSelectedClass);
+  function selectGroup(group) {
+    if (group) {
+      $scope.selectedGroup = group;
+      loadStudentsDataForSelectedGroup().then(loadMembersForSelectedGroup);
     } else {
-      $scope.selectedClass = undefined;
+      $scope.selectedGroup = undefined;
     }
   }
 
-  function reloadStudentsDataForSelectedClass() {
+  function loadStudentsDataForSelectedGroup() {
     $scope.students = undefined;
-    return $http.get("/api/threema_connector/credentials_with_passwords", { params: { classname: $scope.selectedClass } }).then((resp) => {
+    return $http.get("/api/threema_connector/credentials_with_passwords", { params: { classname: $scope.selectedGroup } }).then((resp) => {
       $scope.students = resp.data;
       $scope.activeMembers = $scope.students.filter((s) => s.usage > 0);
-      $scope.groupExists = $scope.existingGroupNames.indexOf($scope.selectedClass) > -1;
+      $scope.groupExists = $scope.existingGroupNames.indexOf($scope.selectedGroup) > -1;
       loadMatchingUserDataForListedCredentials();
     });
   }
@@ -46,19 +49,35 @@ angular.module("dfglfa.threema_connector").controller("ThreemaGroupsController",
   function loadDataForAllGroups() {
     return $http.get("/api/threema_connector/groups").then(({ data: groups }) => {
       $scope.existingGroupNames = groups.map((g) => g.name);
+      const otherGroups = [];
       for (const group of groups) {
         $scope.groupIdForName[group.name] = group.id;
+
+        if (CLASS_NAMES.indexOf(group.name) === -1) {
+          otherGroups.push(group);
+        }
       }
+
+      $scope.otherGroups = otherGroups;
     });
   }
 
-  function loadMembersForSelectedClass() {
-    if ($scope.selectedClass && $scope.existingGroupNames.indexOf($scope.selectedClass) > -1) {
-      const selectedGroupId = $scope.groupIdForName[$scope.selectedClass];
-      $http.get(`/api/threema_connector/group_members?groupId=${selectedGroupId}`).then(({ data: members }) => {
-        $scope.threemaGroupMembers[$scope.selectedClass] = members.map((m) => m.id);
+  function loadMembersForSelectedGroup() {
+    if ($scope.selectedGroup && $scope.existingGroupNames.indexOf($scope.selectedGroup) > -1) {
+      const selectedGroupId = $scope.groupIdForName[$scope.selectedGroup];
+      $http.get(`/api/threema_connector/group_members?groupId=${selectedGroupId}`).then(({ data: users }) => {
+        const credentialsAlreadyListed = $scope.students.map((s) => s.id);
+        console.log("Listed", credentialsAlreadyListed);
+        for (const u of users) {
+          if (credentialsAlreadyListed.indexOf(u.credentials_id) === -1) {
+            console.log(u.credentials_id, "is not yet listed in", credentialsAlreadyListed);
+            $scope.students.push({ username: "?", nickname: u.nickname, id: u.id });
+          }
+        }
+
+        $scope.threemaGroupMembers[$scope.selectedGroup] = users.map((m) => m.id);
         $scope.activeMembersMissingInGroup = $scope.students.filter(
-          (s) => s.usage > 0 && $scope.threemaGroupMembers[$scope.selectedClass].indexOf(s.userid) === -1
+          (s) => s.usage > 0 && $scope.threemaGroupMembers[$scope.selectedGroup].indexOf(s.userid) === -1
         );
       });
     }
@@ -83,18 +102,18 @@ angular.module("dfglfa.threema_connector").controller("ThreemaGroupsController",
 
   function createGroupWithActiveMembers() {
     return $http
-      .post("/api/threema_connector/groups", { name: $scope.selectedClass, members: $scope.students.filter((s) => s.usage > 0).map((s) => s.userid) })
+      .post("/api/threema_connector/groups", { name: $scope.selectedGroup, members: $scope.students.filter((s) => s.usage > 0).map((s) => s.userid) })
       .then(() => {
-        loadDataForAllGroups().then(reloadStudentsDataForSelectedClass);
+        loadDataForAllGroups().then(reloadStudentsDataForselectedGroup);
       });
   }
 
   function addAllMissingActiveMembersToGroup() {
-    const selectedGroupId = $scope.groupIdForName[$scope.selectedClass];
-    const members = $scope.students.filter((s) => s.usage > 0 && $scope.threemaGroupMembers[$scope.selectedClass].indexOf(s.userid) === -1);
+    const selectedGroupId = $scope.groupIdForName[$scope.selectedGroup];
+    const members = $scope.students.filter((s) => s.usage > 0 && $scope.threemaGroupMembers[$scope.selectedGroup].indexOf(s.userid) === -1);
     console.log("Adding members", members, "to group with id", selectedGroupId);
     return $http.post("/api/threema_connector/group_members", { groupId: selectedGroupId, members: members }).then(() => {
-      reloadStudentsDataForSelectedClass();
+      reloadStudentsDataForselectedGroup();
     });
   }
 
@@ -113,7 +132,7 @@ angular.module("dfglfa.threema_connector").controller("ThreemaGroupsController",
     $scope.students.forEach((s) => {
       content += `${s.username},${s.password}\n`;
     });
-    createAndDownloadTextFile(content, `passwords_${$scope.selectedClass}.csv`);
+    createAndDownloadTextFile(content, `passwords_${$scope.selectedGroup}.csv`);
   }
 
   function toggleVisibility(studentId) {

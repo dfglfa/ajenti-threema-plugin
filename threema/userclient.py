@@ -12,19 +12,23 @@ class UserClient:
         self.baseUrl = baseUrl
         self.authHeader = authHeader
 
-    def getAll(self):
+    def getAll(self, **params):
         now = int(time.time())
-        if not USER_CACHE["timestamp"] or now - USER_CACHE["timestamp"] > 60:
+        if params or not USER_CACHE["timestamp"] or now - USER_CACHE["timestamp"] > 60:
             logging.info("Fetching all users from threema")
             url = f"{self.baseUrl}/users"
 
-            params = {"pageSize": 2000}
+            if "pageSize" not in params:
+                params["pageSize"] = 2000
 
             resp = requests.get(
                 url, params=params, headers=self.authHeader)
 
             data = json.loads(resp.content)
             users = data["users"]
+
+            if params.get("filterIds"):
+                users = [u for u in users if u["id"] in params["filterIds"]]
 
             # Set credentials attribute on each user
             for u in users:

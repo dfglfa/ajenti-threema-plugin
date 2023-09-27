@@ -3,6 +3,7 @@ angular.module("dfglfa.threema_connector").service("classService", function () {
   api.getClass = _getClass;
   api.getClassLevel = _getClassLevel;
   api.containsClass = _containsClass;
+  api.getClassNames = _getClassNames;
 
   const classToLevel = {
     "5a": 5,
@@ -82,5 +83,9 @@ angular.module("dfglfa.threema_connector").service("classService", function () {
 
   function _getClassLevel(c) {
     return classToLevel[c] || -1;
+  }
+
+  function _getClassNames() {
+    return Object.keys(classToLevel);
   }
 });

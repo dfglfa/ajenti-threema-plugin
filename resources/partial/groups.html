@@ -1,15 +1,17 @@
 <div style="padding-top: 20px">
-  <div ng-show="!selectedClass">
-    <div class="alert alert-info">Select a class to manage passwords or group membership.</div>
+  <div ng-show="!selectedGroup">
+    <div class="alert alert-info">Select a group to manage passwords or memberships.</div>
     <div>
+      <h4>Class groups</h4>
+      <div style="padding-bottom: 20px">(existing ones in green)</div>
       <table>
-        <tr ng-repeat="group in [5, 6, 7, 8, 9, 10, 11, 12]">
-          <td ng-repeat="cls in classesForLevel[group]">
+        <tr ng-repeat="level in [5, 6, 7, 8, 9, 10, 11, 12]">
+          <td ng-repeat="cls in classesForLevel[level]">
             <button
               style="margin: 5px; border-radius: 5px; width: 100px"
               class="btn btn-lg"
               ng-class="{'btn-success': existingGroupNames.indexOf(cls) > -1}"
-              ng-click="selectClass(cls)"
+              ng-click="selectGroup(cls)"
             >
               {{cls}}
             </button>
@@ -17,13 +19,27 @@
         </tr>
       </table>
     </div>
+
+    <div>
+      <h4>Other groups</h4>
+      <div ng-repeat="group in otherGroups">
+        <button style="margin: 5px; border-radius: 5px; width: 100px" class="btn btn-lg btn-success" ng-click="selectGroup(group.name)">
+          {{group.name}}
+        </button>
+      </div>
+    </div>
+
+    <div>
+      <a href="./groupWizard">Create new group</a>
+    </div>
   </div>
-  <div ng-show="selectedClass">
-    <button class="btn btn-default" ng-click="selectClass()"><i class="fa fa-backward"></i>&nbsp;&nbsp;Back to overview</button>
+
+  <div ng-show="selectedGroup">
+    <button class="btn btn-default" ng-click="selectGroup()"><i class="fa fa-backward"></i>&nbsp;&nbsp;Back to overview</button>
     <progress-spinner ng-show="students === undefined"></progress-spinner>
 
     <div ng-show="students !== undefined" style="margin: 10px 0">
-      <div class="alert alert-info">Students for class <strong>{{selectedClass}}</strong></div>
+      <div class="alert alert-info">Students for class <strong>{{selectedGroup}}</strong></div>
       <div ng-show="students.length > 0">
         <table>
           <tr>
@@ -55,12 +71,12 @@
             <td style="padding: 15px; text-align: center">{{student.userid || (student.usage ? "..." : "-")}}</td>
             <td style="padding: 15px; text-align: center">
               <span
-                ng:show="threemaGroupMembers[selectedClass] && threemaGroupMembers[selectedClass].indexOf(student.userid) > -1"
+                ng:show="threemaGroupMembers[selectedGroup] && threemaGroupMembers[selectedGroup].indexOf(student.userid) > -1"
                 class="badge"
                 style="background-color: green"
                 ><strong><i class="fa fa-check"></i></strong
               ></span>
-              <span ng:show="!threemaGroupMembers[selectedClass] || threemaGroupMembers[selectedClass].indexOf(student.userid) === -1">&dash;</span>
+              <span ng:show="!threemaGroupMembers[selectedGroup] || threemaGroupMembers[selectedGroup].indexOf(student.userid) === -1">&dash;</span>
             </td>
           </tr>
         </table>
@@ -71,10 +87,10 @@
           <div>There is no threema group for this class yet.</div>
           <br />
           <div ng-show="activeMembers.length > 0" class="btn btn-info" ng-click="createGroupWithActiveMembers()">
-            Create group "{{selectedClass}}" with all active users ({{activeMembers.length}}).
+            Create group "{{selectedGroup}}" with all active users ({{activeMembers.length}}).
           </div>
           <div ng-show="activeMembers.length === 0">
-            To create the group "{{selectedClass}}" there must be at least one active user, but there are none yet.
+            To create the group "{{selectedGroup}}" there must be at least one active user, but there are none yet.
           </div>
         </div>
       </div>
