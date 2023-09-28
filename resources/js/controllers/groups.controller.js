@@ -7,8 +7,6 @@ angular.module("dfglfa.threema_connector").controller("ThreemaGroupsController",
   $scope.otherGroups = [];
 
   $scope.selectGroup = selectGroup;
-  $scope.toggleVisibility = toggleVisibility;
-  $scope.downloadPasswordList = downloadPasswordList;
   $scope.createGroupWithActiveMembers = createGroupWithActiveMembers;
   $scope.addAllMissingActiveMembersToGroup = addAllMissingActiveMembersToGroup;
 
@@ -114,32 +112,6 @@ angular.module("dfglfa.threema_connector").controller("ThreemaGroupsController",
     console.log("Adding members", members, "to group with id", selectedGroupId);
     return $http.post("/api/threema_connector/group_members", { groupId: selectedGroupId, members: members }).then(() => {
       reloadStudentsDataForselectedGroup();
-    });
-  }
-
-  function createAndDownloadTextFile(textContent, filename) {
-    const blob = new Blob([textContent], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = filename;
-    anchor.click();
-    URL.revokeObjectURL(url);
-  }
-
-  function downloadPasswordList() {
-    let content = "Benutzername,Passwort\n";
-    $scope.students.forEach((s) => {
-      content += `${s.username},${s.password}\n`;
-    });
-    createAndDownloadTextFile(content, `passwords_${$scope.selectedGroup}.csv`);
-  }
-
-  function toggleVisibility(studentId) {
-    $scope.students.forEach((s) => {
-      if (s.id === studentId) {
-        s.showPassword = !s.showPassword;
-      }
     });
   }
 });

@@ -9,13 +9,18 @@
       <teachers-list credentials="teachersCredentials" on-credentials-change="onCredsChange" />
     </div>
   </uib:tab>
-  <uib:tab heading="{{'Groups'|translate}}">
+  <uib:tab heading="{{'Passwords'|translate}}">
     <div ng-if="activetab === 2">
+      <passwords />
+    </div>
+  </uib:tab>
+  <uib:tab heading="{{'Groups'|translate}}">
+    <div ng-if="activetab === 3">
       <groups />
     </div>
   </uib:tab>
   <uib:tab heading="{{'Contacts'|translate}}">
-    <div ng-if="activetab === 3">
+    <div ng-if="activetab === 4">
       <contacts />
     </div>
   </uib:tab>
