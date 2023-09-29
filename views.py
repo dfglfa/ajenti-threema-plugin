@@ -120,7 +120,7 @@ class Handler(HttpPlugin):
     @authorize('lm:threema:list')
     @endpoint(api=True)
     def handle_api_get_contacts(self, http_context):
-        return [c.toJsonDict() for c in self.client.getContacts()]
+        return self.client.getContacts()
 
     @get(r'/api/threema_connector/normalizations')
     @authorize('lm:threema:list')
