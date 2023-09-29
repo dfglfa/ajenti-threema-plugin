@@ -42,7 +42,7 @@ angular.module("dfglfa.threema_connector").controller("ThreemaGroupCreationContr
             continue;
           }
 
-          const searchtarget = `${c.firstName.toLowerCase()} ${c.lastName.toLowerCase()} ${c.id.toLowerCase()}`;
+          const searchtarget = `${c.firstName ? c.firstName.toLowerCase() : ""} ${c.lastName ? c.lastName.toLowerCase() : ""} ${c.id.toLowerCase()}`;
           if (searchtarget.indexOf(searchTerm) > -1) {
             results.push(c);
           }
