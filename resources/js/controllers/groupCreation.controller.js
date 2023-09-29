@@ -28,7 +28,7 @@ angular.module("dfglfa.threema_connector").controller("ThreemaGroupCreationContr
   }
 
   function runSearch() {
-    if ($scope.search.length < 2) {
+    if (!$scope.search || $scope.search.length < 2) {
       $scope.results = [];
       return;
     }
