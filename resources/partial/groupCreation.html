@@ -32,7 +32,7 @@
         Create new group with {{newMembers.length}} members
       </button>
 
-      <button ng-if="newMembers.length > 0 && groupId" class="btn btn-primary" ng-click="updateGroup()">
+      <button ng-if="newMembers.length > 0 && groupId" class="btn btn-primary" ng-click="updateGroupMembers()">
         Update group members ({{newMembers.length}})
       </button>
 
@@ -51,7 +51,9 @@
             <td style="padding: 5px 15px; width: 100px">{{m.id}}</td>
             <td style="padding: 5px 15px; width: 150px">{{m.firstName}}</td>
             <td style="padding: 5px 15px; width: 150px">{{m.lastName}}</td>
-            <td style="padding: 5px 15px; width: 50px"><span class="btn btn-danger" ng-click="removeFromAddList(m.id)">entfernen</span></td>
+            <td style="padding: 5px 15px; width: 50px">
+              <button ng-click="removeNewMember(m)"><i class="fa fa-ban text-danger"></i></button>
+            </td>
           </tr>
         </table>
       </div>
@@ -79,12 +81,16 @@
           <th style="padding: 15px; width: 150px">User ID</th>
           <th style="padding: 15px; width: 250px">Firstname</th>
           <th style="padding: 15px; width: 250px">Lastname</th>
+          <th></th>
         </tr>
 
         <tr ng-repeat="r in results">
           <td style="padding: 5px 15px; width: 150px">{{r.id}}</td>
           <td style="padding: 5px 15px; width: 250px">{{r.firstName}}</td>
           <td style="padding: 5px 15px; width: 250px">{{r.lastName}}</td>
+          <td style="padding: 5px 15px; width: 100px">
+            <button ng-click="addNewMember(r)"><i class="fa fa-plus text-success"></i></button>
+          </td>
         </tr>
       </table>
     </div>

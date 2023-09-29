@@ -8,8 +8,11 @@ angular.module("dfglfa.threema_connector").controller("ThreemaGroupCreationContr
 
   $scope.searchContacts = searchContacts;
   $scope.createGroup = createGroup;
+  $scope.updateGroupMembers = updateGroupMembers;
   $scope.addResults = addResults;
   $scope.loadMembers = loadMembers;
+  $scope.addNewMember = addNewMember;
+  $scope.removeNewMember = removeNewMember;
 
   let debounceTimer;
   function searchContacts() {
@@ -81,6 +84,13 @@ angular.module("dfglfa.threema_connector").controller("ThreemaGroupCreationContr
     });
   }
 
+  function updateGroupMembers() {
+    return $http.post("/api/threema_connector/group_members", { name: $scope.groupName, members: $scope.newMembers.map((m) => m.id) }).then(() => {
+      $location.path("/view/threema_connector");
+      console.log("Group successfully updated");
+    });
+  }
+
   function loadMembers() {
     return $http.get(`/api/threema_connector/group_members`, { params: { groupId: $scope.groupId } }).then(({ data: members }) => {
       const mems = [];
@@ -89,6 +99,16 @@ angular.module("dfglfa.threema_connector").controller("ThreemaGroupCreationContr
       }
       $scope.existingMembers = mems;
     });
+  }
+
+  function addNewMember(m) {
+    $scope.newMembers.push(m);
+    $scope.results = $scope.results.filter((r) => r.id !== m.id);
+  }
+
+  function removeNewMember(m) {
+    $scope.newMembers = $scope.newMembers.filter((nm) => nm.id !== m.id);
+    runSearch();
   }
 
   function loadGroupInfo() {
