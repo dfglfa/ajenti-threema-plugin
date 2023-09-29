@@ -7,7 +7,7 @@ from .config_loader import getThreemaApiKey, getThreemaBroadcastApiKey, getThree
 from .credentialsclient import CredentialsClient
 from .userclient import UserClient
 from .groupclient import GroupClient
-from .datamodel import User
+from .datamodel import Contact
 
 API_KEY = getThreemaApiKey()
 if not API_KEY:
@@ -76,9 +76,12 @@ class ThreemaAdminClient:
     def getGroups(self):
         return self.groupsClient.getAllGroups()
 
-    def getGroupMembers(self, groupId) -> list[User]:
+    def getGroupDetails(self, groupId):
+        return self.groupsClient.getGroupDetails(groupId)
+
+    def getGroupMembers(self, groupId) -> list[Contact]:
         members = self.groupsClient.getGroupMembers(groupId)
-        return self.userClient.getAll(filterIds=[m["id"] for m in members])
+        return self.contactsClient.getAll(filterIds=[m["id"] for m in members])
 
     def createGroup(self, name, members):
         return self.groupsClient.createGroup(name, members)

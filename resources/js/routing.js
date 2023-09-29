@@ -23,4 +23,9 @@ angular.module("dfglfa.threema_connector").config(($routeProvider) => {
     templateUrl: "/threema_connector:resources/partial/normalizations.html",
     controller: "NormalizationsController",
   });
+
+  $routeProvider.when("/view/threema_connector/groupCreation", {
+    templateUrl: "/threema_connector:resources/partial/groupCreation.html",
+    controller: "ThreemaGroupCreationController",
+  });
 });

@@ -1,5 +1,6 @@
-angular.module("dfglfa.threema_connector").controller("ThreemaConnectorIndexController", function ($scope, $http, classService) {
-  $scope.activetab = 0;
+angular.module("dfglfa.threema_connector").controller("ThreemaConnectorIndexController", function ($scope, $http, $location, classService) {
+  let queryParams = $location.search();
+  $scope.activetab = +queryParams.active || 0;
 
   loadCredentials();
 

@@ -32,6 +32,11 @@ class GroupClient:
             logging.exception("Error while decoding:", te)
             return []
 
+    def getGroupDetails(self, groupId):
+        url = f"{self.baseUrl}/identities/{self.broadcastId}/groups/{groupId}"
+        resp = requests.get(url, headers=self.authHeader)
+        return json.loads(resp.content)
+
     def createGroup(self, name, members):
         url = f"{self.baseUrl}/identities/{self.broadcastId}/groups"
 

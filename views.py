@@ -82,6 +82,20 @@ class Handler(HttpPlugin):
     def handle_api_get_all_groups(self, http_context):
         return self.client.getGroups()
 
+    @post(r'/api/threema_connector/groups')
+    @authorize('lm:threema:list')
+    @endpoint(api=True)
+    def handle_api_create_group(self, http_context):
+        body = http_context.json_body()
+        return self.client.createGroup(name=body.get("name"), members=body.get("members", []))
+
+    @get(r'/api/threema_connector/group_details')
+    @authorize('lm:threema:list')
+    @endpoint(api=True)
+    def handle_api_get_group_details(self, http_context):
+        groupId = http_context.query.get("groupId")
+        return self.client.getGroupDetails(groupId=groupId)
+
     @get(r'/api/threema_connector/group_members')
     @authorize('lm:threema:list')
     @endpoint(api=True)
@@ -95,13 +109,6 @@ class Handler(HttpPlugin):
     def handle_api_add_group_members(self, http_context):
         body = http_context.json_body()
         return self.client.addGroupMembers(groupId=body.get("groupId"), members=body.get("members"))
-
-    @post(r'/api/threema_connector/groups')
-    @authorize('lm:threema:list')
-    @endpoint(api=True)
-    def handle_api_create_group(self, http_context):
-        body = http_context.json_body()
-        return self.client.createGroup(name=body.get("name"), members=body.get("members"))
 
     @get(r'/api/threema_connector/users')
     @authorize('lm:threema:list')

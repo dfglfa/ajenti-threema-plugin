@@ -1,0 +1,75 @@
+<div style="padding-top: 20px">
+  <a class="btn btn-default" href="/view/threema_connector?active=3"><i class="fa fa-backward"></i>&nbsp;&nbsp;Back to overview</a>
+
+  <div style="margin-top: 40px">
+    <h4 ng-if="!groupId">Create group</h4>
+    <h4 ng-if="groupId">Update group</h4>
+
+    <div class="form-group">
+      <div class="row" style="margin: 10px 0">
+        <input ng-if="!groupId" type="text" class="form-control" id="groupName" ng-model="groupName" autofocus placeholder="Group name" />
+        <div ng-if="groupId">Group name: <strong>{{groupName}}</strong></div>
+      </div>
+
+      <button ng-if="members.length > 0 && !groupId" ng-disabled="!groupName" class="btn btn-primary" ng-click="createGroup()">
+        Create new group with {{members.length}} members
+      </button>
+
+      <button ng-if="members.length > 0 && groupId" class="btn btn-primary" ng-click="updateGroup()">
+        Update group members ({{members.length}})
+      </button>
+
+      <div ng-if="members.length === 0 && groupName" class="text-danger">Cannot create empty group. You need to add some group members first!</div>
+    </div>
+  </div>
+
+  <div ng-if="members.length > 0">
+    <h5>These {{members.length}} members will be contained in the group:</h5>
+    <div style="margin: 20px 0">
+      <div>
+        <table>
+          <tr ng-repeat="m in members">
+            <td style="padding: 5px 15px; width: 100px">{{m.id}}</td>
+            <td style="padding: 5px 15px; width: 150px">{{m.firstName}}</td>
+            <td style="padding: 5px 15px; width: 150px">{{m.lastName}}</td>
+            <td style="padding: 5px 15px; width: 50px"><span class="btn btn-danger" ng-click="remove(m.id)">entfernen</span></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <h5>Search contacts</h5>
+    <div class="row" style="margin: 10px 0">
+      <input type="text" class="form-control" id="search" ng-model="search" ng-change="searchContacts()" />
+    </div>
+
+    <div style="height: 50px">
+      <div ng-if="results.length === 0 && search && search.length < 2" class="text-warning">Type at least two letters</div>
+      <button class="btn btn-primary" ng-if="results.length > 0 && results.length <= maxResults" ng-click="addResults()">
+        Add all results ({{results.length}})
+      </button>
+      <div ng-if="results.length > maxResults" class="text-warning">Too many results. Adding more than {{maxResults}} is not allowed.</div>
+      <progress-spinner ng-show="searching"></progress-spinner>
+    </div>
+
+    <div ng-if="results && results.length">
+      <table>
+        <tr>
+          <th style="padding: 15px; width: 150px">User ID</th>
+          <th style="padding: 15px; width: 250px">Firstname</th>
+          <th style="padding: 15px; width: 250px">Lastname</th>
+        </tr>
+
+        <tr ng-repeat="r in results">
+          <td style="padding: 5px 15px; width: 150px">{{r.id}}</td>
+          <td style="padding: 5px 15px; width: 250px">{{r.firstName}}</td>
+          <td style="padding: 5px 15px; width: 250px">{{r.lastName}}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div ng-if="!searching && results.length === 0 && search.length > 1">No results</div>
+</div>
