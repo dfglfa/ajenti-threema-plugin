@@ -27,7 +27,9 @@ class GroupClient:
         resp = requests.get(url, headers=self.authHeader)
         try:
             data = json.loads(resp.content)
-            return data.get("members", [])
+            members = data.get("members", [])
+            logging.info(f"Group {groupId} has {len(members)} members")
+            return members
         except TypeError as te:
             logging.exception("Error while decoding:", te)
             return []

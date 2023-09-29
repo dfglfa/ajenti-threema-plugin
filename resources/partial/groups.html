@@ -1,4 +1,5 @@
-<div style="padding-top: 20px">
+<progress-spinner ng-show="groups === undefined"></progress-spinner>
+<div style="padding-top: 20px" ng-if="groups !== undefined">
   <div ng-show="!selectedGroup">
     <div class="alert alert-info" ng-if="groups && groups.length">Select a group to manage memberships.</div>
     <div>

@@ -1,7 +1,7 @@
 angular.module("dfglfa.threema_connector").controller("ThreemaGroupCreationController", function ($scope, $http, $timeout, $location) {
   $scope.groupId = $location.search().id;
-  $scope.groupName = "";
-  $scope.members = [];
+  $scope.groupName = undefined;
+  $scope.members = undefined;
   $scope.searching = false;
   $scope.maxResults = 30;
 
@@ -22,6 +22,9 @@ angular.module("dfglfa.threema_connector").controller("ThreemaGroupCreationContr
   if ($scope.groupId) {
     loadMembers();
     loadGroupInfo();
+  } else {
+    $scope.groupName = "";
+    $scope.members = [];
   }
 
   function runSearch() {

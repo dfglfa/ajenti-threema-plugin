@@ -24,7 +24,7 @@ class NormalizationClient():
 
         cred_id_to_data = {c.id: c.username for c in credentials}
         cred_id_to_user = {u["credentials_id"]: u for u in users}
-        user_id_to_contact = {c.id: c for c in contacts}
+        user_id_to_contact = {c["id"]: c for c in contacts}
 
         changes = []
 
@@ -48,13 +48,13 @@ class NormalizationClient():
 
             contact = user_id_to_contact[user["id"]]
             expected_contact_firstname = f"{cls} {firstName}" if cls != "teachers" else firstName
-            if contact.firstName != expected_contact_firstname or contact.lastName != lastName:
+            if contact["firstName"] != expected_contact_firstname or contact["lastName"] != lastName:
                 logging.info(
-                    f"Deviation for contact {contact.firstName} {contact.lastName}, expected {expected_contact_firstname} {lastName}")
+                    f"Deviation for contact {contact['firstName']} {contact['lastName']}, expected {expected_contact_firstname} {lastName}")
                 change = {
-                    "firstName": contact.firstName,
+                    "firstName": contact["firstName"],
                     "firstNameNormalized": expected_contact_firstname,
-                    "lastName": contact.lastName,
+                    "lastName": contact["lastName"],
                     "lastNameNormalized": lastName,
                     "threemaId": user["id"],
                     "credentialsName": cred_name

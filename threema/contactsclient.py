@@ -17,7 +17,7 @@ class ContactsClient:
         if params or not CONTACTS_CACHE["timestamp"] or now - CONTACTS_CACHE["timestamp"] > 60:
             url = f"{self.baseUrl}/contacts"
 
-            params = {"pageSize": 2000, }
+            params["pageSize"] = 2000
 
             resp = requests.get(url, params=params,
                                 headers=self.authHeader)
@@ -27,7 +27,9 @@ class ContactsClient:
             contacts = [c for c in contacts if c["enabled"]
                         and not c["id"].startswith("*")]
 
-            if params.get("filterIds"):
+            if "filterIds" in params:
+                logging.info(
+                    f"Filtering contacts with ids {params['filterIds']}")
                 return [c for c in contacts if c["id"]
                         in params["filterIds"]]
 
