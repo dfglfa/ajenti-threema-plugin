@@ -110,6 +110,13 @@ class Handler(HttpPlugin):
         body = http_context.json_body()
         return self.client.addGroupMembers(groupId=body.get("groupId"), members=body.get("members"))
 
+    @post(r'/api/threema_connector/remove_group_members')
+    @authorize('lm:threema:list')
+    @endpoint(api=True)
+    def handle_api_remove_group_members(self, http_context):
+        body = http_context.json_body()
+        return self.client.removeGroupMembers(groupId=body.get("groupId"), memberIds=body.get("memberIds"))
+
     @get(r'/api/threema_connector/users')
     @authorize('lm:threema:list')
     @endpoint(api=True)

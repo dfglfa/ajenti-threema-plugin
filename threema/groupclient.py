@@ -50,9 +50,16 @@ class GroupClient:
         return "ok" if resp.status_code in [200, 204] else f"error: {resp.status_code}"
 
     def addGroupMembers(self, groupId, members):
-        url = f"{self.baseUrl}/identities/{self.broadcastId}/groups/{groupId}"
+        url = f"{self.baseUrl}/identities/{self.broadcastId}/groups/{groupId}/members"
 
         resp = requests.post(
             url, json={"members": members}, headers=self.authHeader)
+
+        return "ok" if resp.status_code in [200, 204] else f"error: {resp.status_code}"
+
+    def removeGroupMembers(self, groupId, memberIds):
+        url = f"{self.baseUrl}/identities/{self.broadcastId}/groups/{groupId}/members"
+
+        resp = requests.delete(url, json=memberIds, headers=self.authHeader)
 
         return "ok" if resp.status_code in [200, 204] else f"error: {resp.status_code}"

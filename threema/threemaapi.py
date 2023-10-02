@@ -89,6 +89,9 @@ class ThreemaAdminClient:
     def addGroupMembers(self, groupId, members):
         return self.groupsClient.addGroupMembers(groupId, members)
 
+    def removeGroupMembers(self, groupId, memberIds):
+        return self.groupsClient.removeGroupMembers(groupId, memberIds)
+
     def getContacts(self):
         return self.contactsClient.getAll()
 

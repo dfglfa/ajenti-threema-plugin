@@ -13,6 +13,7 @@ angular.module("dfglfa.threema_connector").controller("ThreemaGroupCreationContr
   $scope.loadMembers = loadMembers;
   $scope.addNewMember = addNewMember;
   $scope.removeNewMember = removeNewMember;
+  $scope.removeFromGroup = removeFromGroup;
 
   let debounceTimer;
   function searchContacts() {
@@ -73,21 +74,25 @@ angular.module("dfglfa.threema_connector").controller("ThreemaGroupCreationContr
       }
     }
     $scope.newMembers = $scope.newMembers.concat(members);
-    $scope.search = "";
-    $scope.results = [];
+    runSearch();
   }
 
   function createGroup() {
     return $http.post("/api/threema_connector/groups", { name: $scope.groupName, members: $scope.newMembers.map((m) => m.id) }).then(() => {
-      $location.path("/view/threema_connector");
+      $location.url("/view/threema_connector?active=3");
       console.log("Group successfully created");
     });
   }
 
   function updateGroupMembers() {
-    return $http.post("/api/threema_connector/group_members", { name: $scope.groupName, members: $scope.newMembers.map((m) => m.id) }).then(() => {
-      $location.path("/view/threema_connector");
-      console.log("Group successfully updated");
+    console.log("Updating id", $scope.groupId);
+    return $http.post("/api/threema_connector/group_members", { groupId: $scope.groupId, members: $scope.newMembers.map((m) => m.id) }).then(() => {
+      const existingMembers = $scope.existingMembers;
+      for (const m of $scope.newMembers) {
+        existingMembers.push(m);
+      }
+      $scope.newMembers = [];
+      $scope.existingMembers = existingMembers;
     });
   }
 
@@ -109,6 +114,13 @@ angular.module("dfglfa.threema_connector").controller("ThreemaGroupCreationContr
   function removeNewMember(m) {
     $scope.newMembers = $scope.newMembers.filter((nm) => nm.id !== m.id);
     runSearch();
+  }
+
+  function removeFromGroup(memberId) {
+    return $http.post(`/api/threema_connector/remove_group_members`, { groupId: $scope.groupId, memberIds: [memberId] }).then(() => {
+      console.log("Deleted ", memberId);
+      $scope.existingMembers = $scope.existingMembers.filter((m) => m.id !== memberId);
+    });
   }
 
   function loadGroupInfo() {

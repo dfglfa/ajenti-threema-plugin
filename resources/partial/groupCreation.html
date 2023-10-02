@@ -8,8 +8,8 @@
 
     <div class="form-group">
       <div class="row" style="margin: 10px 0">
-        <input ng-if="!groupId" type="text" class="form-control" id="groupName" ng-model="groupName" autofocus placeholder="Group name" />
-        <div ng-if="groupId">Group name: <strong>{{groupName}}</strong></div>
+        <input ng-show="!groupId" type="text" class="form-control" id="groupName" ng-model="groupName" autofocus placeholder="Group name" />
+        <div ng-show="groupId">Group name: <strong>{{groupName}}</strong></div>
       </div>
 
       <div ng-if="existingMembers && existingMembers.length > 0">
@@ -21,7 +21,7 @@
                 <td style="padding: 5px 15px; width: 100px">{{m.id}}</td>
                 <td style="padding: 5px 15px; width: 150px">{{m.firstName}}</td>
                 <td style="padding: 5px 15px; width: 150px">{{m.lastName}}</td>
-                <td style="padding: 5px 15px; width: 50px"><span class="btn btn-danger" ng-click="removeFromGroup(m.id)">entfernen</span></td>
+                <td style="padding: 5px 15px; width: 50px"><span class="btn btn-danger" ng-click="removeFromGroup(m.id)">Remove from group</span></td>
               </tr>
             </table>
           </div>
@@ -36,9 +36,11 @@
         Update group members ({{newMembers.length}})
       </button>
 
-      <div ng-if="existingMembers.length === 0 && newMembers.length === 0 && groupName" class="text-danger">
+      <div ng-if="existingMembers.length === 0 && newMembers.length === 0 && groupName && !groupId" class="text-danger">
         Cannot create empty group. You need to add some group members first!
       </div>
+
+      <div ng-if="existingMembers.length === 0 && groupId" class="text-danger">Group is empty!</div>
     </div>
   </div>
 
@@ -66,10 +68,10 @@
       <input type="text" class="form-control" id="search" ng-model="search" ng-change="searchContacts()" />
     </div>
 
-    <div style="height: 50px">
+    <div style="height: 50px" ng-if="results && results.length">
       <div ng-if="results.length === 0 && search && search.length < 2" class="text-warning">Type at least two letters</div>
       <button class="btn btn-primary" ng-if="results.length > 0 && results.length <= maxResults" ng-click="addResults()">
-        Add all results ({{results.length}})
+        Select all results ({{results.length}})
       </button>
       <div ng-if="results.length > maxResults" class="text-warning">Too many results. Adding more than {{maxResults}} is not allowed.</div>
       <progress-spinner ng-show="searching"></progress-spinner>
@@ -96,5 +98,5 @@
     </div>
   </div>
 
-  <div ng-if="!searching && results.length === 0 && search.length > 1">No results</div>
+  <div ng-if="!searching && results.length === 0 && search.length > 1"><i>(No results)</i></div>
 </div>
