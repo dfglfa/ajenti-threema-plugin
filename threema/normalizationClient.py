@@ -29,6 +29,7 @@ class NormalizationClient():
         changes = []
 
         for cred_id, cred_name in cred_id_to_data.items():
+            logging.info(f"Checking credentials name {cred_name}")
             if cred_name not in normalized_name_to_common_name:
                 logging.info(
                     f"Cannot find ENT real name for credentials name {cred_name}")
@@ -48,6 +49,10 @@ class NormalizationClient():
 
             contact = user_id_to_contact[user["id"]]
             expected_contact_firstname = f"{cls} {firstName}" if cls != "teachers" else firstName
+
+            logging.info(
+                f"Expecting first name name {expected_contact_firstname} and last name {lastName}")
+
             if contact["firstName"] != expected_contact_firstname or contact["lastName"] != lastName:
                 logging.info(
                     f"Deviation for contact {contact['firstName']} {contact['lastName']}, expected {expected_contact_firstname} {lastName}")
