@@ -27,6 +27,7 @@ class NormalizationClient():
         user_id_to_contact = {c["id"]: c for c in contacts}
 
         changes = []
+        unprocessed_user_ids = set(map(lambda u: u["id"], users))
 
         for cred_id, cred_name in cred_id_to_data.items():
             logging.info(f"Checking credentials name {cred_name}")
@@ -47,6 +48,9 @@ class NormalizationClient():
                 logging.info(f"No contact found for user id {user['id']}")
                 continue
 
+            if user["id"] in unprocessed_user_ids:
+                unprocessed_user_ids.remove(user["id"])
+
             contact = user_id_to_contact[user["id"]]
             expected_contact_firstname = f"{cls} {firstName}" if cls != "teachers" else firstName
 
@@ -65,5 +69,8 @@ class NormalizationClient():
                     "credentialsName": cred_name
                 }
                 changes.append(change)
+
+        logging.warn(
+            f"Could not process user ids { {*unprocessed_user_ids,} }")
 
         return changes
