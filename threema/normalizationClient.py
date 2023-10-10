@@ -70,7 +70,10 @@ class NormalizationClient():
                 }
                 changes.append(change)
 
-        logging.warn(
-            f"Could not process user ids { {*unprocessed_user_ids,} }")
+        for upi in unprocessed_user_ids:
+            con = user_id_to_contact.get(upi)
+            if con:
+                logging.warn(
+                    f"Could not process user id {upi}, but found contact {con['firstName']} {con['lastName']}")
 
         return changes
