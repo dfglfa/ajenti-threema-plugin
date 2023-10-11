@@ -76,6 +76,6 @@ class NormalizationClient():
                 logging.warn(
                     f"DISABLING orphaned contact {con['firstName']} {con['lastName']} for user id {upi}")
                 self.contactsClient.updateContact(
-                    con['firstName'], con['lastName'], False)
+                    upi, con['firstName'], con['lastName'], False)
 
         return changes
