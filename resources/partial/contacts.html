@@ -40,23 +40,16 @@
   </div>
   <table class="table" ng:class="{'lmn-blurred': blurred}" style="width: 100%">
     <tr>
-      <th width="50" class="text-center">Threema ID</th>
+      <th width="50">Threema ID</th>
       <th width="150">First name</th>
       <th width="150">Last name</th>
-      <th width="30" class="text-center">Active</th>
-      <th width="150" class="text-center">Nickname</th>
+      <th width="150">Nickname</th>
     </tr>
     <tr ng:repeat="contact in contacts|filter:filter|orderBy:sort.fx:reverse|page:paging.page:paging.pageSize">
       <td width="50" style="vertical-align: middle" class="text-left">{{contact.id}}</td>
       <td width="150" style="vertical-align: middle" class="text-left">{{contact.firstName}}</td>
       <td width="150" style="vertical-align: middle" class="text-left">{{contact.lastName}}</td>
-      <td width="30" style="vertical-align: middle" class="text-center">
-        <span ng:show="contact.enabled" class="badge" style="background-color: green"
-          ><strong><i class="fa fa-check"></i></strong
-        ></span>
-        <span ng:show="!contact.enabled">&dash;</span>
-      </td>
-      <td width="150" style="vertical-align: middle" class="text-center">
+      <td width="150" style="vertical-align: middle">
         <span ng-if="contact.matchingUsername">{{contact.matchingUsername}}</span>
         <span ng-if="!contact.matchingUsername" class="text-danger">?</span>
       </td>
