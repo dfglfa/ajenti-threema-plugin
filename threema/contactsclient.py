@@ -38,14 +38,15 @@ class ContactsClient:
 
         return CONTACTS_CACHE["contacts"]
 
-    def updateContact(self, threemaId, firstname, lastname):
+    def updateContact(self, threemaId, firstname, lastname, enabled=True):
         url = f"{self.baseUrl}/contacts/{threemaId}"
 
         logging.info(
-            f"Updating user {threemaId} to firstname '{firstname}' and lastname '{lastname}'")
+            f"Updating user {threemaId} to firstname '{firstname}' and lastname '{lastname}', ENABLED: {enabled}")
         resp = requests.put(url,
                             json={"firstName": firstname,
-                                  "lastName": lastname, "enabled": True},
+                                  "lastName": lastname,
+                                  "enabled": enabled},
                             headers=self.authHeader)
 
         if resp.status_code <= 400:
@@ -53,9 +54,13 @@ class ContactsClient:
             CONTACTS_CACHE["timestamp"] = None
             return "ok"
         else:
+            logging.error(f"Could not update contact: {resp.content}")
             return "error"
 
     def deleteContact(self, threemaId):
+        """
+        This does NOT work for automatically created contacts :-/
+        """
         url = f"{self.baseUrl}/contacts/{threemaId}"
 
         resp = requests.delete(url, headers=self.authHeader)
