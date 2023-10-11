@@ -54,3 +54,16 @@ class ContactsClient:
             return "ok"
         else:
             return "error"
+
+    def deleteContact(self, threemaId):
+        url = f"{self.baseUrl}/contacts/{threemaId}"
+
+        logging.warn(
+            f"Deleting contact for user {threemaId}")
+        resp = requests.delete(url, headers=self.authHeader)
+
+        if resp.status_code <= 400:
+            CONTACTS_CACHE["timestamp"] = None
+            return "ok"
+        else:
+            return "error"

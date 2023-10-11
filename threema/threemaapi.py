@@ -95,6 +95,9 @@ class ThreemaAdminClient:
     def getContacts(self):
         return self.contactsClient.getAll()
 
+    def deleteContact(self, threemaId):
+        self.contactsClient.deleteContact(threemaId)
+
     def findNormalizations(self):
         return self.normalizationClient.findNormalizations()
 

@@ -74,6 +74,7 @@ class NormalizationClient():
             con = user_id_to_contact.get(upi)
             if con:
                 logging.warn(
-                    f"Could not process user id {upi}, but found contact {con['firstName']} {con['lastName']}")
+                    f"DELETING orphaned contact {con['firstName']} {con['lastName']} for user id {upi}")
+                self.contactsClient.deleteContact(upi)
 
         return changes
