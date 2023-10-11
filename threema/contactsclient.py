@@ -64,6 +64,8 @@ class ContactsClient:
 
         if resp.status_code <= 400:
             CONTACTS_CACHE["timestamp"] = None
+            logging.info("Contact successfully deleted")
             return "ok"
         else:
+            logging.error(f"Contact not deleted: {resp.content}")
             return "error"
