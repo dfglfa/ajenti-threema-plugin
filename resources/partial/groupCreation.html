@@ -4,12 +4,11 @@
 
   <div style="margin-top: 40px">
     <h4 ng-if="!groupId">Create group</h4>
-    <h4 ng-if="groupId">Update group</h4>
+    <h4 ng-if="groupId">Edit group: <strong>{{groupName}}</strong></h4>
 
     <div class="form-group">
       <div class="row" style="margin: 10px 0">
         <input ng-show="!groupId" type="text" class="form-control" id="groupName" ng-model="groupName" autofocus placeholder="Group name" />
-        <div ng-show="groupId">Group name: <strong>{{groupName}}</strong></div>
       </div>
 
       <div ng-if="existingMembers && existingMembers.length > 0">
@@ -20,7 +19,7 @@
               <tr ng-repeat="m in existingMembers">
                 <td style="padding: 5px 15px; width: 100px">{{m.id}}</td>
                 <td style="padding: 5px 15px; width: 150px">{{m.firstName}}</td>
-                <td style="padding: 5px 15px; width: 150px">{{m.lastName}}</td>
+                <td style="padding: 5px 15px; width: 250px">{{m.lastName}}</td>
                 <td style="padding: 5px 15px; width: 50px"><span class="btn btn-danger" ng-click="removeFromGroup(m.id)">Remove from group</span></td>
               </tr>
             </table>
@@ -63,8 +62,7 @@
   </div>
 
   <div style="margin: 20px 0" class="red">
-    <input type="file" id="fileInput" style="margin: 15px 0" onchange="document.getElementById('uploadcsv').classList.remove('disabled')" />
-    <button id="uploadcsv" class="btn btn-success disabled" ng-click="processCSVFile()">Update group from CSV file</button>
+    <button id="uploadcsv" class="btn btn-success" ng-click="openCSVUploadDialog()">Update group from CSV file</button>
   </div>
 
   <div class="form-group">

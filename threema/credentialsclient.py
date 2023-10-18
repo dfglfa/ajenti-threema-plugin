@@ -4,11 +4,14 @@ import random
 import string
 import requests
 
+
 from .userdataprovider import UserDataProvider
 
 from .datamodel import Credentials
 from .datamodel import User
 from .namematcher import NameMatcher
+from .utils import formatName, normalizeName
+
 from urllib.parse import quote
 from aj.api.endpoint import EndpointError
 
@@ -138,6 +141,21 @@ class CredentialsClient:
                 res["notFixable"].append(candidate)
 
         return res
+
+    def findMatchesForRecords(self, records):
+        creds = self.getAll()
+        matches = []
+        for r in records:
+            normalizedName = normalizeName(formatName(
+                r["firstName"], r["lastName"]), r["class"])
+            logging.info(f"Searching for normalized name {normalizedName}")
+            for c in creds:
+                if c.username == normalizedName:
+                    logging.info(f"Found match with ID {c.id}")
+                    matches.append(c.id)
+                    break
+
+        return matches
 
     def checkConsistencyForAllStudents(self):
         return self.nameMatcher.checkConsistency(self.getAll())

@@ -1,0 +1,14 @@
+<div class="modal-header">
+  <h4 translate>Upload CSV</h4>
+</div>
+<div class="modal-body">
+  <p>Upload a CSV file to add its users to this group</p>
+  <div>
+    <input type="file" id="fileInput" style="margin: 15px 0" />
+  </div>
+  <progress-spinner ng:show="isUploading"></progress-spinner>
+</div>
+<div class="modal-footer" ng:show="!isUploading">
+  <button class="btn btn-warning" ng:click="cancel()" translate>Cancel</button>
+  <button class="btn btn-danger" ng:click="processFile()" translate>Upload</button>
+</div>

@@ -1,5 +1,8 @@
 
 
+import csv
+import io
+import logging
 import unicodedata
 
 
@@ -58,6 +61,18 @@ def normalizeClassName(cls):
         if k.lower() == cl:
             return k
     return cls
+
+
+def readRecordsFromCSV(csvData):
+    records = []
+    try:
+        reader = csv.DictReader(io.StringIO(csvData))
+        for record in reader:
+            records.append(
+                {"firstName": record["Prenom"], "lastName": record["Nom"], "class": record["Classe"]})
+    except Exception as ex:
+        logging.error(f"Error while parsing CSV file: {ex}")
+    return records
 
 
 CLASS_TO_LEVEL = {

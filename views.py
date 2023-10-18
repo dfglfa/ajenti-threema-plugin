@@ -113,10 +113,10 @@ class Handler(HttpPlugin):
     @post(r'/api/threema_connector/group_members/csv')
     @authorize('lm:threema:list')
     @endpoint(api=True)
-    def handle_api_add_group_members_by_csv(self, http_context):
+    def handle_api_search_users_by_csv(self, http_context):
         body = http_context.json_body()
-        newMembers, notFound = self.client.addGroupMembersByCSV(
-            groupId=body.get("groupId"), csvData=body.get("data"))
+        newMembers, notFound = self.client.getUsersByCSV(
+            csvData=body.get("data"))
         return {"added": newMembers, "notFound": notFound}
 
     @post(r'/api/threema_connector/remove_group_members')

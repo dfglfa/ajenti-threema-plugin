@@ -1,6 +1,7 @@
 
 import logging
 
+
 from .contactsclient import ContactsClient
 from .normalizationClient import NormalizationClient
 from .config_loader import getThreemaApiKey, getThreemaBroadcastApiKey, getThreemaBroadcastId
@@ -8,7 +9,7 @@ from .credentialsclient import CredentialsClient
 from .userclient import UserClient
 from .groupclient import GroupClient
 from .datamodel import Contact
-from .userdataprovider import UserDataProvider
+from .utils import readRecordsFromCSV
 
 API_KEY = getThreemaApiKey()
 if not API_KEY:
@@ -93,13 +94,16 @@ class ThreemaAdminClient:
     def removeGroupMembers(self, groupId, memberIds):
         return self.groupsClient.removeGroupMembers(groupId, memberIds)
 
-    def addGroupMembersByCSV(self, groupId, csvData):
-        threemaUsers = self.userClient.getAll()
-        entUsers = UserDataProvider().getUserData()
-        members, notFound = self.contactsClient.searchMembersByCsvFile(
-            csvData, entUsers, threemaUsers)
-        self.groupsClient.addGroupMembers(groupId, members)
-        return members, notFound
+    def getUsersByCSV(self, csvData):
+        records = readRecordsFromCSV(csvData)
+        creds = self.credentialsClient.findMatchesForRecords(records)
+        foundIds, notFoundIds = self.userClient.searchUsersByCredentials(creds)
+
+        foundContacts = self.contactsClient.getContactsForUserIds(foundIds)
+        notFoundContacts = self.contactsClient.getContactsForUserIds(
+            notFoundIds)
+
+        return foundContacts, notFoundContacts
 
     def getContacts(self):
         return self.contactsClient.getAll()

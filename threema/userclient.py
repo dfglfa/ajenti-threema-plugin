@@ -38,6 +38,24 @@ class UserClient:
 
         return USER_CACHE["users"]
 
+    def searchUsersByCredentials(self, credentialsIds):
+        users = self.getAll()
+        members, notFound = [], set(map(lambda u: u["id"], users))
+
+        for cred in credentialsIds:
+            logging.info(f"Searching active user for creds id {cred}")
+            for u in users:
+                if cred == u["credentials_id"]:
+                    foundId = u["id"]
+                    logging.info(f"Found user {foundId}")
+                    members.append(foundId)
+                    notFound.remove(foundId)
+                    break
+
+        logging.info(
+            f"Found {len(members)} active users, {len(notFound)} could not be found")
+        return members, notFound
+
     def _extractCredsForUser(self, user):
         for link in user["_links"]:
             if link.get("rel") == "credential":

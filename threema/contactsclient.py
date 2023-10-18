@@ -96,26 +96,3 @@ class ContactsClient:
         else:
             logging.error(f"Contact not deleted: {resp.content}")
             return "error"
-
-    def searchMembersByCsvFile(self, csvData, entUsers, threemaUsers):
-        members, notFound = [], []
-        try:
-            reader = csv.DictReader(io.StringIO(csvData))
-            for line in reader:
-                firstname, lastname, classe = line["Prenom"], line["Nom"], line["Classe"]
-                print(f"Checking {firstname} {lastname} from class {classe}")
-
-                for entUser in entUsers:
-                    if (entUser["givenName"], entUser["sn"], entUser["cls"]) == (firstname, lastname, classe):
-                        print(
-                            f"Found match for normalized name {entUser['normalizedName']}")
-
-                        for tu in threemaUsers:
-                            if tu["credentials_id"] == entUser['normalizedName']:
-                                print(f"Found user id, too: {tu['id']}")
-                                break
-
-        except Exception as ex:
-            logging.error(f"Cannot parse csv file: {ex}")
-
-        return members, notFound
