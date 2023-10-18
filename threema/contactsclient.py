@@ -60,6 +60,11 @@ class ContactsClient:
     def updateContact(self, threemaId, firstname, lastname, enabled):
         url = f"{self.baseUrl}/contacts/{threemaId}"
 
+        # Handle the case of empty name data. Fill with default to avoid invalid requests.
+        if not enabled:
+            firstname = firstname or "NONAME"
+            lastname = lastname or "NONAME"
+
         logging.info(
             f"Updating user {threemaId} to firstname '{firstname}' and lastname '{lastname}', ENABLED: {enabled}")
         resp = requests.put(url,
