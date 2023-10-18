@@ -1,5 +1,5 @@
 <div style="padding: 20px">
-  <h1>Normalize contact names</h1>
+  <h1>Synchronize contacts</h1>
 
   <progress-spinner ng-show="changes === undefined"></progress-spinner>
 
@@ -7,9 +7,7 @@
     <i class="fa fa-backward"></i>&nbsp;&nbsp;<a ng:href="/view/threema_connector?active=4">Back to contacts</a>
 
     <div ng-if="changes.length === 0">
-      <div class="alert alert-success" style="padding: 15px; margin: 10px 0">
-        All contact names are in sync with their respective credentials names.
-      </div>
+      <div class="alert alert-success" style="padding: 15px; margin: 10px 0">All contacts in sync.</div>
     </div>
 
     <div class="progress" style="margin-top: 20px" ng-if="total > 0">
@@ -23,8 +21,13 @@
       <div ng-repeat="c in changes" class="row" style="padding: 2px 0; display: flex; align-items: center">
         <div class="col-xs-12 col-sm-8">
           <div>Credentials: <strong>{{c.credentialsName}}</strong></div>
-          <div ng-if="c.firstNameNormalized !== c.firstName">Contact first name: '{{c.firstName}}' => <strong>{{c.firstNameNormalized}}</strong></div>
-          <div ng-if="c.lastNameNormalized !== c.lastName">Contact last name: '{{c.lastName}}' => <strong>{{c.lastNameNormalized}}</strong></div>
+          <div ng-if="c.firstNameNormalized !== c.firstName || c.credentialsName == 'MISSING'">
+            Contact first name: '{{c.firstName}}' => <strong>{{c.firstNameNormalized}}</strong>
+          </div>
+          <div ng-if="c.lastNameNormalized !== c.lastName || c.credentialsName == 'MISSING'">
+            Contact last name: '{{c.lastName}}' => <strong>{{c.lastNameNormalized}}</strong>
+          </div>
+          <div>Status: <strong>'{{c.enabled ? "ENABLED" : "DISABLED"}}'</strong></div>
         </div>
         <div class="col-xs-6 col-sm-4">
           <button class="btn btn-info" ng-click="apply(c)" ng-disabled="isUpdating" ng-show="!c.done">Apply changes</button>

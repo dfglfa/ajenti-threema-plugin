@@ -14,6 +14,8 @@ angular.module("dfglfa.threema_connector").controller("ThreemaGroupCreationContr
   $scope.addNewMember = addNewMember;
   $scope.removeNewMember = removeNewMember;
   $scope.removeFromGroup = removeFromGroup;
+  $scope.triggerCSVUpload = triggerCSVUpload;
+  $scope.processCSVFile = processCSVFile;
 
   let debounceTimer;
   function searchContacts() {
@@ -114,6 +116,29 @@ angular.module("dfglfa.threema_connector").controller("ThreemaGroupCreationContr
   function removeNewMember(m) {
     $scope.newMembers = $scope.newMembers.filter((nm) => nm.id !== m.id);
     runSearch();
+  }
+
+  function triggerCSVUpload() {
+    document.getElementById("fileInput").click();
+  }
+
+  function processCSVFile() {
+    var fileInput = document.getElementById("fileInput");
+    var file = fileInput.files[0];
+    console.log("Reading file", file);
+    if (file) {
+      var reader = new FileReader();
+
+      // Define a callback for when the file is loaded
+      reader.onload = function (e) {
+        var fileContents = e.target.result;
+        $http.post(`/api/threema_connector/group_members/csv`, { groupId: $scope.groupId, data: fileContents }).then(console.log);
+      };
+
+      reader.readAsText(file);
+    } else {
+      console.log("No file found");
+    }
   }
 
   function removeFromGroup(memberId) {

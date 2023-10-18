@@ -110,6 +110,15 @@ class Handler(HttpPlugin):
         body = http_context.json_body()
         return self.client.addGroupMembers(groupId=body.get("groupId"), members=body.get("members"))
 
+    @post(r'/api/threema_connector/group_members/csv')
+    @authorize('lm:threema:list')
+    @endpoint(api=True)
+    def handle_api_add_group_members_by_csv(self, http_context):
+        body = http_context.json_body()
+        newMembers, notFound = self.client.addGroupMembersByCSV(
+            groupId=body.get("groupId"), csvData=body.get("data"))
+        return {"added": newMembers, "notFound": notFound}
+
     @post(r'/api/threema_connector/remove_group_members')
     @authorize('lm:threema:list')
     @endpoint(api=True)
@@ -151,4 +160,5 @@ class Handler(HttpPlugin):
         threemaId = body.get("threemaId")
         firstname = body.get("firstName")
         lastname = body.get("lastName")
-        return self.client.applyContactChange(threemaId, firstname, lastname)
+        enabled = body.get("enabled")
+        return self.client.applyContactChange(threemaId, firstname, lastname, enabled)

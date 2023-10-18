@@ -40,5 +40,6 @@ class UserDataProvider():
 
             user["givenName"] = formatFirstname(user["givenName"])
             user["sn"] = formatLastname(user["sn"])
+            user["originalLastname"] = user["sn"]
 
         return active_users

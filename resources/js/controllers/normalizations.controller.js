@@ -19,6 +19,7 @@ angular.module("dfglfa.threema_connector").controller("NormalizationsController"
         threemaId: change.threemaId,
         firstName: change.firstNameNormalized,
         lastName: change.lastNameNormalized,
+        enabled: change.enabled,
       })
       .then(() => {
         notify.success("Change applied");

@@ -19,7 +19,7 @@ angular.module("dfglfa.threema_connector").config(($routeProvider) => {
     controller: "SuggestionsController",
   });
 
-  $routeProvider.when("/view/threema_connector/normalizations", {
+  $routeProvider.when("/view/threema_connector/contactsSync", {
     templateUrl: "/threema_connector:resources/partial/normalizations.html",
     controller: "NormalizationsController",
   });

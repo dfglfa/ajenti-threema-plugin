@@ -6,7 +6,7 @@ angular.module("dfglfa.threema_connector").controller("ContactsController", func
   $scope.sorts = [
     { name: "First name", fx: (c) => c.firstName },
     { name: "Last name", fx: (c) => c.lastName },
-    { name: "Active", fx: (c) => c.enabled },
+    { name: "Enabled", fx: (c) => c.enabled },
   ];
 
   $scope.sort = $scope.sorts[0];

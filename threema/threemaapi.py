@@ -8,6 +8,7 @@ from .credentialsclient import CredentialsClient
 from .userclient import UserClient
 from .groupclient import GroupClient
 from .datamodel import Contact
+from .userdataprovider import UserDataProvider
 
 API_KEY = getThreemaApiKey()
 if not API_KEY:
@@ -81,7 +82,7 @@ class ThreemaAdminClient:
 
     def getGroupMembers(self, groupId) -> list[Contact]:
         members = self.groupsClient.getGroupMembers(groupId)
-        return self.contactsClient.getAll(filterIds=[m["id"] for m in members])
+        return self.contactsClient.getContactsForUserIds([m["id"] for m in members])
 
     def createGroup(self, name, members):
         return self.groupsClient.createGroup(name, members)
@@ -92,6 +93,14 @@ class ThreemaAdminClient:
     def removeGroupMembers(self, groupId, memberIds):
         return self.groupsClient.removeGroupMembers(groupId, memberIds)
 
+    def addGroupMembersByCSV(self, groupId, csvData):
+        threemaUsers = self.userClient.getAll()
+        entUsers = UserDataProvider().getUserData()
+        members, notFound = self.contactsClient.searchMembersByCsvFile(
+            csvData, entUsers, threemaUsers)
+        self.groupsClient.addGroupMembers(groupId, members)
+        return members, notFound
+
     def getContacts(self):
         return self.contactsClient.getAll()
 
@@ -101,5 +110,5 @@ class ThreemaAdminClient:
     def findNormalizations(self):
         return self.normalizationClient.findNormalizations()
 
-    def applyContactChange(self, threemaId, firstname, lastname):
-        return self.contactsClient.updateContact(threemaId, firstname, lastname)
+    def applyContactChange(self, threemaId, firstname, lastname, enabled):
+        return self.contactsClient.updateContact(threemaId, firstname, lastname, enabled)
