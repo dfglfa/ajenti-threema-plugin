@@ -1,4 +1,6 @@
 import pytest
+
+from .utils import formatName, normalizeName, normalizeClassName
 from .namematcher import NameMatcher
 
 
@@ -17,7 +19,10 @@ def matcher():
 
 class MockUserDataProvider():
     def getUserData(self):
-        return [{"sn": sn, "givenName": gn, "sophomorixAdminClass": ac} for sn, gn, ac in EXAMPLE_DATA]
+        return [{"sn": sn, "givenName": gn, "sophomorixAdminClass": ac,
+                 "formattedName": formatName(gn, sn),
+                 "cls": normalizeClassName(ac),
+                 "normalizedName": normalizeName(formatName(gn, sn), ac)} for sn, gn, ac in EXAMPLE_DATA]
 
 
 class TestNamematcher():

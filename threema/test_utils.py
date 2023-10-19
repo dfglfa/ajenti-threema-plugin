@@ -1,4 +1,4 @@
-from .utils import getClassDifference
+from .utils import getClassDifference, formatName
 
 
 def test_same_class():
@@ -29,3 +29,10 @@ def test_unknown():
     assert getClassDifference("TES", "whatever") > 20
     assert getClassDifference("whatever", "whatever") > 20
     assert getClassDifference("whatever", "TES") > 20
+
+
+def test_formatName():
+    assert formatName("Hans", "Müller") == "MüllerHans"
+    assert formatName(
+        "Hans Michael", "Müller Berndhausen") == "MüllerBerndhausenHans"
+    assert formatName("Gaël-Rüdiger", "von Bayern") == "vonBayernGaël-Rüdiger"
