@@ -7,7 +7,7 @@ from .userdataprovider import UserDataProvider
 
 # A constant value used as name for missing credentials
 # Do not change, as it is used in the frontend
-MISSING = "MISSING"
+ORPHANED = "ORPHANED"
 
 
 class NormalizationClient():
@@ -30,8 +30,11 @@ class NormalizationClient():
         user_for_cred_id = {u["credentials_id"]: u for u in users}
         contact_for_user_id = {c["id"]: c for c in contacts}
 
-        # List of changes that are returned, but not yet applied.
-        changes = []
+        # List of updates that are returned, but not yet applied.
+        updates = []
+
+        # List of missing contacts that need to be created
+        missing = []
 
         # Track user ids that have been found in order to disable the remaining ones.
         not_found_user_ids = set(map(lambda u: u["id"], users))
@@ -59,8 +62,8 @@ class NormalizationClient():
 
             if user["id"] not in contact_for_user_id:
                 logging.info(f"No contact found for user id {user['id']}")
-                self.contactsClient.createContact(
-                    user['id'], normalized_contact_firstname, normalized_contact_lastname)
+                missing.append(
+                    {"threemaId": user["id"], "firstName": normalized_contact_firstname, "lastName": normalized_contact_lastname})
                 continue
 
             contact = contact_for_user_id[user["id"]]
@@ -71,7 +74,7 @@ class NormalizationClient():
             if contact["firstName"] != normalized_contact_firstname or contact["lastName"] != originalLastName or not contact["enabled"]:
                 logging.info(
                     f"Deviation for contact {contact['firstName']} {contact['lastName']} ENABLED={contact['enabled']}, expected enabled contact {normalized_contact_firstname} {originalLastName}")
-                changes.append({
+                updates.append({
                     "firstName": contact["firstName"],
                     "firstNameNormalized": normalized_contact_firstname,
                     "lastName": contact["lastName"],
@@ -86,14 +89,14 @@ class NormalizationClient():
             if con and con["enabled"]:
                 logging.warn(
                     f"DISABLING orphaned contact {con['firstName']} {con['lastName']} for user id {upi}")
-                changes.append({
+                updates.append({
                     "firstName": con["firstName"],
                     "firstNameNormalized": con["firstName"],
                     "lastName": contact["lastName"],
                     "lastNameNormalized": contact["lastName"],
                     "threemaId": upi,
-                    "credentialsName": MISSING,
+                    "credentialsName": ORPHANED,
                     "enabled": False
                 })
 
-        return changes
+        return {"updates": updates, "missing": missing}

@@ -107,6 +107,9 @@ class ThreemaAdminClient:
     def getContacts(self):
         return self.contactsClient.getAll()
 
+    def createContact(self, threemaId, firstName, lastName):
+        return self.contactsClient.createContact(threemaId, firstName, lastName)
+
     def deleteContact(self, threemaId):
         self.contactsClient.deleteContact(threemaId)
 

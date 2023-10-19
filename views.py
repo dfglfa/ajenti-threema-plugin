@@ -138,6 +138,16 @@ class Handler(HttpPlugin):
     def handle_api_get_contacts(self, http_context):
         return self.client.getContacts()
 
+    @post(r'/api/threema_connector/contacts')
+    @authorize('lm:threema:list')
+    @endpoint(api=True)
+    def handle_api_create_contact(self, http_context):
+        body = http_context.json_body()
+        threemaId = body.get("threemaId")
+        firstName = body.get("firstName")
+        lastName = body.get("lastName")
+        return self.client.createContact(threemaId, firstName, lastName)
+
     @delete(r'/api/threema_connector/contacts/delete')
     @authorize('lm:threema:list')
     @endpoint(api=True)

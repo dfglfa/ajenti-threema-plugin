@@ -10,21 +10,12 @@ from .userdataprovider import UserDataProvider
 from .datamodel import Credentials
 from .datamodel import User
 from .namematcher import NameMatcher
-from .utils import formatName, normalizeName
+from .utils import formatName, normalizeName, CLASS_TO_LEVEL
 
 from urllib.parse import quote
 from aj.api.endpoint import EndpointError
 
-
-GRADES_NAMES_COLLEGE_GERMAN = range(5, 10)
-GRADES_NAMES_COLLEGE_FRENCH = range(6, 2, -1)
-GRADES_COLLEGE_GERMAN = [f"{g}a" for g in GRADES_NAMES_COLLEGE_GERMAN] + \
-    [f"{g}b" for g in GRADES_NAMES_COLLEGE_GERMAN]
-GRADES_COLLEGE_FRENCH = [f"{g}I" for g in GRADES_NAMES_COLLEGE_FRENCH] + \
-    [f"{g}II" for g in GRADES_NAMES_COLLEGE_FRENCH]
-GRADES_LYCEE = ["2ES", "2L1", "2L2", "2S1", "2S2", "1ES", "1L1", "1L2",
-                "1SBC1", "1SBC2", "1SMP", "TES", "TL1", "TL2", "TSBC1", "1TSBC2", "TSMP"]
-GRADES = GRADES_COLLEGE_GERMAN + GRADES_COLLEGE_FRENCH + GRADES_LYCEE
+GRADES = CLASS_TO_LEVEL.keys()
 
 
 class CredentialsClient:
