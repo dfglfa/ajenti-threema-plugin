@@ -22,7 +22,7 @@ class UserDataProvider():
             logging.warn(
                 f"Fetching user data from example data file {filename}")
             with open(filename, "r") as csv_file:
-                reader = csv.DictReader(csv_file, delimiter=",")
+                reader = csv.DictReader(csv_file, delimiter=";")
                 user_data = [{"sn": rec['Nom'], "givenName": rec['Prenom'],
                               "sophomorixAdminClass": rec["Classe"]} for rec in reader]
 

@@ -66,12 +66,13 @@ def normalizeClassName(cls):
 def readRecordsFromCSV(csvData):
     records = []
     try:
-        reader = csv.DictReader(io.StringIO(csvData))
+        reader = csv.DictReader(io.StringIO(csvData), delimiter=";")
         for record in reader:
             records.append(
                 {"firstName": record["Prenom"], "lastName": record["Nom"], "class": record["Classe"]})
     except Exception as ex:
-        logging.error(f"Error while parsing CSV file: {ex}")
+        logging.error(
+            f"Error while parsing CSV file: {ex}, record was {record}")
     return records
 
 

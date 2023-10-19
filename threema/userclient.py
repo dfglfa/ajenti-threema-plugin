@@ -40,7 +40,7 @@ class UserClient:
 
     def searchUsersByCredentials(self, credentialsIds):
         users = self.getAll()
-        members, notFound = [], set(map(lambda u: u["id"], users))
+        members, notFound = [], []
 
         for cred in credentialsIds:
             logging.info(f"Searching active user for creds id {cred}")
@@ -49,8 +49,9 @@ class UserClient:
                     foundId = u["id"]
                     logging.info(f"Found user {foundId}")
                     members.append(foundId)
-                    notFound.remove(foundId)
                     break
+            else:
+                notFound.append(cred)
 
         logging.info(
             f"Found {len(members)} active users, {len(notFound)} could not be found")
