@@ -97,13 +97,12 @@ class ThreemaAdminClient:
     def getUsersByCSV(self, csvData):
         records = readRecordsFromCSV(csvData)
         creds = self.credentialsClient.findMatchesForRecords(records)
-        foundIds, notFoundIds = self.userClient.searchUsersByCredentials(creds)
+        foundIds, notFoundCredentials = self.userClient.searchUsersByCredentials(
+            creds)
 
         foundContacts = self.contactsClient.getContactsForUserIds(foundIds)
-        notFoundContacts = self.contactsClient.getContactsForUserIds(
-            notFoundIds)
 
-        return foundContacts, notFoundContacts
+        return foundContacts, notFoundCredentials
 
     def getContacts(self):
         return self.contactsClient.getAll()

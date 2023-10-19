@@ -152,7 +152,7 @@ class CredentialsClient:
             for c in creds:
                 if c.username == normalizedName:
                     logging.info(f"Found match with ID {c.id}")
-                    matches.append(c.id)
+                    matches.append(c)
                     break
 
         return matches

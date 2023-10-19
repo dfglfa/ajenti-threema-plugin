@@ -143,6 +143,7 @@ angular
           var fileContents = e.target.result;
           $http.post(`/api/threema_connector/group_members/csv`, { data: fileContents }).then(({ data: { added, notFound } }) => {
             $scope.newMembers = added;
+            console.log("Not found:", notFound);
             if (notFound && notFound.length > 0) {
               notify.warning(notFound.length + " users from the csv could not be found among the active contacts");
             } else {

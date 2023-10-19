@@ -117,7 +117,7 @@ class Handler(HttpPlugin):
         body = http_context.json_body()
         newMembers, notFound = self.client.getUsersByCSV(
             csvData=body.get("data"))
-        return {"added": newMembers, "notFound": notFound}
+        return {"added": newMembers, "notFound": [c.toJsonDict() for c in notFound]}
 
     @post(r'/api/threema_connector/remove_group_members')
     @authorize('lm:threema:list')
