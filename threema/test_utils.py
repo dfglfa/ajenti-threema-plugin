@@ -42,3 +42,5 @@ def test_normalization():
     assert normalizeName("MüllerHeiner", "5i") == "5eI_MüllerHeiner"
     assert normalizeName("MüllerHeiner", "Lehrer") == "MüllerHeiner"
     assert normalizeName("MüllerHeiner", "5I") == "5eI_MüllerHeiner"
+    assert normalizeName("MüllerHeiner", "3II") == "3eII_MüllerHeiner"
+    assert normalizeName("MüllerHeiner", "3ii") == "3eII_MüllerHeiner"
