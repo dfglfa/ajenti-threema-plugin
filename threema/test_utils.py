@@ -1,4 +1,4 @@
-from .utils import getClassDifference, formatName
+from .utils import getClassDifference, formatName, normalizeName
 
 
 def test_same_class():
@@ -36,3 +36,9 @@ def test_formatName():
     assert formatName(
         "Hans Michael", "Müller Berndhausen") == "MüllerBerndhausenHans"
     assert formatName("Gaël-Rüdiger", "von Bayern") == "vonBayernGaël-Rüdiger"
+
+
+def test_normalization():
+    assert normalizeName("MüllerHeiner", "5i") == "5eI_MüllerHeiner"
+    assert normalizeName("MüllerHeiner", "Lehrer") == "MüllerHeiner"
+    assert normalizeName("MüllerHeiner", "5I") == "5eI_MüllerHeiner"

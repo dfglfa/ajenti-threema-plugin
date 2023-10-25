@@ -61,6 +61,5 @@ target/
 crash*.txt
 .vscode
 notes.txt
-ent_dummy_data.csv
-threema_dummy_data.csv
+*.csv
 **/._*

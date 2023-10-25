@@ -44,14 +44,20 @@ def normalizeName(formattedName, className):
     "3II_MuellerPeterHansi" for Peter Hansi Müller in the 3ème II.
     """
 
-    if className.lower() == "teachers":
+    if className.lower() in ("teachers", "teacher", "lehrer"):
         return formattedName
 
     if className not in CLASS_TO_LEVEL.keys():
         classNameCaseInsensitive = [
             c for c in CLASS_TO_LEVEL.keys() if c.lower() == className.lower()]
-        className = classNameCaseInsensitive[0] if len(
-            classNameCaseInsensitive) == 1 else className
+        if len(classNameCaseInsensitive) == 1:
+            className = classNameCaseInsensitive[0]
+        elif className in NONSTANDARD_CLASS_NAMES:
+            className = NONSTANDARD_CLASS_NAMES[className]
+        else:
+            logging.warn(
+                f"Cannot find match or correction for class name {className}")
+
     return f"{className}_{formattedName}"
 
 
@@ -75,6 +81,9 @@ def readRecordsFromCSV(csvData):
             f"Error while parsing CSV file: {ex}, record was {record}")
     return records
 
+
+NONSTANDARD_CLASS_NAMES = {"6I": "6eI", "6II": "6eII", "5I": "5eI",
+                           "5II": "5eII", "4I": "4eI", "4II": "4eII", "3I": "3eI", "3II": "3eII"}
 
 CLASS_TO_LEVEL = {
     "5a": 5,
