@@ -1,7 +1,7 @@
 angular
   .module("dfglfa.threema_connector")
   .controller("ThreemaUserListController", function ($scope, $http, pageTitle, gettext, notify, $uibModal, classService) {
-    pageTitle.set(gettext("ThreemaConnector"));
+    pageTitle.set(gettext("Threema"));
 
     $scope.reverse = false;
 
