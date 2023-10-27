@@ -92,8 +92,8 @@ class NormalizationClient():
                 updates.append({
                     "firstName": con["firstName"],
                     "firstNameNormalized": con["firstName"],
-                    "lastName": contact["lastName"],
-                    "lastNameNormalized": contact["lastName"],
+                    "lastName": con["lastName"],
+                    "lastNameNormalized": con["lastName"],
                     "threemaId": upi,
                     "credentialsName": ORPHANED,
                     "enabled": False
