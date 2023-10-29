@@ -2,14 +2,14 @@
 import logging
 
 
-from .contactsclient import ContactsClient
-from .normalizationClient import NormalizationClient
-from .config_loader import getThreemaApiKey, getThreemaBroadcastApiKey, getThreemaBroadcastId
-from .credentialsclient import CredentialsClient
-from .userclient import UserClient
-from .groupclient import GroupClient
-from .datamodel import Contact
-from .utils import readRecordsFromCSV
+from threema.contactsclient import ContactsClient
+from threema.normalizationClient import NormalizationClient
+from threema.config_loader import getThreemaApiKey, getThreemaBroadcastApiKey, getThreemaBroadcastId
+from threema.credentialsclient import CredentialsClient
+from threema.userclient import UserClient
+from threema.groupclient import GroupClient
+from threema.datamodel import Contact
+from threema.utils import readRecordsFromCSV
 
 API_KEY = getThreemaApiKey()
 if not API_KEY:

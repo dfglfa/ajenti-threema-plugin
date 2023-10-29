@@ -2,9 +2,8 @@ import difflib
 import logging
 from operator import itemgetter
 
-from .datamodel import Credentials
-
-from .utils import CLASS_TO_LEVEL
+from threema.datamodel import Credentials
+from threema.utils import CLASS_TO_LEVEL
 
 
 CLASS_NAMES = CLASS_TO_LEVEL.keys()

@@ -1,8 +1,8 @@
 import csv
 import logging
 
-from .utils import formatFirstname, formatLastname, formatName, normalizeClassName, normalizeName
-from .config_loader import getStudentsFileName
+from threema.utils import formatFirstname, formatLastname, formatName, normalizeClassName, normalizeName
+from threema.config_loader import getStudentsFileName
 
 try:
     from linuxmusterTools.ldapconnector import LMNLdapReader as ldapreader

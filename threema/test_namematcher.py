@@ -1,7 +1,7 @@
 import pytest
 
-from .utils import formatName, normalizeName, normalizeClassName
-from .namematcher import NameMatcher
+from utils import formatName, normalizeName, normalizeClassName
+from namematcher import NameMatcher
 
 
 EXAMPLE_DATA = {("Mueller", "Lisa", "tes"): "TES_MuellerLisa",

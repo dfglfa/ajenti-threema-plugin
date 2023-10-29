@@ -1,9 +1,9 @@
 
 import logging
-from .contactsclient import ContactsClient
-from .credentialsclient import CredentialsClient
-from .userclient import UserClient
-from .userdataprovider import UserDataProvider
+from threema.contactsclient import ContactsClient
+from threema.credentialsclient import CredentialsClient
+from threema.userclient import UserClient
+from threema.userdataprovider import UserDataProvider
 
 # A constant value used as name for missing credentials
 # Do not change, as it is used in the frontend

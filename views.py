@@ -4,9 +4,9 @@ from aj.api.http import HttpPlugin, delete, get, post, put
 from jadi import component
 from aj.auth import authorize
 
-from .threema.utils import CLASS_TO_LEVEL
+from threema.utils import CLASS_TO_LEVEL
 
-from .threema.threemaapi import ThreemaAdminClient
+from threema.threemaapi import ThreemaAdminClient
 
 
 @component(HttpPlugin)

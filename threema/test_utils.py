@@ -1,4 +1,4 @@
-from .utils import getClassDifference, formatName, normalizeName
+from utils import getClassDifference, formatName, normalizeName
 
 
 def test_same_class():

@@ -5,12 +5,11 @@ import string
 import requests
 
 
-from .userdataprovider import UserDataProvider
+from threema.userdataprovider import UserDataProvider
 
-from .datamodel import Credentials
-from .datamodel import User
-from .namematcher import NameMatcher
-from .utils import formatName, normalizeName, CLASS_TO_LEVEL
+from threema.datamodel import Credentials, User
+from threema.namematcher import NameMatcher
+from threema.utils import formatName, normalizeName, CLASS_TO_LEVEL
 
 from urllib.parse import quote
 from aj.api.endpoint import EndpointError
