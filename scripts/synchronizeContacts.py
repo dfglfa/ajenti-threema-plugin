@@ -16,7 +16,7 @@ updates = changes.get("updates", [])
 print(f"\nSync running at {now.strftime('%d.%m.%y %H:%M')}")
 
 if updates:
-    print(f"*** Found {len(updates)} updates\n")
+    print(f"*** Found {len(updates)} updates")
     for update in updates:
         threemaId = update.get("threemaId")
         firstname = update.get("firstNameNormalized")
@@ -28,7 +28,7 @@ if updates:
 
 missing = changes.get("missing", [])
 if missing:
-    print(f"\n*** Found {len(missing)} missing contacts\n")
+    print(f"\n*** Found {len(missing)} missing contacts")
     for m in missing:
         threemaId = m.get("threemaId")
         firstName = m.get("firstName")
