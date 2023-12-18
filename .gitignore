@@ -1,4 +1,4 @@
-build
+#build
 vendor
 
 # Byte-compiled / optimized / DLL files
@@ -11,7 +11,7 @@ __pycache__/
 # Distribution / packaging
 .Python
 env/
-build/
+#build/
 develop-eggs/
 dist/
 downloads/
@@ -63,7 +63,5 @@ crash*.txt
 notes.txt
 *.csv
 **/._*
-
-ajenti_src
 ajenti_requirements.txt
 .venv
