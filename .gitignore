@@ -63,3 +63,7 @@ crash*.txt
 notes.txt
 *.csv
 **/._*
+
+ajenti_src
+ajenti_requirements.txt
+.venv
