@@ -1,0 +1,4 @@
+threema_api_key:
+threema_broadcast_id:
+threema_broadcast_api_key:
+students_data_file: /opt/plugins/ajenti-threema/ent_dummy_data.csv

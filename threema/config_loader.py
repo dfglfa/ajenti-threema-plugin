@@ -1,7 +1,8 @@
 import yaml
 import logging
+import os
 
-CONFIG_PATH = "/etc/linuxmuster/webui/threema.yml"
+CONFIG_PATH = os.getenv("THREEMA_CONFIG", "/etc/linuxmuster/webui/threema.yml")
 
 
 def _loadConfig():

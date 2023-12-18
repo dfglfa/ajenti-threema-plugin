@@ -65,3 +65,5 @@ notes.txt
 **/._*
 ajenti_requirements.txt
 .venv
+threema.yml
+resources/build
