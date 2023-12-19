@@ -17,6 +17,7 @@ class UserDataProvider():
             logging.info("Fetching user data via LDAP")
             user_data += ldapreader.get('/roles/student')
             user_data += ldapreader.get('/roles/teacher')
+            logging.info(f"Found data: {user_data}")
         else:
             filename = getStudentsFileName()
             logging.warn(
