@@ -61,7 +61,7 @@ class ThreemaAdminClient:
         return self.credentialsClient.correctNamingScheme()
 
     def checkConsistencyForAllStudents(self):
-        return self.credentialsClient.checkConsistencyForAllStudents()
+        return self.credentialsClient.matchAgainstMasterUserData()
 
     def checkConsistencyForStudentIds(self, threemaIds):
         return self.credentialsClient.checkConsistencyForStudentIds(threemaIds)

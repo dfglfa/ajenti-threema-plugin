@@ -32,18 +32,14 @@ class UserDataProvider():
         active_users = [
             u for u in user_data if u["sophomorixAdminClass"].lower() != "attic"]
 
+        user_dict = {}
         for user in active_users:
-            user["login"] = user["sAMAccountName"]
-            formattedName = formatName(user['givenName'], user['sn'])
-            user["formattedName"] = formattedName
+            user["cls"] = normalizeClassName(user["sophomorixAdminClass"])
+            user["firstName"] = user["givenName"]
+            user["lastName"] = user["sn"]
+            user["normalizedName"] = normalizeName(formatName(user["firstName"], user["lastName"]), user["cls"])
 
-            cls = normalizeClassName(user["sophomorixAdminClass"])
-            user["cls"] = cls
+            # Use ENT login as key
+            user_dict[user["sAMAccountName"]] = user
 
-            user["normalizedName"] = normalizeName(formattedName, cls)
-
-            user["givenName"] = formatFirstname(user["givenName"])
-            user["sn"] = formatLastname(user["sn"])
-            user["originalLastname"] = user["sn"]
-
-        return active_users
+        return user_dict
