@@ -17,20 +17,23 @@ class UserDataProvider():
             logging.info("Fetching user data via LDAP")
             user_data += ldapreader.get('/roles/student')
             user_data += ldapreader.get('/roles/teacher')
-            logging.info(f"Found data: {user_data}")
         else:
             filename = getStudentsFileName()
             logging.warn(
                 f"Fetching user data from example data file {filename}")
             with open(filename, "r") as csv_file:
                 reader = csv.DictReader(csv_file, delimiter=";")
-                user_data = [{"sn": rec['Nom'], "givenName": rec['Prenom'],
-                              "sophomorixAdminClass": rec["Classe"]} for rec in reader]
+                user_data = [{"sn": rec['Nom'], 
+                              "givenName": rec['Prenom'],
+                              "sAMAccountName": rec['sAMAccountName'],
+                              "sophomorixAdminClass": rec["Classe"]} 
+                              for rec in reader]
 
         active_users = [
             u for u in user_data if u["sophomorixAdminClass"].lower() != "attic"]
 
         for user in active_users:
+            user["login"] = user["sAMAccountName"]
             formattedName = formatName(user['givenName'], user['sn'])
             user["formattedName"] = formattedName
 
