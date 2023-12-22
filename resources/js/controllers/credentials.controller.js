@@ -50,28 +50,34 @@ angular
         })
         .then((resp) => {
           $scope.validated = true;
-          const { ok: valid_usernames, suggestions, unmatched, unused } = resp.data;
+          const { matched, unmatched, unused } = resp.data;
           const unmatched_ids = unmatched.map((c) => c.id);
-          const suggestions_ids = suggestions.map((c) => c.id);
 
           $scope.countENTRecordsNotFoundInThreema = unused.length;
           $scope.countThreemaRecordsNotFoundInENT = unmatched_ids.length;
-          $scope.countSuggestionsForNameChange = suggestions_ids.length;
 
+          let changeCount = 0;
           for (let cred of $scope.credentials) {
-            if (valid_usernames.indexOf(cred.username) > -1) {
-              cred.status = "OK";
+            let entMatch = matched[cred.id];
+            if (entMatch) {
+              cred.cls = entMatch["cls"];
+              if (cred.username === entMatch["entLogin"]) {
+                cred.status = "OK";
+              } else {
+                cred.status = "SUGGESTION";
+                cred.nameChange = entMatch["entLogin"];
+                changeCount++;
+              }
             } else if (unmatched_ids.indexOf(cred.id) > -1) {
               cred.status = "UNMATCHED";
-            } else if (suggestions_ids.indexOf(cred.id) > -1) {
-              cred.status = "SUGGESTION";
-              cred.suggestions = suggestions.find((c) => c.id == cred.id).match;
             } else {
               cred.status = "UNKNOWN";
             }
           }
 
-          if (unmatched_ids.length + suggestions_ids.length + unused.length === 0) {
+          $scope.countSuggestionsForNameChange = changeCount;
+
+          if (unmatched_ids.length + unused.length + changeCount === 0) {
             notify.success("Threema and ENT are perfectly synced. Nothing to do here.");
           } else {
             notify.success("Data deviations between Threema and ENT have been found. Check the options below the list to adjust.");
@@ -101,7 +107,6 @@ angular
           cred.username = newName;
           cred.cls = classService.getClass(newName);
           $scope.validated && validate();
-          $scope.onCredentialsChange(threemaId);
         }
       });
     }
