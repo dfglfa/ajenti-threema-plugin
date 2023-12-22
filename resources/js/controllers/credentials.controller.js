@@ -1,6 +1,6 @@
 angular
   .module("dfglfa.threema_connector")
-  .controller("ThreemaUserListController", function ($scope, $http, pageTitle, gettext, notify, $uibModal, classService) {
+  .controller("CredentialsController", function ($scope, $http, pageTitle, gettext, notify, $uibModal, classService) {
     pageTitle.set(gettext("Threema"));
 
     $scope.reverse = false;
@@ -29,23 +29,18 @@ angular
       }
     };
 
-    $scope.$watch("credentials", (newCreds) => {
-      if (!newCreds) {
-        return;
-      }
-
-      for (let c of newCreds) {
-        if (!c.username) {
-          continue;
-        }
-        const cls = classService.getClass(c.username);
-        c["cls"] = cls;
-      }
-    });
-
     $scope.validate = validate;
     $scope.openCredentialsChangeModal = openCredentialsChangeModal;
     $scope.openCredentialsDeleteModal = openCredentialsDeleteModal;
+
+    loadCredentials();
+
+    function loadCredentials() {
+      $http.get("/api/threema_connector/credentials").then((resp) => {
+        $scope.credentials = resp.data;
+        validate();
+      });
+    }
 
     function validate() {
       $scope.isValidating = true;
@@ -55,8 +50,7 @@ angular
         })
         .then((resp) => {
           $scope.validated = true;
-          const { ok, suggestions, unmatched, unused } = resp.data;
-          const ok_ids = ok.map((c) => c.id);
+          const { ok: valid_usernames, suggestions, unmatched, unused } = resp.data;
           const unmatched_ids = unmatched.map((c) => c.id);
           const suggestions_ids = suggestions.map((c) => c.id);
 
@@ -65,13 +59,13 @@ angular
           $scope.countSuggestionsForNameChange = suggestions_ids.length;
 
           for (let cred of $scope.credentials) {
-            if (ok_ids.indexOf(cred.id) > -1) {
+            if (valid_usernames.indexOf(cred.username) > -1) {
               cred.status = "OK";
             } else if (unmatched_ids.indexOf(cred.id) > -1) {
               cred.status = "UNMATCHED";
             } else if (suggestions_ids.indexOf(cred.id) > -1) {
               cred.status = "SUGGESTION";
-              cred.suggestions = suggestions.find((c) => c.id == cred.id).matches.map((m) => m[0]);
+              cred.suggestions = suggestions.find((c) => c.id == cred.id).match;
             } else {
               cred.status = "UNKNOWN";
             }

@@ -10,11 +10,11 @@ angular.module("dfglfa.threema_connector").controller("ThreemaConnectorIndexCont
     });
   }
 
-  function sortByUserType(credsList) {
+  function sortByUserType(credentials) {
     const studentsCreds = [];
     const teachersCreds = [];
 
-    for (let c of credsList) {
+    for (let c of credentials) {
       if (c.username && classService.getClass(c.username)) {
         studentsCreds.push(c);
       } else {
@@ -25,6 +25,7 @@ angular.module("dfglfa.threema_connector").controller("ThreemaConnectorIndexCont
 
     $scope.studentsCredentials = studentsCreds;
     $scope.teachersCredentials = teachersCreds;
+    $scope.credentials = credentials;
   }
 
   $scope.onCredsChange = () => {

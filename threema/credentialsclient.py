@@ -8,7 +8,7 @@ import requests
 from threema.userdataprovider import UserDataProvider
 
 from threema.datamodel import Credentials, User
-from threema.utils import formatName, normalizeName, CLASS_TO_LEVEL
+from threema.utils import CLASS_TO_LEVEL
 
 from urllib.parse import quote
 from aj.api.endpoint import EndpointError
@@ -109,38 +109,39 @@ class CredentialsClient:
             logging.error(f"Response {resp.status_code}. Please check again.")
 
     def matchAgainstMasterUserData(self):
-        master_user_dict = self.userDataProvider.getUserData()
-        threema_creds_dict = self.getCredsByName()
+        userForEntLogin = self.userDataProvider.getUserData()
+        threemaCredentialsForCredsName = self.getCredsByName()
         
         result = {
-            "suggestions": [],
-            "ok": [],
+            "matched": {},
             "unmatched": [],
             "unused": []
         }
 
-        unhandledMuids = []
-        for muid in master_user_dict:
-            print("Checking ", muid, "in ent creds")
-            if muid not in threema_creds_dict:
-                unhandledMuids.append(muid)
-            else:
-                result["ok"].append(muid)
-
         matchedThreemaIds = []
-        for umu in unhandledMuids:
-            normedName = master_user_dict[umu]["normalizedName"]
-            if normedName in threema_creds_dict:
-                matchedThreemaIds.append(normedName)
-                print(f"Found old format {normedName} for ent ID {umu} (threemaId {threema_creds_dict[normedName].id})")
-                result["suggestions"].append(
-                    {"id": threema_creds_dict[normedName].id, "username": normedName, "matches": umu})
+        unhandledMuids = []
+        for entLogin in userForEntLogin:
+            if entLogin not in threemaCredentialsForCredsName:
+                unhandledMuids.append(entLogin)
             else:
-                result["unmatched"].append({"id": umu})
+                credsId = threemaCredentialsForCredsName[entLogin].id
+                result["matched"][credsId] = userForEntLogin[entLogin]
+                matchedThreemaIds.append(credsId)
+
+        for umu in unhandledMuids:
+            normedName = userForEntLogin[umu]["normalizedName"]
+            print("Looking for", normedName)
+            if normedName in threemaCredentialsForCredsName:
+                credsId = threemaCredentialsForCredsName[normedName].id
+                result["matched"][credsId] = userForEntLogin[umu]
+                matchedThreemaIds.append(credsId)
+            else:
+                result["unused"].append(umu)
         
-        for threemaName in threema_creds_dict:
-            if threemaName not in matchedThreemaIds:
-                result["unused"].append(threemaName)
+        for threemaName in threemaCredentialsForCredsName:
+            credsId = threemaCredentialsForCredsName[threemaName].id
+            if credsId not in matchedThreemaIds:
+                result["unmatched"].append({"id": credsId, "username": threemaName})
 
         return result
 

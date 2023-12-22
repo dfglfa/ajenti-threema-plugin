@@ -34,12 +34,14 @@ class UserDataProvider():
 
         user_dict = {}
         for user in active_users:
-            user["cls"] = normalizeClassName(user["sophomorixAdminClass"])
-            user["firstName"] = user["givenName"]
-            user["lastName"] = user["sn"]
-            user["normalizedName"] = normalizeName(formatName(user["firstName"], user["lastName"]), user["cls"])
+            u = {}
+            u["cls"] = normalizeClassName(user["sophomorixAdminClass"])
+            u["firstName"] = user["givenName"]
+            u["lastName"] = user["sn"]
+            u["normalizedName"] = normalizeName(formatName(u["firstName"], u["lastName"]), u["cls"])
+            u["entLogin"] = user["sAMAccountName"]
 
             # Use ENT login as key
-            user_dict[user["sAMAccountName"]] = user
+            user_dict[user["sAMAccountName"]] = u
 
         return user_dict

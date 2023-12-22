@@ -1,0 +1,12 @@
+<progress-spinner ng:show="users === undefined"></progress-spinner>
+<div ng:show="!!users && users.length === 0">
+  <br />
+  <div class="alert alert-info">
+    <i class="fa fa-info-circle"></i>
+    <span translate="">There are no users to manage yet.</span>
+  </div>
+</div>
+
+<div style="margin: 20px 0 10px 0"></div>
+
+<div ng:show="users.length > 0" style="padding-top: 20px">Users: {{users}}</div>
