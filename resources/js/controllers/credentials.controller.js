@@ -5,7 +5,7 @@ angular
 
     $scope.reverse = false;
 
-    $scope.isValidating = false;
+    $scope.entMatchInProgress = false;
     $scope.validated = false;
     $scope.countThreemaRecordsNotFoundInENT = 0;
     $scope.countENTRecordsNotFoundInThreema = 0;
@@ -36,6 +36,7 @@ angular
     loadCredentials();
 
     function loadCredentials() {
+      $scope.entMatchInProgress = true;
       $http.get("/api/threema_connector/credentials").then((resp) => {
         $scope.credentials = resp.data;
         validate();
@@ -43,7 +44,7 @@ angular
     }
 
     function validate() {
-      $scope.isValidating = true;
+      $scope.entMatchInProgress = true;
       $http
         .post("/api/threema_connector/credentials/check", {
           idsToCheck: null,
@@ -52,13 +53,18 @@ angular
           $scope.validated = true;
           const { matched, unmatched, unused } = resp.data;
           const unmatched_ids = unmatched.map((c) => c.id);
+          const match_by_creds_id = {};
+
+          for (let m of matched) {
+            match_by_creds_id[m.credsId] = m;
+          }
 
           $scope.countENTRecordsNotFoundInThreema = unused.length;
           $scope.countThreemaRecordsNotFoundInENT = unmatched_ids.length;
 
           let changeCount = 0;
           for (let cred of $scope.credentials) {
-            let entMatch = matched[cred.id];
+            let entMatch = match_by_creds_id[cred.id];
             if (entMatch) {
               cred.cls = entMatch["cls"];
               if (cred.username === entMatch["entLogin"]) {
@@ -83,7 +89,7 @@ angular
             notify.success("Data deviations between Threema and ENT have been found. Check the options below the list to adjust.");
           }
         })
-        .finally(() => ($scope.isValidating = false));
+        .finally(() => ($scope.entMatchInProgress = false));
     }
 
     function openCredentialsChangeModal(threemaId, oldName, newName) {

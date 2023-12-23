@@ -13,7 +13,14 @@ angular.module("dfglfa.threema_connector").controller("SuggestionsController", f
 
   function loadResults() {
     return $http.post("/api/threema_connector/credentials/check", {}).then((resp) => {
-      $scope.results = resp.data;
+      let suggestions = [];
+      for (let entry of resp.data.matched) {
+        if (entry.needsChange) {
+          suggestions.push(entry);
+        }
+      }
+      $scope.suggestions = suggestions;
+      console.log("Suggestions: ", $scope.suggestions);
     });
   }
 
@@ -43,8 +50,8 @@ angular.module("dfglfa.threema_connector").controller("SuggestionsController", f
 
   function applyAllSuggestions() {
     const allTasks = [];
-    for (let suggestion of $scope.results.suggestions) {
-      allTasks.push([suggestion.id, suggestion.matches[0][0]]);
+    for (let suggestion of $scope.suggestions) {
+      allTasks.push([suggestion.id, suggestion.entLogin]);
     }
 
     $scope.isUpdating = true;

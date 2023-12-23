@@ -113,7 +113,7 @@ class CredentialsClient:
         threemaCredentialsForCredsName = self.getCredsByName()
         
         result = {
-            "matched": {},
+            "matched": [],
             "unmatched": [],
             "unused": []
         }
@@ -125,7 +125,8 @@ class CredentialsClient:
                 unhandledMuids.append(entLogin)
             else:
                 credsId = threemaCredentialsForCredsName[entLogin].id
-                result["matched"][credsId] = userForEntLogin[entLogin]
+                userForEntLogin[entLogin]["credsId"] = credsId
+                result["matched"].append(userForEntLogin[entLogin])
                 matchedThreemaIds.append(credsId)
 
         for umu in unhandledMuids:
@@ -133,7 +134,9 @@ class CredentialsClient:
             print("Looking for", normedName)
             if normedName in threemaCredentialsForCredsName:
                 credsId = threemaCredentialsForCredsName[normedName].id
-                result["matched"][credsId] = userForEntLogin[umu]
+                userForEntLogin[umu]["credsId"] = credsId
+                userForEntLogin[umu]["needsChange"] = True
+                result["matched"].append(userForEntLogin[umu])
                 matchedThreemaIds.append(credsId)
             else:
                 result["unused"].append(umu)
