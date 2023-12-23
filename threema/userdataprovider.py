@@ -1,7 +1,7 @@
 import csv
 import logging
 
-from threema.utils import formatFirstname, formatLastname, formatName, normalizeClassName, normalizeName
+from threema.utils import formatName, normalizeClassName, normalizeName
 from threema.config_loader import getStudentsFileName
 
 try:
