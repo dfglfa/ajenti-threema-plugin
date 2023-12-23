@@ -23,9 +23,6 @@ class NormalizationClient():
         users = self.userClient.getAll()
         contacts = self.contactsClient.getAll()
 
-        normalized_name_to_common_name = {e["normalizedName"]: (
-            e["givenName"], e["originalLastname"], e["cls"]) for e in entData}
-
         cred_name_for_cred_id = {c.id: c.username for c in credentials}
         user_for_cred_id = {u["credentials_id"]: u for u in users}
         contact_for_user_id = {c["id"]: c for c in contacts}
@@ -41,12 +38,14 @@ class NormalizationClient():
 
         for cred_id, cred_name in cred_name_for_cred_id.items():
             logging.info(f"Checking credentials name {cred_name}")
-            if cred_name not in normalized_name_to_common_name:
+            if cred_name not in entData:
                 logging.info(
                     f"Cannot find ENT user entry for credentials name {cred_name}")
                 continue
 
-            firstName, originalLastName, cls = normalized_name_to_common_name[cred_name]
+            firstName, originalLastName, cls = (entData[cred_name]["firstName"], 
+                                                entData[cred_name]["lastName"], 
+                                                entData[cred_name]["cls"])
 
             if cred_id not in user_for_cred_id:
                 logging.info(
