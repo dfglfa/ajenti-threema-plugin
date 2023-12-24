@@ -44,4 +44,5 @@ class UserDataProvider():
             # Use ENT login as key
             user_dict[user["sAMAccountName"]] = u
 
+        print("USERS: ", [f"\n{u}: {user_dict[u]}" for u in user_dict])
         return user_dict
