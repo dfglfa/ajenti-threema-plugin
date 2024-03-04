@@ -2,7 +2,7 @@ angular.module("dfglfa.threema_connector").controller("ThreemaUsersController", 
   $scope.users = undefined;
 
   $scope.sorts = [
-    { name: "Usage", fx: (c) => c.usage },
+    { name: "Usage", fx: (c) => [c.usage, c.id] },
     { name: "Name", fx: (c) => c.nickname },
   ];
 
