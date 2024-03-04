@@ -9,6 +9,68 @@
 
 <div style="margin: 20px 0 10px 0"></div>
 
-<div ng:show="users.length > 0" style="padding-top: 20px">Users: {{users}}</div>
+<div ng:show="users.length > 0" style="padding-top: 20px">
+  <div class="input-group">
+    <input ng:model="filter" type="search" autofocus class="form-control" placeholder="Filter" typeahead-min-length="1" />
+    <div uib-dropdown class="input-group-btn">
+      <button class="btn btn-default" uib-dropdown-toggle>
+        <i class="fa fa-sort-amount-asc"></i> {{sort.name}}
+        <span class="caret"></span>
+      </button>
+      <ul uib-dropdown-menu class="dropdown-menu-right" style="width: 150px">
+        <li ng:repeat="sort in sorts">
+          <a ng:click="sortClicked(sort)"> <i class="fa fa-sort-amount-asc"></i> {{sort.name}} </a>
+        </li>
+      </ul>
+    </div>
+    <div uib-dropdown class="input-group-btn" auto-close="outsideClick">
+      <button class="btn btn-default" uib-dropdown-toggle>
+        <i class="fa fa-list-ol"></i> {{'Rows'|translate}}
+        <span class="caret"></span>
+      </button>
+      <ul uib-dropdown-menu class="dropdown-menu-right" style="width: 200px">
+        <li ng:repeat="size in [10, 50, 100, 500, 1000]">
+          <a ng:click="paging.pageSize = size"><i class="fa fa-list-ol"></i> {{size}} <span translate>users</span></a>
+        </li>
+        <li>
+          <div class="input-group" style="display: table">
+            <div class="input-group-addon">Other:</div>
+            <input ng:model="paging.pageSize" type="number" autofocus class="form-control" />
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <table class="table" ng:class="{'lmn-blurred': blurred}" style="width: 100%">
+    <tr>
+      <th width="35" class="text-center"><span translate> UserId </span></th>
+      <th width="120">Nickname</th>
+      <th width="30">Usage</th>
+      <th width="120">Created</th>
+    </tr>
+    <tr ng:repeat="user in users|filter:filter|orderBy:sort.fx:reverse|page:paging.page:paging.pageSize">
+      <td width="35" style="vertical-align: middle" class="text-center"><strong>{{user.id}}</strong></td>
+      <td width="120" style="vertical-align: middle" class="text-left">
+        <i>{{user.nickname}}</i>
+      </td>
+      <td width="30" style="vertical-align: middle" class="text-left">
+        <span style="padding: 5px">{{user.usage}}</span>
+      </td>
+      <td width="120" style="vertical-align: middle" class="text-left">
+        <span>{{user.createdAt|date:'yyyy-MM-dd HH:mm'}}</span>
+      </td>
+    </tr>
+  </table>
 
-Coming soon ...
+  <br />
+  <ul
+    uib-pagination
+    ng:show="users.length > paging.pageSize"
+    ng-model="paging.page"
+    total-items="users.length"
+    items-per-page="paging.pageSize"
+    max-size="10"
+    rotate="true"
+    boundary-links="true"
+  ></ul>
+</div>

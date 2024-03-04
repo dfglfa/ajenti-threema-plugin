@@ -86,7 +86,7 @@ angular
           if (unmatched_ids.length + unused.length + changeCount === 0) {
             notify.success("Threema and ENT are perfectly synced. Nothing to do here.");
           } else {
-            notify.success("Data deviations between Threema and ENT have been found. Check the options below the list to adjust.");
+            notify.success("Data deviations between Threema and ENT have been found.");
           }
         })
         .finally(() => ($scope.entMatchInProgress = false));
