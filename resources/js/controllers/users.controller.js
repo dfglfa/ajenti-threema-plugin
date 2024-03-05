@@ -1,18 +1,21 @@
-angular.module("dfglfa.threema_connector").controller("ThreemaUsersController", function ($scope, $http, classService) {
+angular.module("dfglfa.threema_connector").controller("ThreemaUsersController", function ($scope, $http) {
   $scope.users = undefined;
+  $scope.paging = { pageSize: 50, page: 1 };
 
-  $scope.sorts = [
-    { name: "Usage", fx: (c) => [c.usage, c.id] },
-    { name: "Name", fx: (c) => c.nickname },
-  ];
+  const credentials_dict = {};
+  loadCredentials().then(loadUsers);
 
-  $scope.sort = $scope.sorts[0];
-  $scope.paging = { pageSize: 20, page: 1 };
-
-  loadUsers();
+  function loadCredentials() {
+    return $http.get("/api/threema_connector/credentials").then((resp) => {
+      for (const cred of resp.data) {
+        credentials_dict[cred.id] = cred;
+      }
+      console.log("Dict:", credentials_dict);
+    });
+  }
 
   function loadUsers() {
-    $http.get("/api/threema_connector/users").then((resp) => {
+    return $http.get("/api/threema_connector/users").then((resp) => {
       const userdata = resp.data;
 
       const usage = {};
@@ -28,6 +31,7 @@ angular.module("dfglfa.threema_connector").controller("ThreemaUsersController", 
       for (const u of userdata) {
         user_list.push({
           ...u,
+          credentials_name: credentials_dict[u.credentials_id]?.username,
           usage: usage[u.credentials_id],
         });
       }
