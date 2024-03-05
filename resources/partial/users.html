@@ -37,6 +37,7 @@
       <th width="120">User-Nickname</th>
       <th width="30">Usage</th>
       <th width="120">Created</th>
+      <th width="120">Last login</th>
     </tr>
     <tr
       ng:repeat="user in users|filter:filter|orderBy:['-usage','credentials_name','-createdAt']|page:paging.page:paging.pageSize"
@@ -54,6 +55,9 @@
       </td>
       <td width="120" style="vertical-align: middle" class="text-left">
         <span>{{user.createdAt|date:'yyyy-MM-dd HH:mm'}}</span>
+      </td>
+      <td width="120" style="vertical-align: middle" class="text-left">
+        <span>{{user.lastCheck|date:'yyyy-MM-dd HH:mm'}}</span>
       </td>
     </tr>
   </table>
