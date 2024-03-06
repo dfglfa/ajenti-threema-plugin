@@ -48,6 +48,9 @@ class ThreemaAdminClient:
     def getAllUsers(self, **params):
         return self.userClient.getAll(**params)
 
+    def deleteUser(self, threemaId):
+        return self.userClient.deleteUser(threemaId)
+
     def getAllCredentials(self, **params):
         return self.credentialsClient.getAll(**params)
 

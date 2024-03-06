@@ -9,6 +9,12 @@
 
 <div style="margin: 20px 0 10px 0"></div>
 
+<div ng:show="orphans.length > 0">
+  <button ng-disabled="deleting" class="btn btn-danger" ng-click="deleteOrphans()">
+    {{deleting ? 'Deleting' : 'Delete'}} users without credentials ({{orphans.length}})
+  </button>
+</div>
+
 <div ng:show="users.length > 0" style="padding-top: 20px">
   <div class="input-group">
     <input ng:model="filter" type="search" autofocus class="form-control" placeholder="Filter" typeahead-min-length="1" />

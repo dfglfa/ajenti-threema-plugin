@@ -56,6 +56,13 @@ class UserClient:
             f"Found {len(members)} active users, {len(notFound)} could not be found")
         return members, notFound
 
+    def deleteUser(self, threemaId):
+        url = f"{self.baseUrl}/users/{threemaId}"
+        logging.info(f"Deleting user ID {threemaId}")
+        # cache bust
+        USER_CACHE["timestamp"] = None
+        requests.delete(url, headers=self.authHeader)
+
     def _extractCredsForUser(self, user):
         for link in user["_links"]:
             if link.get("rel") == "credential":

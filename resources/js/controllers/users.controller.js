@@ -1,6 +1,10 @@
-angular.module("dfglfa.threema_connector").controller("ThreemaUsersController", function ($scope, $http) {
+angular.module("dfglfa.threema_connector").controller("ThreemaUsersController", function ($scope, $http, $timeout, notify) {
   $scope.users = undefined;
   $scope.paging = { pageSize: 50, page: 1 };
+
+  $scope.orphans = [];
+  $scope.deleteOrphans = deleteOrphans;
+  $scope.deleting = false;
 
   const credentials_dict = {};
   loadCredentials().then(loadUsers);
@@ -28,15 +32,43 @@ angular.module("dfglfa.threema_connector").controller("ThreemaUsersController", 
       }
 
       const user_list = [];
+      const orphans = [];
       for (const u of userdata) {
+        creds_usage = usage[u.credentials_id];
+        creds_id = credentials_dict[u.credentials_id];
+
+        if (!creds_id) {
+          orphans.push(u);
+        }
+
         user_list.push({
           ...u,
-          credentials_name: credentials_dict[u.credentials_id]?.username,
-          usage: usage[u.credentials_id],
+          credentials_name: creds_id?.username,
+          usage: creds_usage,
         });
       }
 
       $scope.users = user_list;
+      $scope.orphans = orphans;
     });
+  }
+
+  function deleteOrphans() {
+    if ($scope.orphans.length === 0) {
+      $scope.deleting = false;
+      return;
+    }
+
+    $scope.deleting = true;
+    const orphan = $scope.orphans.pop();
+    console.log("Deleting ", orphan.id, " (username ", orphan.nickname, ")");
+    $http
+      .delete("/api/threema_connector/users/" + orphan.id)
+      .then((resp) => {
+        $scope.users = $scope.users.filter((u) => u.id !== orphan.id);
+        notify.success("Deleted user " + orphan.id);
+        $timeout(deleteOrphans, 500);
+      })
+      .catch(() => notify.error("Error while deleting user " + orphan.id));
   }
 });

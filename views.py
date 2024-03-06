@@ -132,6 +132,13 @@ class Handler(HttpPlugin):
     def handle_api_get_users(self, http_context):
         return self.client.getAllUsers()
 
+    @delete(r'/api/threema_connector/users/(?P<threemaId>.+)')
+    @authorize('lm:threema:list')
+    @endpoint(api=True)
+    def handle_api_delete_user(self, http_context, threemaId=""):
+        if threemaId:
+            self.client.deleteUser(threemaId)
+
     @get(r'/api/threema_connector/contacts')
     @authorize('lm:threema:list')
     @endpoint(api=True)
