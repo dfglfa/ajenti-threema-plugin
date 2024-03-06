@@ -19,7 +19,7 @@ angular.module("dfglfa.threema_connector").controller("ThreemaUsersController", 
 
   function loadUsers() {
     return $http.get("/api/threema_connector/users").then((resp) => {
-      const userdata = resp.data;
+      const userdata = resp.data.concat({ id: 123, nickname: "hans" });
 
       const usage = {};
       for (const u of userdata) {
@@ -63,8 +63,10 @@ angular.module("dfglfa.threema_connector").controller("ThreemaUsersController", 
     });
 
     modal.result.then(() => {
+      const userIds = users.map((u) => u.id);
       notify.success(gettext("Deleted"));
-      $scope.credentials = $scope.credentials.filter((c) => users.indexOf(c.id) === -1);
+      $scope.users = $scope.users.filter((c) => userIds.indexOf(c.id) === -1);
+      $scope.orphans = $scope.orphans.filter((o) => userIds.indexOf(o.id) === -1);
     });
   }
 });
