@@ -1,0 +1,12 @@
+<div class="modal-header">
+  <h4 translate>Confirm deletion</h4>
+</div>
+<div class="modal-body">
+  <p>Really delete <strong>{{users.length > 1 ? users.length + " users" : "user " + users[0].nickname}}</strong>?</p>
+  <div ng-show="error">Unable to delete user: {{error.data.message}}</div>
+  <progress-spinner ng:show="isDeleting"></progress-spinner>
+</div>
+<div class="modal-footer" ng:show="!isDeleting">
+  <button class="btn btn-warning" ng:click="cancel()" translate>Cancel</button>
+  <button class="btn btn-danger" ng:click="deleteUsers(users)" translate>Yes, delete</button>
+</div>

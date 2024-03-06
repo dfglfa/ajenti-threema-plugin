@@ -10,7 +10,7 @@
 <div style="margin: 20px 0 10px 0"></div>
 
 <div ng:show="orphans.length > 0">
-  <button ng-disabled="deleting" class="btn btn-danger" ng-click="deleteOrphans()">
+  <button ng-disabled="deleting" class="btn btn-danger" ng-click="openUserDeleteModal(orphans)">
     {{deleting ? 'Deleting' : 'Delete'}} users without credentials ({{orphans.length}})
   </button>
 </div>
@@ -44,10 +44,11 @@
       <th width="30">Usage</th>
       <th width="120">Created</th>
       <th width="120">Last login</th>
+      <th width="120">Action</th>
     </tr>
     <tr
       ng:repeat="user in users|filter:filter|orderBy:['-usage','credentials_name','-lastCheck']|page:paging.page:paging.pageSize"
-      ng:class="{'text-danger': user.usage > 1}"
+      ng:class="{'text-danger': user.usage > 1, 'alert alert-danger': !user.credentials_name}"
     >
       <td width="35" style="vertical-align: middle" class="text-center"><strong>{{user.id}}</strong></td>
       <td width="120" style="vertical-align: middle" class="text-left">
@@ -64,6 +65,16 @@
       </td>
       <td width="120" style="vertical-align: middle" class="text-left">
         <span>{{user.lastCheck|date:'yyyy-MM-dd HH:mm'}}</span>
+      </td>
+      <td>
+        <button
+          ng:show="user.usage > 1 || !user.credentials_name"
+          class="btn btn-danger"
+          ng:disabled="deleting"
+          ng:click="openUserDeleteModal([user])"
+        >
+          Delete
+        </button>
       </td>
     </tr>
   </table>

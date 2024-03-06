@@ -1,10 +1,9 @@
-angular.module("dfglfa.threema_connector").controller("ThreemaUsersController", function ($scope, $http, $timeout, notify) {
+angular.module("dfglfa.threema_connector").controller("ThreemaUsersController", function ($scope, $http, $uibModal, gettext, notify) {
   $scope.users = undefined;
   $scope.paging = { pageSize: 50, page: 1 };
 
   $scope.orphans = [];
-  $scope.deleteOrphans = deleteOrphans;
-  $scope.deleting = false;
+  $scope.openUserDeleteModal = openUserDeleteModal;
 
   const credentials_dict = {};
   loadCredentials().then(loadUsers);
@@ -53,22 +52,19 @@ angular.module("dfglfa.threema_connector").controller("ThreemaUsersController", 
     });
   }
 
-  function deleteOrphans() {
-    if ($scope.orphans.length === 0) {
-      $scope.deleting = false;
-      return;
-    }
+  function openUserDeleteModal(users) {
+    const modal = $uibModal.open({
+      templateUrl: "/threema_connector:resources/partial/userDelete.modal.html",
+      controller: "UserDeleteController",
+      size: "lg",
+      resolve: {
+        users: () => users,
+      },
+    });
 
-    $scope.deleting = true;
-    const orphan = $scope.orphans.pop();
-    console.log("Deleting ", orphan.id, " (username ", orphan.nickname, ")");
-    $http
-      .delete("/api/threema_connector/users/" + orphan.id)
-      .then((resp) => {
-        $scope.users = $scope.users.filter((u) => u.id !== orphan.id);
-        notify.success("Deleted user " + orphan.id);
-        $timeout(deleteOrphans, 500);
-      })
-      .catch(() => notify.error("Error while deleting user " + orphan.id));
+    modal.result.then(() => {
+      notify.success(gettext("Deleted"));
+      $scope.credentials = $scope.credentials.filter((c) => users.indexOf(c.id) === -1);
+    });
   }
 });
