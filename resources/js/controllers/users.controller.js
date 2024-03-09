@@ -36,7 +36,7 @@ angular.module("dfglfa.threema_connector").controller("ThreemaUsersController", 
       for (const u of userdata) {
         creds_usage = usage[u.credentials_id];
         creds_id = credentials_dict[u.credentials_id];
-        deletable = !creds_id || (creds_usage > 1 && getDaysPast(u.lastCheck) > 180);
+        deletable = !creds_id || (creds_usage > 1 && getDaysPast(u.lastCheck) > 90);
         console.log("Last login of " + u.nickname + " was " + getDaysPast(u.lastCheck) + " days ago: " + u.lastCheck);
 
         if (!creds_id) {
