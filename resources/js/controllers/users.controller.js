@@ -19,7 +19,8 @@ angular.module("dfglfa.threema_connector").controller("ThreemaUsersController", 
 
   function loadUsers() {
     return $http.get("/api/threema_connector/users").then((resp) => {
-      const userdata = resp.data.concat({ id: 123, nickname: "hans" });
+      //const userdata = resp.data.concat({ id: 123, nickname: "hans", lastCheck: "2023-09-10" });
+      const userdata = resp.data;
 
       const usage = {};
       for (const u of userdata) {
@@ -35,6 +36,8 @@ angular.module("dfglfa.threema_connector").controller("ThreemaUsersController", 
       for (const u of userdata) {
         creds_usage = usage[u.credentials_id];
         creds_id = credentials_dict[u.credentials_id];
+        deletable = !creds_id || (creds_usage > 1 && getDaysPast(u.lastCheck) > 180);
+        console.log("Last login of " + u.nickname + " was " + getDaysPast(u.lastCheck) + " days ago: " + u.lastCheck);
 
         if (!creds_id) {
           orphans.push(u);
@@ -44,6 +47,7 @@ angular.module("dfglfa.threema_connector").controller("ThreemaUsersController", 
           ...u,
           credentials_name: creds_id?.username,
           usage: creds_usage,
+          deletable,
         });
       }
 
@@ -68,5 +72,12 @@ angular.module("dfglfa.threema_connector").controller("ThreemaUsersController", 
       $scope.users = $scope.users.filter((c) => userIds.indexOf(c.id) === -1);
       $scope.orphans = $scope.orphans.filter((o) => userIds.indexOf(o.id) === -1);
     });
+  }
+
+  function getDaysPast(targetDate) {
+    const currentDate = new Date();
+    const timeDifference = currentDate - new Date(targetDate);
+    const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+    return daysDifference;
   }
 });

@@ -67,14 +67,7 @@
         <span>{{user.lastCheck|date:'yyyy-MM-dd HH:mm'}}</span>
       </td>
       <td>
-        <button
-          ng:show="user.usage > 1 || !user.credentials_name"
-          class="btn btn-danger"
-          ng:disabled="deleting"
-          ng:click="openUserDeleteModal([user])"
-        >
-          Delete
-        </button>
+        <button ng:show="user.deletable" class="btn btn-danger" ng:disabled="deleting" ng:click="openUserDeleteModal([user])">Delete</button>
       </td>
     </tr>
   </table>
