@@ -47,7 +47,7 @@
       <th width="120">Action</th>
     </tr>
     <tr
-      ng:repeat="user in users|filter:filter|orderBy:['-usage','credentials_name','-lastCheck']|page:paging.page:paging.pageSize"
+      ng:repeat="user in users|filter:filter|orderBy:['-usage','credentials_id','-lastCheck']|page:paging.page:paging.pageSize"
       ng:class="{'text-danger': user.usage > 1, 'alert alert-danger': !user.credentials_name}"
     >
       <td width="35" style="vertical-align: middle" class="text-center"><strong>{{user.id}}</strong></td>
