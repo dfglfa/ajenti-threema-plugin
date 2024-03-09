@@ -35,6 +35,7 @@ angular.module("dfglfa.threema_connector").controller("ThreemaUsersController", 
       for (const u of userdata) {
         creds_usage = usage[u.credentials_id];
         creds_id = credentials_dict[u.credentials_id];
+        credentials_name_or_id = creds_id ? creds_id.username : u.credentials_id;
 
         if (!creds_id) {
           orphans.push(u);
@@ -42,7 +43,7 @@ angular.module("dfglfa.threema_connector").controller("ThreemaUsersController", 
 
         user_list.push({
           ...u,
-          credentials_name: creds_id?.username,
+          credentials_name: credentials_name_or_id,
           usage: creds_usage,
         });
       }
