@@ -59,7 +59,7 @@ class NormalizationClient():
                 no_ent_match.append({"threemaId": u["id"], "credentials_name": cred_name})
                 continue
             
-            normed_first_name = f"{entUserData['cls']} {entUserData['firstName']}" if entUserData['cls'] != "teachers" else entUserData['firstName']
+            normed_first_name = f"{entUserData['cls']} {entUserData['firstName'].split()[0]}" if entUserData['cls'] != "teachers" else entUserData['firstName']
             normed_last_name = entUserData['lastName']
             logging.info(f"Contact name of user {u['id']} should be {normed_first_name} {normed_last_name}")
 
