@@ -24,7 +24,8 @@ if updates:
         enabled = update.get("enabled", True)
         print(
             f"Updating threemaId {threemaId} to {firstname} {lastname}, enabled: {enabled}")
-        client.applyContactChange(threemaId, firstname, lastname, enabled)
+        print("UPDATE CURRENTLY DISABLED")
+        #client.applyContactChange(threemaId, firstname, lastname, enabled)
 
 missing = changes.get("missing", [])
 if missing:
@@ -35,7 +36,8 @@ if missing:
         lastName = m.get("lastName")
         print(
             f"Creating contact for threemaId {threemaId} with firstname {firstName} and lastname {lastName}")
-        client.createContact(threemaId, firstName, lastName)
+        print("CREATION CURRENTLY DISABLED")
+        #client.createContact(threemaId, firstName, lastName)
 
 if not missing and not updates:
     print("Everything in sync, nothing to do here.")
