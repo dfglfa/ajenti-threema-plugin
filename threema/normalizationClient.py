@@ -35,7 +35,16 @@ class NormalizationClient():
         # List of credentials names that have not been found in ENT
         no_ent_match = []
 
+        # Track user ids that have been found in order to disable the remaining ones.
+        not_found_user_ids = set(map(lambda u: u["id"], users))
+
         for u in users:
+
+            # If a user is found, we assume an active user and thus do NOT disable a contact
+            # for this user id.
+            if u["id"] in not_found_user_ids:
+                not_found_user_ids.remove(u["id"])
+
             cred_id = u["credentials_id"]
             cred_name = cred_name_for_cred_id.get(cred_id)
 
@@ -70,6 +79,24 @@ class NormalizationClient():
                     "threemaId": u["id"],
                     "credentialsName": cred_name,
                     "enabled": True})
+                
+        # Last step: For each user ID that has not been found among the active users,
+        # we look for an existing contact and disable it, if active. 
+        # (Contacts cannot always be deleted, just disabled)
+        for upi in not_found_user_ids:
+            con = contact_for_user_id.get(upi)
+            if con and con["enabled"]:
+                logging.warn(
+                    f"DISABLING orphaned contact {con['firstName']} {con['lastName']} for user id {upi}")
+                updates.append({
+                    "firstName": con["firstName"],
+                    "firstNameNormalized": con["firstName"],
+                    "lastName": con["lastName"],
+                    "lastNameNormalized": con["lastName"],
+                    "threemaId": upi,
+                    "credentialsName": ORPHANED,
+                    "enabled": False
+                })
 
         return {"updates": updates, "missing": missing, "no_ent_match": no_ent_match}
 
