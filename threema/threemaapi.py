@@ -9,6 +9,7 @@ from threema.credentialsclient import CredentialsClient
 from threema.userclient import UserClient
 from threema.groupclient import GroupClient
 from threema.datamodel import Contact
+from threema.entuserdataprovider import ENTUserDataProvider
 from threema.utils import readRecordsFromCSV
 
 API_KEY = getThreemaApiKey()
@@ -43,7 +44,7 @@ class ThreemaAdminClient:
         self.groupsClient = GroupClient(BROADCAST_ID,
                                         DEFAULT_BROADCAST_BASE_URL, authHeader={"X-Api-Key": BROADCAST_API_KEY})
         self.normalizationClient = NormalizationClient(
-            self.credentialsClient, self.userClient, self.contactsClient)
+            self.credentialsClient, self.userClient, self.contactsClient, ENTUserDataProvider())
 
     def getAllUsers(self, **params):
         return self.userClient.getAll(**params)

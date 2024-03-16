@@ -5,14 +5,17 @@ angular.module("dfglfa.threema_connector").controller("NormalizationsController"
 
   $scope.changes = undefined;
   $scope.missing = undefined;
+  $scope.no_ent_match = undefined;
+
   $scope.apply = applyChange;
   $scope.create = create;
   loadNormalizations();
 
   function loadNormalizations() {
-    return $http.get("/api/threema_connector/normalizations", {}).then(({ data: { updates, missing } }) => {
+    return $http.get("/api/threema_connector/normalizations", {}).then(({ data: { updates, missing, no_ent_match } }) => {
       $scope.changes = updates;
       $scope.missing = missing;
+      $scope.no_ent_match = no_ent_match;
     });
   }
 

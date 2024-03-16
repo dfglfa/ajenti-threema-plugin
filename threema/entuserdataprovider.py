@@ -10,7 +10,7 @@ except ImportError:
     ldapreader = None
 
 
-class UserDataProvider():
+class ENTUserDataProvider():
     def getUserData(self):
         user_data = []
         if ldapreader:

@@ -14,10 +14,10 @@ EXAMPLE_DATA = {("Mueller", "Lisa", "tes"): "TES_MuellerLisa",
 
 @pytest.fixture
 def matcher():
-    return NameMatcher(MockUserDataProvider())
+    return NameMatcher(MockENTUserDataProvider())
 
 
-class MockUserDataProvider():
+class MockENTUserDataProvider():
     def getUserData(self):
         return [{"sn": sn, "givenName": gn, "sophomorixAdminClass": ac,
                  "formattedName": formatName(gn, sn),

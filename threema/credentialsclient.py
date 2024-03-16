@@ -5,7 +5,7 @@ import string
 import requests
 
 
-from threema.userdataprovider import UserDataProvider
+from threema.entuserdataprovider import ENTUserDataProvider
 
 from threema.datamodel import Credentials, User
 from threema.utils import CLASS_TO_LEVEL
@@ -20,7 +20,7 @@ class CredentialsClient:
     def __init__(self, baseUrl: str, authHeader: dict):
         self.baseUrl = baseUrl
         self.authHeader = authHeader
-        self.userDataProvider = UserDataProvider()
+        self.ENTUserDataProvider = ENTUserDataProvider()
 
     def getAll(self, **params):
         url = f"{self.baseUrl}/credentials"
@@ -109,7 +109,7 @@ class CredentialsClient:
             logging.error(f"Response {resp.status_code}. Please check again.")
 
     def matchAgainstMasterUserData(self):
-        userForEntLogin = self.userDataProvider.getUserData()
+        userForEntLogin = self.ENTUserDataProvider.getUserData()
         threemaCredentialsForCredsName = self.getCredsByName()
         
         result = {

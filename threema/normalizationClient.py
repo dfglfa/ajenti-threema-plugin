@@ -3,7 +3,7 @@ import logging
 from threema.contactsclient import ContactsClient
 from threema.credentialsclient import CredentialsClient
 from threema.userclient import UserClient
-from threema.userdataprovider import UserDataProvider
+from threema.entuserdataprovider import ENTUserDataProvider
 
 # A constant value used as name for missing credentials
 # Do not change, as it is used in the frontend
@@ -11,14 +11,71 @@ ORPHANED = "ORPHANED"
 
 
 class NormalizationClient():
-    def __init__(self, credentialsClient: CredentialsClient, userClient: UserClient, contactsClient: ContactsClient):
+    def __init__(self, credentialsClient: CredentialsClient, userClient: UserClient, contactsClient: ContactsClient, entUserDataProvider: ENTUserDataProvider):
         self.credentialsClient = credentialsClient
         self.userClient = userClient
         self.contactsClient = contactsClient
-        self.userDataProvider = UserDataProvider()
+        self.entUserDataProvider = entUserDataProvider
 
     def findNormalizations(self):
-        entData = self.userDataProvider.getUserData()
+        credentials = self.credentialsClient.getAll()
+        users = self.userClient.getAll()
+        contacts = self.contactsClient.getAll()
+        entData = self.entUserDataProvider.getUserData()
+
+        contact_for_user_id = {c["id"]: c for c in contacts}
+        cred_name_for_cred_id = {c.id: c.username for c in credentials}
+
+        # List of updates that are returned, but not yet applied.
+        updates = []
+
+        # List of missing contacts that need to be created
+        missing = []
+
+        # List of credentials names that have not been found in ENT
+        no_ent_match = []
+
+        for u in users:
+            cred_id = u["credentials_id"]
+            cred_name = cred_name_for_cred_id.get(cred_id)
+
+            if not cred_name:
+                logging.info(f"IGNORING orphaned user {u['id']}")
+                continue
+
+            entUserData = entData.get(cred_name)
+
+            if not entUserData:
+                logging.error(f"ENT user for creds name {cred_name} not found")
+                no_ent_match.append({"threemaId": u["id"], "credentials_name": cred_name})
+                continue
+            
+            normed_first_name = f"{entUserData['cls']} {entUserData['firstName']}"
+            normed_last_name = entUserData['lastName']
+            logging.info(f"Contact name of user {u['id']} should be {normed_first_name} {normed_last_name}")
+
+            actual_contact = contact_for_user_id.get(u['id'])
+
+            if not actual_contact:
+                # Mark as missing in order to have the contact created
+                logging.info(f"No contact yet for user {u['id']}")
+                missing.append({"threemaId": u["id"], "firstName": normed_first_name, "lastName": normed_last_name})
+
+            elif actual_contact["firstName"] != normed_first_name or actual_contact["lastName"] != normed_last_name or not actual_contact["enabled"]:
+                # Data not normed of enablement incorrect => include in update list
+                updates.append({"firstName": actual_contact["firstName"],
+                    "firstNameNormalized": normed_first_name,
+                    "lastName": actual_contact["lastName"],
+                    "lastNameNormalized": normed_last_name,
+                    "threemaId": u["id"],
+                    "credentialsName": cred_name,
+                    "enabled": True})
+
+        return {"updates": updates, "missing": missing, "no_ent_match": no_ent_match}
+
+
+    def _findNormalizations(self):
+        entData = self.entUserDataProvider.getUserData()
         credentials = self.credentialsClient.getAll()
         users = self.userClient.getAll()
         contacts = self.contactsClient.getAll()
@@ -43,8 +100,8 @@ class NormalizationClient():
                     f"Cannot find ENT user entry for credentials name {cred_name}")
                 continue
 
-            firstName, originalLastName, cls = (entData[cred_name]["firstName"], 
-                                                entData[cred_name]["lastName"], 
+            firstName, originalLastName, cls = (entData[cred_name]["firstName"],
+                                                entData[cred_name]["lastName"],
                                                 entData[cred_name]["cls"])
 
             if cred_id not in user_for_cred_id:

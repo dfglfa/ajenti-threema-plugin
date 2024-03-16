@@ -4,9 +4,11 @@
   <progress-spinner ng-show="changes === undefined"></progress-spinner>
 
   <div ng-if="changes">
-    <i class="fa fa-backward"></i>&nbsp;&nbsp;<a ng:href="/view/threema_connector?active=2">Back to contacts</a>
+    <div style="margin-bottom: 20px">
+      <i class="fa fa-backward"> </i>&nbsp;&nbsp;<a ng:href="/view/threema_connector?active=2">Back to contacts</a>
+    </div>
 
-    <div ng-if="changes.length === 0">
+    <div ng-if="changes.length === 0 && missing.length === 0 && no_ent_match.length === 0">
       <div class="alert alert-success" style="padding: 15px; margin: 10px 0">All contacts in sync.</div>
     </div>
 
@@ -21,6 +23,7 @@
       <div ng-repeat="c in changes" class="row" style="padding: 2px 0; display: flex; align-items: center">
         <div class="col-xs-12 col-sm-8">
           <div>Credentials: <strong>{{c.credentialsName}}</strong></div>
+          <div>ThreemaID: <strong>{{c.threemaId}}</strong></div>
           <div ng-if="c.firstNameNormalized !== c.firstName || c.credentialsName == 'ORPHANED'">
             Contact first name: '{{c.firstName}}' => <strong>{{c.firstNameNormalized}}</strong>
           </div>
@@ -39,7 +42,7 @@
     <div ng-if="missing.length > 0">
       <div ng-repeat="n in missing" class="row" style="padding: 2px 0; display: flex; align-items: center">
         <div class="col-xs-12 col-sm-8">
-          <div>ThreemaID: <strong>{{n.id}}</strong></div>
+          <div>ThreemaID: <strong>{{n.threemaId}}</strong></div>
           <div>Contact first name: <strong>{{n.firstName}}</strong></div>
           <div>Contact last name: <strong>{{n.lastName}}</strong></div>
         </div>
@@ -48,6 +51,24 @@
           <div class="text-success" ng-show="n.done">OK</div>
         </div>
       </div>
+    </div>
+
+    <div ng-if="no_ent_match.length > 0">
+      <div style="margin: 20px 0" class="text-danger">Not found in ENT:</div>
+      <table border="1">
+        <thead>
+          <tr>
+            <th style="padding: 5px; text-align: left">ThreemaID</th>
+            <th style="padding: 5px; text-align: left">Credentials name</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="nm in no_ent_match">
+            <td style="padding: 5px; text-align: left">{{nm.threemaId}}</td>
+            <td style="padding: 5px; text-align: left">{{nm.credentials_name}}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>
