@@ -1,8 +1,7 @@
 angular
   .module("dfglfa.threema_connector")
   .controller("CredentialsChangeController", function ($scope, $http, $uibModalInstance, threemaId, oldName, newName) {
-    $scope.data = { oldName, newName };
-    $scope.password = "";
+    $scope.data = { oldName, newName, password: "" };
     $scope.error = undefined;
     $scope.isUpdating = false;
 
@@ -12,7 +11,7 @@ angular
         .post("/api/threema_connector/credentials/update", {
           threemaId,
           changedName: $scope.data.newName,
-          changedPassword: $scope.password,
+          changedPassword: $scope.data.password,
         })
         .then(() => {
           $scope.isUpdating = false;
