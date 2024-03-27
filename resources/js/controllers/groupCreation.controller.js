@@ -18,6 +18,7 @@ angular
     $scope.removeFromGroup = removeFromGroup;
     $scope.processCSVFile = processCSVFile;
     $scope.openCSVUploadDialog = openCSVUploadDialog;
+    $scope.addAllFromClass = addAllFromClass;
 
     let debounceTimer;
     function searchContacts() {
@@ -169,5 +170,9 @@ angular
       return $http.get(`/api/threema_connector/group_details`, { params: { groupId: $scope.groupId } }).then(({ data }) => {
         $scope.groupName = data.name;
       });
+    }
+
+    function addAllFromClass() {
+      alert("Not implemented yet");
     }
   });
