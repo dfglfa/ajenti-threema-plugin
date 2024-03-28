@@ -37,6 +37,10 @@ class CredentialsClient:
         try:
             data = json.loads(resp.content)
             credentialsList = data["credentials"]
+
+            if params.get("json"):
+                return credentialsList
+
             return [Credentials(**c) for c in credentialsList]
         except TypeError as te:
             logging.exception(f"Error while decoding: {te}")
