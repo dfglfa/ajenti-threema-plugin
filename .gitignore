@@ -68,3 +68,4 @@ ajenti_requirements.txt
 threema.yml
 resources/build
 local.db
+prod.db

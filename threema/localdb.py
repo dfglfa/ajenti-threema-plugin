@@ -44,7 +44,19 @@ def fetch_data():
                 INSERT INTO contacts (userid, firstname, lastname, enabled)
                 VALUES (?, ?, ?, ?)
             """, (contact["id"], contact["firstName"], contact["lastName"], contact["enabled"]))
-    
+
+def get_user_table():
+    with sqlite3.connect("local.db") as db:
+        cursor = db.cursor()
+        cursor.execute("""
+            select * from ent_users
+            left outer join credentials on credentials_name = login
+            left outer join users on users.credentials_id = credentials.credentials_id
+            left outer join contacts on users.userid = contacts.userid
+            order by class;
+        """)
+        return cursor.fetchall()
+
 def setup_tables(cursor):
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS "ent_users" (
