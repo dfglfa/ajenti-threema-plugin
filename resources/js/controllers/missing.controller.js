@@ -18,28 +18,20 @@ angular
     function loadResults() {
       return $http.post("/api/threema_connector/credentials/check", {}).then((resp) => {
         $scope.results = resp.data;
-        /*
-        // Enable code to filter teachers from missing records
-        const missing = [];
-        for (const rec of resp.data.unused) {
-          if (rec && classService.containsClass(rec)) {
-            missing.push(rec);
-          }
-        }
-        $scope.results.unused = missing;
-        */
       });
     }
 
-    function addCredentials(username, singleUpdate) {
+    function addCredentials(entLogin, singleUpdate) {
       if (singleUpdate) {
         $scope.isUpdating = true;
       }
 
+      const threemaUsername = "dfg_" + entLogin;
+
       return $http
-        .put("/api/threema_connector/credentials", { username })
+        .put("/api/threema_connector/credentials", { username: threemaUsername })
         .then(() => {
-          notify.success(`User ${username} successfully created`);
+          notify.success(`User ${threemaUsername} successfully created`);
           singleUpdate && loadResults();
         })
         .finally(() => {
