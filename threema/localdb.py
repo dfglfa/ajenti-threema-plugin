@@ -12,7 +12,7 @@ from threema.threemaapi import ThreemaAdminClient
 threema_client = ThreemaAdminClient()
 ent_user_data_provider = ENTUserDataProvider()
 
-def fetch_data():
+def sync_all_tables():
     with sqlite3.connect("local.db") as db:
         cursor = db.cursor()
         setup_tables(cursor)
@@ -45,7 +45,9 @@ def fetch_data():
                 VALUES (?, ?, ?, ?)
             """, (contact["id"], contact["firstName"], contact["lastName"], contact["enabled"]))
 
-def get_user_table():
+def query_master_table(clauses=("true")):
+    constraints = " AND ".join(clauses)
+    print("Constraint is", constraints)
     with sqlite3.connect("local.db") as db:
         cursor = db.cursor()
         cursor.execute("""
@@ -53,9 +55,25 @@ def get_user_table():
             left outer join credentials on credentials_name = login
             left outer join users on users.credentials_id = credentials.credentials_id
             left outer join contacts on users.userid = contacts.userid
+            where ?
             order by class;
-        """)
+        """, (constraints, ))
         return cursor.fetchall()
+
+def generate_report():
+    print("Checking orphaned credentials:")
+    with sqlite3.connect("local.db") as db:
+        cursor = db.cursor()
+        cursor.execute("""
+            select * from (
+                select login, credentials_id, credentials_name from ent_users
+                left outer join credentials cr on credentials_name = login
+                union
+            select login, credentials_id, credentials_name from credentials
+                left outer join ent_users cr on credentials_name = login
+            ) where credentials_id is null;
+        """)
+        print(cursor.fetchall())
 
 def setup_tables(cursor):
     cursor.execute("""
@@ -108,4 +126,5 @@ def setup_tables(cursor):
     cursor.execute("DELETE FROM contacts")
 
 if __name__ == "__main__":
-    fetch_data()
+    #sync_all_tables()
+    generate_report()

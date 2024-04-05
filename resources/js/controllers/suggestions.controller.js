@@ -15,7 +15,7 @@ angular.module("dfglfa.threema_connector").controller("SuggestionsController", f
     return $http.post("/api/threema_connector/credentials/check", {}).then((resp) => {
       let suggestions = [];
       for (let entry of resp.data.matched) {
-        if (entry.needsChange) {
+        if (entry.correctThreemaLogin) {
           suggestions.push(entry);
         }
       }

@@ -5,6 +5,7 @@ import io
 import logging
 import unicodedata
 
+STANDARD_THREEMA_PREFIX = "dfg_"
 
 def replaceUmlauteAndSz(name):
     return name.replace("ä", "ae") \

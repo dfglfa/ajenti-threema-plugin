@@ -1,7 +1,7 @@
 import csv
 import logging
 
-from threema.utils import formatName, normalizeClassName, normalizeName
+from threema.utils import STANDARD_THREEMA_PREFIX, formatName, normalizeClassName, normalizeName
 from threema.config_loader import getStudentsFileName
 
 try:
@@ -40,6 +40,7 @@ class ENTUserDataProvider():
             u["lastName"] = user["sn"]
             u["normalizedName"] = normalizeName(formatName(u["firstName"], u["lastName"]), u["cls"])
             u["entLogin"] = user["sAMAccountName"]
+            u["standardThreemaName"] = STANDARD_THREEMA_PREFIX + u["entLogin"]
 
             # Use ENT login as key
             user_dict[user["sAMAccountName"]] = u

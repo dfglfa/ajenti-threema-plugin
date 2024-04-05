@@ -53,10 +53,12 @@ angular
           $scope.validated = true;
           const { matched, unmatched, unused } = resp.data;
           const unmatched_ids = unmatched.map((c) => c.id);
-          const match_by_creds_id = {};
 
+          // Dictionary that contains data for all cred ids for which a match has been found
+          // This might not be an exact match and still need a slight correction.
+          const matchedDataForCredsId = {};
           for (let m of matched) {
-            match_by_creds_id[m.credsId] = m;
+            matchedDataForCredsId[m.credsId] = m;
           }
 
           $scope.countENTRecordsNotFoundInThreema = unused.length;
@@ -64,14 +66,14 @@ angular
 
           let changeCount = 0;
           for (let cred of $scope.credentials) {
-            let entMatch = match_by_creds_id[cred.id];
+            let entMatch = matchedDataForCredsId[cred.id];
             if (entMatch) {
               cred.cls = entMatch["cls"];
-              if (cred.username === entMatch["entLogin"]) {
+              if (entMatch["currentThreemaLogin"] === entMatch["correctThreemaLogin"]) {
                 cred.status = "OK";
               } else {
                 cred.status = "SUGGESTION";
-                cred.nameChange = entMatch["entLogin"];
+                cred.nameChange = entMatch["correctThreemaLogin"];
                 changeCount++;
               }
             } else if (unmatched_ids.indexOf(cred.id) > -1) {

@@ -123,27 +123,42 @@ class CredentialsClient:
         }
 
         matchedThreemaIds = []
-        unhandledMuids = []
-        for entLogin in userForEntLogin:
-            if entLogin not in threemaCredentialsForCredsName:
-                unhandledMuids.append(entLogin)
-            else:
-                credsId = threemaCredentialsForCredsName[entLogin].id
+        unmatchedEntLogins = []
+        for entLogin, userdata in userForEntLogin.items():
+            std_name = userdata["standardThreemaName"]
+            if std_name in threemaCredentialsForCredsName:
+                # Exact match found => set credentials ID in ENT user dict
+                credsId = threemaCredentialsForCredsName[std_name].id
                 userForEntLogin[entLogin]["credsId"] = credsId
+                userForEntLogin[entLogin]["currentThreemaLogin"] = std_name
+                userForEntLogin[entLogin]["correctThreemaLogin"] = std_name
                 result["matched"].append(userForEntLogin[entLogin])
                 matchedThreemaIds.append(credsId)
+            else:
+                # There is no exact threema login match for this ENT user
+                unmatchedEntLogins.append(entLogin)
 
-        for umu in unhandledMuids:
-            normedName = userForEntLogin[umu]["normalizedName"]
-            print("Looking for", normedName)
+        for unmatchedEntLogin in unmatchedEntLogins:
+            normedName = userForEntLogin[unmatchedEntLogin]["normalizedName"]
+            logging.info(f"ENT login {unmatchedEntLogin} has no corresponding threema user, now checking {normedName}")
             if normedName in threemaCredentialsForCredsName:
+                logging.info(f"Found old-style threema login {normedName}")
                 credsId = threemaCredentialsForCredsName[normedName].id
-                userForEntLogin[umu]["credsId"] = credsId
-                userForEntLogin[umu]["needsChange"] = True
-                result["matched"].append(userForEntLogin[umu])
+                userForEntLogin[unmatchedEntLogin]["credsId"] = credsId
+                userForEntLogin[unmatchedEntLogin]["currentThreemaLogin"] = normedName
+                userForEntLogin[unmatchedEntLogin]["correctThreemaLogin"] = userForEntLogin[unmatchedEntLogin]["standardThreemaName"]
+                result["matched"].append(userForEntLogin[unmatchedEntLogin])
+                matchedThreemaIds.append(credsId)
+            elif unmatchedEntLogin in threemaCredentialsForCredsName:
+                logging.info(f"Found plain ENT login {unmatchedEntLogin} as threema login => prefix needed")
+                credsId = threemaCredentialsForCredsName[unmatchedEntLogin].id
+                userForEntLogin[unmatchedEntLogin]["credsId"] = credsId
+                userForEntLogin[unmatchedEntLogin]["currentThreemaLogin"] = unmatchedEntLogin
+                userForEntLogin[unmatchedEntLogin]["correctThreemaLogin"] = userForEntLogin[unmatchedEntLogin]["standardThreemaName"]
+                result["matched"].append(userForEntLogin[unmatchedEntLogin])
                 matchedThreemaIds.append(credsId)
             else:
-                result["unused"].append(umu)
+                result["unused"].append(unmatchedEntLogin)
         
         for threemaName in threemaCredentialsForCredsName:
             credsId = threemaCredentialsForCredsName[threemaName].id
