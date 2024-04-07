@@ -138,6 +138,7 @@ class CredentialsClient:
                 # There is no exact threema login match for this ENT user
                 unmatchedEntLogins.append(entLogin)
 
+        prefixLessThreemaCreds = {cname.split("_")[-1]: data for cname, data in threemaCredentialsForCredsName.items()}
         for unmatchedEntLogin in unmatchedEntLogins:
             normedName = userForEntLogin[unmatchedEntLogin]["normalizedName"]
             logging.info(f"ENT login {unmatchedEntLogin} has no corresponding threema user, now checking {normedName}")
@@ -152,6 +153,15 @@ class CredentialsClient:
             elif unmatchedEntLogin in threemaCredentialsForCredsName:
                 logging.info(f"Found plain ENT login {unmatchedEntLogin} as threema login => prefix needed")
                 credsId = threemaCredentialsForCredsName[unmatchedEntLogin].id
+                userForEntLogin[unmatchedEntLogin]["credsId"] = credsId
+                userForEntLogin[unmatchedEntLogin]["currentThreemaLogin"] = unmatchedEntLogin
+                userForEntLogin[unmatchedEntLogin]["correctThreemaLogin"] = userForEntLogin[unmatchedEntLogin]["standardThreemaName"]
+                result["matched"].append(userForEntLogin[unmatchedEntLogin])
+                matchedThreemaIds.append(credsId)
+            elif unmatchedEntLogin.split("_")[-1] in prefixLessThreemaCreds:
+                logging.info(f"Found ENT login {unmatchedEntLogin} with wrong prefix => prefix change needed")
+                raw_login = unmatchedEntLogin.split("_")[-1]
+                credsId = prefixLessThreemaCreds[raw_login].id
                 userForEntLogin[unmatchedEntLogin]["credsId"] = credsId
                 userForEntLogin[unmatchedEntLogin]["currentThreemaLogin"] = unmatchedEntLogin
                 userForEntLogin[unmatchedEntLogin]["correctThreemaLogin"] = userForEntLogin[unmatchedEntLogin]["standardThreemaName"]

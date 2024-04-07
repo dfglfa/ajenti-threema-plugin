@@ -40,7 +40,7 @@ class ENTUserDataProvider():
             u["lastName"] = user["sn"]
             u["normalizedName"] = normalizeName(formatName(u["firstName"], u["lastName"]), u["cls"])
             u["entLogin"] = user["sAMAccountName"]
-            u["standardThreemaName"] = STANDARD_THREEMA_PREFIX + u["entLogin"]
+            u["standardThreemaName"] = f"{STANDARD_THREEMA_PREFIX}_{u['entLogin']}"
 
             # Use ENT login as key
             user_dict[user["sAMAccountName"]] = u

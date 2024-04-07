@@ -15,6 +15,8 @@ angular
     $scope.done = 0;
     $scope.total = 0;
 
+    $scope.THREEMA_PREFIX = "dfg";
+
     function loadResults() {
       return $http.post("/api/threema_connector/credentials/check", {}).then((resp) => {
         $scope.results = resp.data;
@@ -26,7 +28,7 @@ angular
         $scope.isUpdating = true;
       }
 
-      const threemaUsername = "dfg_" + entLogin;
+      const threemaUsername = $scope.THREEMA_PREFIX + "_" + entLogin;
 
       return $http
         .put("/api/threema_connector/credentials", { username: threemaUsername })
