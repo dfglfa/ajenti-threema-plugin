@@ -15,7 +15,7 @@ angular.module("dfglfa.threema_connector").controller("SuggestionsController", f
     return $http.post("/api/threema_connector/credentials/check", {}).then((resp) => {
       let suggestions = [];
       for (let entry of resp.data.matched) {
-        if (entry.correctThreemaLogin) {
+        if (entry.currentThreemaLogin !== entry.correctThreemaLogin) {
           suggestions.push(entry);
         }
       }
@@ -51,7 +51,7 @@ angular.module("dfglfa.threema_connector").controller("SuggestionsController", f
   function applyAllSuggestions() {
     const allTasks = [];
     for (let suggestion of $scope.suggestions) {
-      allTasks.push([suggestion.id, suggestion.entLogin]);
+      allTasks.push([suggestion.credsId, suggestion.correctThreemaLogin]);
     }
 
     $scope.isUpdating = true;
