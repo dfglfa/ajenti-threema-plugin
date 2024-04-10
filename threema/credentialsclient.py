@@ -85,7 +85,9 @@ class CredentialsClient:
         if not password:
             # Need to fetch password, as it should stay unchanged
             details = self.getDetails(threemaId)
-            password = details.password
+            # If no password is found (which normally means that it is stored as a hash),
+            # default to a random password.
+            password = details.password or self._get_random_password()
 
         resp = requests.put(url, json={"id": threemaId, "username": username, "password": password},
                             headers=self.authHeader)
