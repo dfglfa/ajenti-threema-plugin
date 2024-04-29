@@ -4,6 +4,7 @@ from threema.contactsclient import ContactsClient
 from threema.credentialsclient import CredentialsClient
 from threema.userclient import UserClient
 from threema.entuserdataprovider import ENTUserDataProvider
+from threema.utils import STANDARD_THREEMA_PREFIX
 
 # A constant value used as name for missing credentials
 # Do not change, as it is used in the frontend
@@ -52,10 +53,11 @@ class NormalizationClient():
                 logging.info(f"IGNORING orphaned user {u['id']}")
                 continue
 
-            entUserData = entData.get(cred_name)
+            ent_login_for_cred = cred_name[len(STANDARD_THREEMA_PREFIX)+1:] if cred_name.startswith(STANDARD_THREEMA_PREFIX) else cred_name
+            entUserData = entData.get(ent_login_for_cred)
 
             if not entUserData:
-                logging.error(f"ENT user for creds name {cred_name} not found")
+                logging.error(f"ENT user for creds name {cred_name} not found (tried to match {ent_login_for_cred})")
                 no_ent_match.append({"threemaId": u["id"], "credentials_name": cred_name})
                 continue
             
