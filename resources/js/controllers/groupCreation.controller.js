@@ -18,7 +18,7 @@ angular
     $scope.removeFromGroup = removeFromGroup;
     $scope.processCSVFile = processCSVFile;
     $scope.openCSVUploadDialog = openCSVUploadDialog;
-    $scope.addAllFromClass = addAllFromClass;
+    $scope.addAllFromClass = addSyncForClass;
 
     let debounceTimer;
     function searchContacts() {
@@ -172,7 +172,12 @@ angular
       });
     }
 
-    function addAllFromClass() {
-      alert("Not implemented yet");
+    function addSyncForClass() {
+      return $http
+        .get(`/api/threema_connector/group_sync`, { params: { groupId: $scope.groupId, className: $scope.selectedClass } })
+        .then(({ data }) => {
+          notify.info("Group sync succesfully created.");
+          console.log("Sync creation response:", data);
+        });
     }
   });
