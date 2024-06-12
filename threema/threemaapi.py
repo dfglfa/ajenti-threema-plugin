@@ -54,6 +54,9 @@ class ThreemaAdminClient:
 
     def getAllCredentials(self, **params):
         return self.credentialsClient.getAll(**params)
+    
+    def getAllCredentialsAsDict(self, **params):
+        return self.credentialsClient.getCredsByName()
 
     def createCredentials(self, username, password):
         return self.credentialsClient.create(username, password)

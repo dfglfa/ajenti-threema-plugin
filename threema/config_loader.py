@@ -32,3 +32,8 @@ def getThreemaBroadcastId():
 def getThreemaBroadcastApiKey():
     config = _loadConfig()
     return config.get("threema_broadcast_api_key")
+
+
+def getThreemaTeacherGroupIds():
+    config = _loadConfig()
+    return [name.strip() for name in config.get("threema_teacher_group_ids", "").split(",")]

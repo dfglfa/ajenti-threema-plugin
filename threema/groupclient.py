@@ -50,6 +50,8 @@ class GroupClient:
         return "ok" if resp.status_code in [200, 204] else f"error: {resp.status_code}"
 
     def addGroupMembers(self, groupId, members):
+        print(f"Adding new members {members} to group id {groupId}")
+        logging.info(f"Adding new members {members} to group id {groupId}")
         url = f"{self.baseUrl}/identities/{self.broadcastId}/groups/{groupId}/members"
 
         resp = requests.post(

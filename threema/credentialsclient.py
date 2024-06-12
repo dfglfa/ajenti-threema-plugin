@@ -179,10 +179,8 @@ class CredentialsClient:
 
         return result
 
-
     def getCredsByName(self):
         return {c.username: c for c in self.getAll()}
-
 
     def _getUrlForId(self, threemaId):
         return f"{self.baseUrl}/credentials/{quote(threemaId, safe='')}"
