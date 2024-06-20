@@ -15,22 +15,22 @@ sys.path.append(parent_dir)
 
 from threema.config_loader import getThreemaTeacherGroupIds
 from threema.threemaapi import ThreemaAdminClient
-from threema.entuserdataprovider import ENTUserDataProvider
+from threema.userdataprovider import LDAPUserDataProvider
 from threema.utils import STANDARD_THREEMA_PREFIX
 
 client = ThreemaAdminClient()
 TEACHER_GROUP_IDS = getThreemaTeacherGroupIds()
 ALL_CREDENTIALS = client.getAllCredentialsAsDict()
 
-ALL_ENT_USERS = ENTUserDataProvider().getUserData()
+ALL_LDAP_USERS = LDAPUserDataProvider().getUserData()
 ALL_THREEMA_USERS = client.getAllUsers()
-ALL_TEACHERS = dict([(key, val) for key, val in ALL_ENT_USERS.items() if val.get("cls") == "teachers"])
-print(f"Found {len(ALL_TEACHERS)} teachers among {len(ALL_ENT_USERS)} ENT users.")
+ALL_TEACHERS = dict([(key, val) for key, val in ALL_LDAP_USERS.items() if val.get("cls") == "teachers"])
+print(f"Found {len(ALL_TEACHERS)} teachers among {len(ALL_LDAP_USERS)} LDAP users.")
 
 print("\n\n\n***** Building dictionary from entLogin names to active threema user ids.")
-threemaUserIdForENTLogin = {}
-for entLogin in ALL_TEACHERS:
-    credsName = f"{STANDARD_THREEMA_PREFIX}_{entLogin}"
+threemaUserIdForLDAPLogin = {}
+for ldapLogin in ALL_TEACHERS:
+    credsName = f"{STANDARD_THREEMA_PREFIX}_{ldapLogin}"
     if credsName in ALL_CREDENTIALS:
         credsId = ALL_CREDENTIALS.get(credsName).id
         
@@ -43,18 +43,18 @@ for entLogin in ALL_TEACHERS:
                         print("IGNORING user because of older last login date.")
                         continue
                     else:
-                        print(f"Overriding entry for {entLogin} with user Id {u.get('id')}")
+                        print(f"Overriding entry for {ldapLogin} with user Id {u.get('id')}")
                     
-                threemaUserIdForENTLogin[entLogin] = u.get("id")
-                lastLoginDate = u.get("lastCheck")
-                
+                threemaUserIdForLDAPLogin[ldapLogin] = u.get("id")
+                print(f"Found user ID {u.get('id')} for ldap login {ldapLogin}")
+                lastLoginDate = u.get("lastCheck")                
         
-        if not threemaUserIdForENTLogin.get(entLogin):
-            print(f"No active threema user yet for ent login {entLogin}")
+        if not threemaUserIdForLDAPLogin.get(ldapLogin):
+            print(f"No active threema user yet for LDAP login {ldapLogin}")
     else:
-        print(f"WARNING: ENT user {entLogin} has no threema credentials yet!")
+        print(f"WARNING: LDAP user {ldapLogin} has no threema credentials yet!")
 
-teacher_threema_user_ids = set(threemaUserIdForENTLogin.values())
+teacher_threema_user_ids = set(threemaUserIdForLDAPLogin.values())
 print("\n\n\n***** STARTING GROUP SYNCHRONIZATION *****\n")
 
 for teacher_group_id in TEACHER_GROUP_IDS:

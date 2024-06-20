@@ -3,7 +3,7 @@ import logging
 from threema.contactsclient import ContactsClient
 from threema.credentialsclient import CredentialsClient
 from threema.userclient import UserClient
-from threema.entuserdataprovider import ENTUserDataProvider
+from threema.userdataprovider import LDAPUserDataProvider
 from threema.utils import STANDARD_THREEMA_PREFIX
 
 # A constant value used as name for missing credentials
@@ -12,17 +12,17 @@ ORPHANED = "ORPHANED"
 
 
 class NormalizationClient():
-    def __init__(self, credentialsClient: CredentialsClient, userClient: UserClient, contactsClient: ContactsClient, entUserDataProvider: ENTUserDataProvider):
+    def __init__(self, credentialsClient: CredentialsClient, userClient: UserClient, contactsClient: ContactsClient, userDataProvider: LDAPUserDataProvider):
         self.credentialsClient = credentialsClient
         self.userClient = userClient
         self.contactsClient = contactsClient
-        self.entUserDataProvider = entUserDataProvider
+        self.userDataProvider = userDataProvider
 
     def findNormalizations(self):
         credentials = self.credentialsClient.getAll()
         users = self.userClient.getAll()
         contacts = self.contactsClient.getAll()
-        entData = self.entUserDataProvider.getUserData()
+        entData = self.userDataProvider.getUserData()
 
         contact_for_user_id = {c["id"]: c for c in contacts}
         cred_name_for_cred_id = {c.id: c.username for c in credentials}
@@ -104,7 +104,7 @@ class NormalizationClient():
 
 
     def _findNormalizations(self):
-        entData = self.entUserDataProvider.getUserData()
+        entData = self.userDataProvider.getUserData()
         credentials = self.credentialsClient.getAll()
         users = self.userClient.getAll()
         contacts = self.contactsClient.getAll()
