@@ -65,3 +65,12 @@ class GroupClient:
         resp = requests.delete(url, json=memberIds, headers=self.authHeader)
 
         return "ok" if resp.status_code in [200, 204] else f"error: {resp.status_code}"
+    
+    def updateGroup(self, groupId, groupName, saveChatHistory=False):
+        url = f"{self.baseUrl}/identities/{self.broadcastId}/groups/{groupId}"
+
+        resp = requests.put(url, 
+                            json={"name": groupName, "saveChatHistory": saveChatHistory}, 
+                            headers=self.authHeader)
+
+        return "ok" if resp.status_code in [200, 204] else f"error: {resp.status_code}"

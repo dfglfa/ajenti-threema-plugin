@@ -83,17 +83,23 @@ for teacher_group_id in TEACHER_GROUP_IDS:
     print(f"{log_prefix} The following members are REMOVED from this group: {remove_members}")    
     
     if persist_changes:
+        needs_refresh = False
         if new_members:
             try:
                 client.addGroupMembers(groupId=teacher_group_id, members=new_members)
+                needs_refresh = True
             except Exception as ex:
                 print("ERROR while adding new members: ", ex)
             
         if remove_members:
             try:
                 client.removeGroupMembers(groupId=teacher_group_id, memberIds=remove_members)
+                needs_refresh = True
             except Exception as ex:
                 print("ERROR while removing obsolete members: ", ex)
         
-        
+        if needs_refresh:
+            # Fake refresh. Necessary because groups are not synced on the users' devices 
+            # after members are added or removed. :( Not sure if it works when no settings are changed.
+            client.updateGroup(teacher_group_id, group_name, saveChatHistory=False)
         

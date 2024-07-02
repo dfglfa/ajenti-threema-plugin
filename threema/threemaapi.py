@@ -91,6 +91,9 @@ class ThreemaAdminClient:
     def getGroupMembers(self, groupId) -> list[Contact]:
         members = self.groupsClient.getGroupMembers(groupId)
         return self.contactsClient.getContactsForUserIds([m["id"] for m in members])
+    
+    def updateGroup(self, groupId, groupName, saveChatHistory=False):
+        return self.groupsClient.updateGroup(groupId, groupName, saveChatHistory)
 
     def createGroup(self, name, members):
         return self.groupsClient.createGroup(name, members)
