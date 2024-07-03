@@ -66,6 +66,6 @@ notes.txt
 ajenti_requirements.txt
 .venv
 threema.yml
-resources/build
+#resources/build
 local.db
 prod.db
