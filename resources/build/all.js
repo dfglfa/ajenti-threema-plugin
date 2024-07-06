@@ -390,8 +390,8 @@ angular
 
     $scope.entMatchInProgress = false;
     $scope.validated = false;
-    $scope.countThreemaRecordsNotFoundInENT = 0;
-    $scope.countENTRecordsNotFoundInThreema = 0;
+    $scope.countThreemaCredsNotFoundInLdap = 0;
+    $scope.countLdapUsersNotFoundInThreema = 0;
     $scope.countSuggestionsForNameChange = 0;
 
     $scope.sorts = [
@@ -419,10 +419,8 @@ angular
     loadCredentials();
 
     function loadCredentials() {
-      $scope.entMatchInProgress = true;
       $http.get("/api/threema_connector/credentials").then((resp) => {
         $scope.credentials = resp.data;
-        validate();
       });
     }
 
@@ -444,8 +442,8 @@ angular
             matchedDataForCredsId[m.credsId] = m;
           }
 
-          $scope.countENTRecordsNotFoundInThreema = unused.length;
-          $scope.countThreemaRecordsNotFoundInENT = unmatched_ids.length;
+          $scope.countLdapUsersNotFoundInThreema = unused.length;
+          $scope.countThreemaCredsNotFoundInLdap = unmatched_ids.length;
 
           let changeCount = 0;
           for (let cred of $scope.credentials) {
@@ -1169,4 +1167,3 @@ angular.module("dfglfa.threema_connector").service("classService", function () {
     return Object.keys(classToLevel);
   }
 });
-

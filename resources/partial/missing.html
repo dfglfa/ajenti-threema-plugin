@@ -18,7 +18,7 @@
 
     <div ng-if="results.unused && results.unused.length > 0">
       <div ng-if="!total" class="alert alert-info" style="padding: 15px; margin: 20px 0">
-        ENT users without matching threema credentials have been found.
+        LDAP users without matching threema credentials have been found.
       </div>
       <div ng-repeat="u in results.unused" class="row" style="padding: 2px 0; display: flex; align-items: center">
         <div class="col-xs-6 col-sm-4">{{u}}</div>
