@@ -1167,3 +1167,4 @@ angular.module("dfglfa.threema_connector").service("classService", function () {
     return Object.keys(classToLevel);
   }
 });
+

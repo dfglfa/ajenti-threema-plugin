@@ -1,13 +1,15 @@
 import os
 import sys
 import argparse
+import datetime
 
 parser = argparse.ArgumentParser(description='Script for cron to update threema groups')
 parser.add_argument('--persist', action='store_true', help='Set this flag in order to persist the group changes.')
 args = parser.parse_args()
 persist_changes = args.persist
 log_prefix = "PERSISTENT" if persist_changes else "DRY-RUN"
-print(f"***** Starting in {log_prefix} mode *****")
+reference_time = datetime.datetime.now().isoformat()
+print(f"\n***** Starting sync in {log_prefix} mode at {reference_time} *****\n")
 
 current_file_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(current_file_dir)
@@ -27,8 +29,9 @@ ALL_THREEMA_USERS = client.getAllUsers()
 ALL_TEACHERS = dict([(key, val) for key, val in ALL_LDAP_USERS.items() if val.get("cls") == "teachers"])
 print(f"Found {len(ALL_TEACHERS)} teachers among {len(ALL_LDAP_USERS)} LDAP users.")
 
-print("\n\n\n***** Building dictionary from entLogin names to active threema user ids.")
+print("\n\n\n***** Building dictionary from LDAP Login names to active threema user ids.")
 threemaUserIdForLDAPLogin = {}
+isNewUser = {}
 for ldapLogin in ALL_TEACHERS:
     credsName = f"{STANDARD_THREEMA_PREFIX}_{ldapLogin}"
     if credsName in ALL_CREDENTIALS:
@@ -45,8 +48,11 @@ for ldapLogin in ALL_TEACHERS:
                     else:
                         print(f"Overriding entry for {ldapLogin} with user Id {u.get('id')}")
                     
-                threemaUserIdForLDAPLogin[ldapLogin] = u.get("id")
-                print(f"Found user ID {u.get('id')} for ldap login {ldapLogin}")
+                threemaId = u.get("id")
+                threemaUserIdForLDAPLogin[ldapLogin] = threemaId
+                isNewUser[threemaId] = u.get("createdAt") > reference_time
+                
+                print(f"Found user ID {u.get('id')} for ldap login {ldapLogin}, created at {u.get('createdAt')}. New user? {isNewUser[threemaId]}")
                 lastLoginDate = u.get("lastCheck")                
         
         if not threemaUserIdForLDAPLogin.get(ldapLogin):
@@ -64,7 +70,7 @@ for teacher_group_id in TEACHER_GROUP_IDS:
         print(f"ERROR: Group ID {teacher_group_id} not found, please check entry in threema.yml")
         continue
     
-    print(f"Synchronizing group with ID {teacher_group_id}. Group name is: {group_name}")
+    print(f"Synchronizing group with ID {teacher_group_id}. Group name is: '{group_name}'")
     members = client.getGroupMembers(teacher_group_id)
     member_id_list = [m['id'] for m in members]
     print(f"There are currently {len(member_id_list)} members in this group: {member_id_list}")
@@ -77,6 +83,11 @@ for teacher_group_id in TEACHER_GROUP_IDS:
     new_members = []
     for tid in teacher_threema_user_ids:
         if tid not in member_id_list:
+            # activate later ...
+            # if isNewUser[tid]:
+            #    new_members.append(tid)
+            #else:
+            #    print(f"Missing user with ID {tid} will not be added to group {group_name}. Not a new user.")
             new_members.append(tid)
         
     print(f"{log_prefix} The following members are ADDED to this group: {new_members}")
@@ -100,6 +111,8 @@ for teacher_group_id in TEACHER_GROUP_IDS:
         
         if needs_refresh:
             # Fake refresh. Necessary because groups are not synced on the users' devices 
-            # after members are added or removed. :( Not sure if it works when no settings are changed.
-            client.updateGroup(teacher_group_id, group_name, saveChatHistory=False)
+            # after members are added or removed. :(
+            dummy_group_name = group_name.strip() if group_name.endswith(" ") else group_name + " "
+            print(f"Faking a group settings update, new group name is now '{dummy_group_name}' instead of '{group_name}'")
+            client.updateGroup(teacher_group_id, dummy_group_name, saveChatHistory=False)
         
