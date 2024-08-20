@@ -42,7 +42,7 @@ class LDAPUserDataProvider():
             u["entLogin"] = user["sAMAccountName"]
             u["standardThreemaName"] = f"{STANDARD_THREEMA_PREFIX}_{u['entLogin']}"
 
-            # Use ENT login as key
+            # Use LDAP login as key
             user_dict[user["sAMAccountName"]] = u
 
         logging.info("USERS: " + "\n".join([f"{u}: {user_dict[u]}" for u in user_dict]))

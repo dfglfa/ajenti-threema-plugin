@@ -63,17 +63,6 @@
 
   <div style="margin: 20px 0" class="red">
     <button id="uploadcsv" class="btn btn-success" ng-click="openCSVUploadDialog()">Update group from CSV file</button>
-    <div style="float: right">
-      <span style="margin-right: 5px">Add permanent sync for class:</span>
-      <select name="selectedClass" ng-model="selectedClass">
-        <option value="tes" ng-selected="selectedClass === 'tes'">TES</option>
-        <option value="5eII" ng-selected="selectedClass === '5eII'">5eII</option>
-        <option value="teachers" ng-selected="selectedClass === 'teachers'">Teachers</option>
-      </select>
-      <button id="addAllFromClass" class="btn btn-warning" ng-click="addAllFromClass()" ng-disabled="!selectedClass" style="margin-left: 5px">
-        Go
-      </button>
-    </div>
   </div>
 
   <div class="form-group">

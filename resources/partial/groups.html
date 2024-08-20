@@ -1,19 +1,21 @@
 <progress-spinner ng-show="groups === undefined"></progress-spinner>
 <div style="padding-top: 20px" ng-if="groups !== undefined">
   <div ng-show="!selectedGroup">
-    <div class="alert alert-info" ng-if="groups && groups.length">Select a group to manage memberships.</div>
     <div>
-      <h4>Existing groups</h4>
-      <div ng-repeat="group in groups">
-        <a style="margin: 5px; border-radius: 5px; min-width: 150px" class="btn btn-info" ng-href="./threema_connector/groupCreation?id={{group.id}}"
-          >{{group.name}}</a
-        >
-      </div>
+      <h4>Group overview</h4>
       <div ng-if="!groups || groups.length === 0">There are no existing groups.</div>
+      <table ng-if="groups && groups.length > 0" style="padding: 20px 0">
+        <tr ng-repeat="group in groups">
+          <td style="padding: 5px 30px 5px 0"><strong>{{group.name}}</strong></td>
+          <td style="padding: 5px 10px 5px 0">
+            <a class="btn btn-info" ng-href="./threema_connector/groupCreation?id={{group.id}}"><i class="fa fa-pen"></i> edit</a>
+          </td>
+        </tr>
+      </table>
     </div>
 
     <div style="margin: 20px 0">
-      <a class="btn btn-lg btn-success" href="./threema_connector/groupCreation">Create new group</a>
+      <a class="btn btn-success" href="./threema_connector/groupCreation">Create new group</a>
     </div>
   </div>
 </div>

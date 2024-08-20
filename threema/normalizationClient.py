@@ -126,7 +126,7 @@ class NormalizationClient():
             logging.info(f"Checking credentials name {cred_name}")
             if cred_name not in entData:
                 logging.info(
-                    f"Cannot find ENT user entry for credentials name {cred_name}")
+                    f"Cannot find LDAP user entry for credentials name {cred_name}")
                 continue
 
             firstName, originalLastName, cls = (entData[cred_name]["firstName"],
