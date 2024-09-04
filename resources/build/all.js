@@ -151,8 +151,7 @@ angular.module("dfglfa.threema_connector").controller("UnmatchedController", fun
   $scope.openCredentialsDeleteModal = openCredentialsDeleteModal;
 
   // Check on page load
-  $scope.unmatchedStudents = undefined;
-  $scope.unmatchedTeachers = undefined;
+  $scope.unmatchedCredentials = undefined;
   loadResults();
 
   $scope.queue = [];
@@ -161,17 +160,11 @@ angular.module("dfglfa.threema_connector").controller("UnmatchedController", fun
 
   function loadResults() {
     return $http.post("/api/threema_connector/credentials/check", {}).then((resp) => {
-      const unmatchedStudents = [];
-      const unmatchedTeachers = [];
+      const unmatchedCredentials = [];
       for (const user of resp.data.unmatched) {
-        if (user.username && classService.containsClass(user.username)) {
-          unmatchedStudents.push(user);
-        } else {
-          unmatchedTeachers.push(user);
-        }
+        unmatchedCredentials.push(user);
       }
-      $scope.unmatchedStudents = unmatchedStudents;
-      $scope.unmatchedTeachers = unmatchedTeachers;
+      $scope.unmatchedCredentials = unmatchedCredentials;
     });
   }
 
@@ -210,7 +203,7 @@ angular.module("dfglfa.threema_connector").controller("UnmatchedController", fun
 
   function deleteAllCredentials() {
     const allTasks = [];
-    for (let unmatched of $scope.unmatchedStudents) {
+    for (let unmatched of $scope.unmatchedCredentials) {
       allTasks.push([unmatched.id, unmatched.username]);
     }
 
