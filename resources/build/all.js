@@ -452,6 +452,7 @@ angular
               cred.cls = entMatch["cls"];
               if (entMatch["currentThreemaLogin"] === entMatch["correctThreemaLogin"]) {
                 cred.status = "OK";
+                cred.realname = `${entMatch.lastName}, ${entMatch.firstName}`;
               } else {
                 cred.status = "SUGGESTION";
                 cred.nameChange = entMatch["correctThreemaLogin"];
