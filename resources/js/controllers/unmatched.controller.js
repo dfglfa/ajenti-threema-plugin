@@ -1,8 +1,11 @@
 angular.module("dfglfa.threema_connector").controller("UnmatchedController", function ($scope, $http, $uibModal, $timeout, notify, classService) {
   $scope.isUpdating = false;
   $scope.delete = deleteCredentials;
-  $scope.deleteAll = deleteAllCredentials;
+  $scope.deleteSelected = deleteSelectedCredentials;
   $scope.openCredentialsDeleteModal = openCredentialsDeleteModal;
+  $scope.toggle = toggle;
+  $scope.selectAll = selectAll;
+  $scope.unselectAll = unselectAll;
 
   // Check on page load
   $scope.unmatchedCredentials = undefined;
@@ -11,6 +14,8 @@ angular.module("dfglfa.threema_connector").controller("UnmatchedController", fun
   $scope.queue = [];
   $scope.done = 0;
   $scope.total = 0;
+  $scope.selectedIds = [];
+  $scope.allIds = [];
 
   function loadResults() {
     return $http.post("/api/threema_connector/credentials/check", {}).then((resp) => {
@@ -19,7 +24,17 @@ angular.module("dfglfa.threema_connector").controller("UnmatchedController", fun
         unmatchedCredentials.push(user);
       }
       $scope.unmatchedCredentials = unmatchedCredentials;
+      $scope.selectedIds = unmatchedCredentials.map(c => c.id);
+      $scope.allIds = $scope.selectedIds;
     });
+  }
+
+  function toggle(uid) {
+    if ($scope.selectedIds.indexOf(uid) === -1) {
+      $scope.selectedIds.push(uid);
+    } else {
+      $scope.selectedIds = $scope.selectedIds.filter(i => i !== uid);
+    }
   }
 
   function deleteCredentials(threemaId, username, singleDelete) {
@@ -48,17 +63,19 @@ angular.module("dfglfa.threema_connector").controller("UnmatchedController", fun
       resolve: {
         threemaId: () => undefined,
         username: () => undefined,
-        allUsers: () => true,
+        multipleUsers: () => true,
       },
     });
 
-    modal.result.then(deleteAllCredentials);
+    modal.result.then(deleteSelectedCredentials);
   }
 
-  function deleteAllCredentials() {
+  function deleteSelectedCredentials() {
     const allTasks = [];
     for (let unmatched of $scope.unmatchedCredentials) {
-      allTasks.push([unmatched.id, unmatched.username]);
+      if ($scope.selectedIds.indexOf(unmatched.id) > -1) {
+        allTasks.push([unmatched.id, unmatched.username]);
+      }
     }
 
     $scope.isUpdating = true;
@@ -83,5 +100,13 @@ angular.module("dfglfa.threema_connector").controller("UnmatchedController", fun
         $timeout(processQueue, 500);
       });
     }
+  }
+
+  function selectAll() {
+    $scope.selectedIds = $scope.allIds;
+  }
+
+  function unselectAll() {
+    $scope.selectedIds = [];
   }
 });

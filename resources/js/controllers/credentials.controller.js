@@ -126,7 +126,7 @@ angular
         resolve: {
           threemaId: () => threemaId,
           username: () => username,
-          allUsers: () => false,
+          multipleUsers: () => false,
         },
       });
 

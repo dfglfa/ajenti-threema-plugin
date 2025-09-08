@@ -21,6 +21,9 @@
         Students were detected in Threema that do not appear in ENT.
       </div>
       <div ng-repeat="u in unmatchedCredentials" class="row" style="padding: 2px 0; display: flex; align-items: center">
+        <div class="col-xs-1">
+          <input type="checkbox" ng-checked="selectedIds.indexOf(u.id) > -1" ng-click="toggle(u.id)">
+        </div>
         <div class="col-xs-6 col-sm-4">{{u.username}}</div>
         <div class="col-xs-6 col-sm-4">
           <button class="btn btn-danger" ng-click="delete(u.id, u.username, true)" ng-disabled="isUpdating">
@@ -29,8 +32,13 @@
         </div>
       </div>
       <br />
-      <button class="btn btn-danger" ng-disabled="isUpdating" ng-click="openCredentialsDeleteModal()" ng-show="unmatchedCredentials.length > 1">
-        <i class="fa fa-skull"></i> &nbsp; Delete ALL unmatched students
+      <div>
+        <button class="btn btn-info" ng-click="selectAll()">Select All</button> 
+        <button class="btn btn-info" ng-click="unselectAll()">Unselect All</button>
+      </div>
+      <br />
+      <button class="btn btn-danger" ng-disabled="isUpdating || selectedIds.length === 0" ng-click="openCredentialsDeleteModal()" ng-show="unmatchedCredentials.length > 1">
+        <i class="fa fa-trash"></i> &nbsp; Delete selected students ({{selectedIds.length}})
       </button>
     </div>
   </div>

@@ -1,12 +1,12 @@
 angular
   .module("dfglfa.threema_connector")
-  .controller("CredentialsDeleteController", function ($scope, $http, $uibModalInstance, threemaId, username, allUsers) {
+  .controller("CredentialsDeleteController", function ($scope, $http, $uibModalInstance, threemaId, username, multipleUsers) {
     $scope.username = username;
     $scope.isDeleting = false;
-    $scope.allUsers = allUsers;
+    $scope.multipleUsers = multipleUsers;
 
     $scope.delete = () => {
-      if (!allUsers) {
+      if (!multipleUsers) {
         $scope.isDeleting = true;
 
         $http
