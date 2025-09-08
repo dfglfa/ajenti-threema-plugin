@@ -70,12 +70,15 @@ angular.module("dfglfa.threema_connector").controller("ThreemaConnectorIndexCont
 
 angular
   .module("dfglfa.threema_connector")
-  .controller("MissingController", function ($scope, $http, $timeout, pageTitle, gettext, notify, classService) {
+  .controller("MissingController", function ($scope, $http, $timeout, pageTitle, gettext, notify) {
     pageTitle.set(gettext("Missing"));
 
     $scope.isUpdating = false;
     $scope.add = addCredentials;
-    $scope.addAll = addCredentialsForAll;
+    $scope.addSelectedCredentials = addSelectedCredentials;
+    $scope.toggle = toggle;
+    $scope.selectAll = selectAll;
+    $scope.unselectAll = unselectAll;
 
     // Check on page load
     $scope.results = undefined;
@@ -84,13 +87,25 @@ angular
     $scope.queue = [];
     $scope.done = 0;
     $scope.total = 0;
+    $scope.selectedNames = [];
+    $scope.allNames = [];
 
     $scope.THREEMA_PREFIX = "dfg";
 
     function loadResults() {
       return $http.post("/api/threema_connector/credentials/check", {}).then((resp) => {
-        $scope.results = resp.data;
+        $scope.results = resp.data.unused;
+        $scope.selectedNames = $scope.results;
+        $scope.allNames = $scope.results;
       });
+    }
+
+    function toggle(uid) {
+      if ($scope.selectedNames.indexOf(uid) === -1) {
+        $scope.selectedNames.push(uid);
+      } else {
+        $scope.selectedNames = $scope.selectedNames.filter(i => i !== uid);
+      }
     }
 
     function addCredentials(entLogin, singleUpdate) {
@@ -113,10 +128,12 @@ angular
         });
     }
 
-    function addCredentialsForAll() {
+    function addSelectedCredentials() {
       const allTasks = [];
-      for (let uname of $scope.results.unused) {
-        allTasks.push(uname);
+      for (let uname of $scope.results) {
+        if ($scope.selectedNames.indexOf(uname) > -1) {
+          allTasks.push(uname);
+        }
       }
 
       $scope.isUpdating = true;
@@ -141,6 +158,14 @@ angular
           $timeout(processQueue, 300);
         });
       }
+    }
+
+    function selectAll() {
+      $scope.selectedNames = $scope.allNames;
+    }
+
+    function unselectAll() {
+      $scope.selectedNames = [];
     }
   });
 

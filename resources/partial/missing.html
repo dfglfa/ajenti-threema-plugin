@@ -6,7 +6,7 @@
   <div ng-if="results">
     <i class="fa fa-backward"></i>&nbsp;&nbsp;<a ng:href="/view/threema_connector/">Back to threema overview</a>
 
-    <div ng-if="!results.unused || results.unused.length === 0">
+    <div ng-if="!results || results.length === 0">
       <div class="alert alert-success" style="padding: 15px; margin: 10px 0">No users from LDAP seem to be missing in Threema.</div>
     </div>
 
@@ -16,11 +16,14 @@
       </div>
     </div>
 
-    <div ng-if="results.unused && results.unused.length > 0">
+    <div ng-if="results && results.length > 0">
       <div ng-if="!total" class="alert alert-info" style="padding: 15px; margin: 20px 0">
         LDAP users without matching threema credentials have been found.
       </div>
-      <div ng-repeat="u in results.unused" class="row" style="padding: 2px 0; display: flex; align-items: center">
+      <div ng-repeat="u in results" class="row" style="padding: 2px 0; display: flex; align-items: center">
+        <div class="col-xs-1">
+          <input type="checkbox" ng-checked="selectedNames.indexOf(u) > -1" ng-click="toggle(u)">
+        </div>
         <div class="col-xs-6 col-sm-4">{{u}}</div>
         <div class="col-xs-6 col-sm-4">
           <button class="btn btn-primary" ng-click="add(u, true)" ng-disabled="isUpdating">
@@ -29,8 +32,13 @@
         </div>
       </div>
       <br />
-      <button class="btn btn-primary" ng-click="addAll()" ng-disabled="isUpdating" ng-show="results.unused && results.unused.length > 1">
-        <i class="fa fa-layer-group"></i> &nbsp; Add credentials for ALL ({{results.unused.length}})
+      <div>
+        <button class="btn btn-info" ng-click="selectAll()">Select All</button> 
+        <button class="btn btn-info" ng-click="unselectAll()">Unselect All</button>
+      </div>
+      <br />
+      <button class="btn btn-primary" ng-click="addSelectedCredentials()" ng-disabled="isUpdating || selectedNames.length === 0" ng-show="results && results.length > 1">
+        <i class="fa fa-layer-group"></i> &nbsp; Add credentials for ALL ({{selectedNames.length}})
       </button>
     </div>
   </div>
