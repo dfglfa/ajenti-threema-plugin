@@ -62,7 +62,7 @@ def normalizeName(formattedName, className):
             if len(nonstandardClassMatchCaseInsensitive) == 1:
                 className = NONSTANDARD_CLASS_NAMES[nonstandardClassMatchCaseInsensitive[0]]
             else:
-                logging.warn(
+                logging.warning(
                     f"Cannot find match or correction for class name {className}")
 
     return f"{className}_{formattedName}"

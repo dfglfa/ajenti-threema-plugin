@@ -49,7 +49,7 @@ class ContactsClient:
                                    "enabled": True},
                              headers=self.authHeader)
 
-        if resp.status_code <= 400:
+        if resp.status_code < 400:
             # avoid caching
             CONTACTS_CACHE["timestamp"] = None
             return "ok"
@@ -70,10 +70,11 @@ class ContactsClient:
         resp = requests.put(url,
                             json={"firstName": firstname,
                                   "lastName": lastname,
-                                  "enabled": enabled},
+                                  "enabled": enabled,
+                                  "directory_enabled": True},
                             headers=self.authHeader)
 
-        if resp.status_code <= 400:
+        if resp.status_code < 400:
             # avoid caching
             CONTACTS_CACHE["timestamp"] = None
             return "ok"
@@ -89,7 +90,7 @@ class ContactsClient:
 
         resp = requests.delete(url, headers=self.authHeader)
 
-        if resp.status_code <= 400:
+        if resp.status_code < 400:
             CONTACTS_CACHE["timestamp"] = None
             logging.info(f"Contact successfully deleted {resp.content}")
             return "ok"
